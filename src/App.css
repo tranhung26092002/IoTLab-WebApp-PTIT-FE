@@ -74,6 +74,7 @@
     border-color: #fff !important;
 }
 
+/* Base Colors */
 .primary--color {
     color: #4f6f52 !important;
 }
@@ -90,8 +91,134 @@
     color: #d2e3c8 !important;
 }
 
+/* Additional Nature-Inspired Colors */
+.forest--dark--color {
+    color: #2c4a2d !important;
+}
+
+.sage--color {
+    color: #95a88c !important;
+}
+
+.moss--color {
+    color: #6b8e4e !important;
+}
+
+.olive--color {
+    color: #708238 !important;
+}
+
+.mint--color {
+    color: #98b4a6 !important;
+}
+
+/* Neutral Tones */
 .gray--color {
     color: rgb(183, 181, 181) !important;
+}
+
+.black--color {
+    color: #000 !important;
+}
+
+.earth--color {
+    color: #796e65 !important;
+}
+
+.stone--color {
+    color: #8b8589 !important;
+}
+
+/* Accent Colors */
+.pine--color {
+    color: #3a5a40 !important;
+}
+
+.fern--color {
+    color: #85ab8d !important;
+}
+
+/* Loading Animation */
+#nprogress .bar {
+    background: #4f6f52 !important;
+    height: 3px !important;
+}
+
+#nprogress .peg {
+    box-shadow: 0 0 10px #4f6f52, 0 0 5px #4f6f52 !important;
+}
+
+.content {
+    position: relative;
+    min-height: calc(100vh - 64px - 70px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-enter {
+    animation: fadeIn 0.2s ease-in;
+}
+
+.backdrop-blur-sm {
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Course */
+
+/* Add to your existing CSS */
+.course-card-animation {
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+}
+
+.course-grid {
+    display: grid;
+    gap: 2rem;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+.filter-section {
+    background: linear-gradient(to right, #2c4a2d, #3a5a40);
+}
+
+.course-card {
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.course-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+}
+
+/* Profile */
+
+.profile-modal .ant-modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.profile-modal .ant-descriptions-item-label {
+    width: 150px;
 }
 
 /* Plant lists */

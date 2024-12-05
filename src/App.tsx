@@ -1,50 +1,33 @@
-import React, { useState } from "react";
-import { Layout, Button } from "antd";
-import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
-import "./App.css";
-import CustomHeader from "./components/Header";
-import MainContent from "./components/MainContent";
-import SideContent from "./components/SideContent";
-import Sidebar from "./components/SideBar";
+import React, { Suspense } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import LoadingSpinner from './components/LoadingSpinner';
 
-// Destructuring Layout components
-const { Sider, Header, Content } = Layout;
+// Lazy load components
+const Home = React.lazy(() => import('./pages/Home'));
+const About = React.lazy(() => import('./pages/About'));
+const Login = React.lazy(() => import('./pages/Login'));
+const Contact = React.lazy(() => import('./pages/Contact'));
+const Course = React.lazy(() => import('./pages/Course'));
+const ToDo = React.lazy(() => import('./pages/ToDo'));
+const Setting = React.lazy(() => import('./pages/Setting'));
+const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 
-const App: React.FC = () => {
-  // Khai báo kiểu cho state `collapsed`
-  const [collapsed, setCollapsed] = useState<boolean>(false);
-
-  return (
-    <Layout>
-      <Sider
-        theme="light"
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-        className="sider"
-      >
-        <Sidebar />
-        
-        <Button
-          type="text"
-          icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={() => setCollapsed(!collapsed)}
-          className="trigger-btn"
-        />
-      </Sider>
-      <Layout>
-        <Header className="header">
-          <CustomHeader />
-        </Header>
-        <Content className="content">
-          <div style={{ display: "flex" }}>
-            <MainContent />
-            <SideContent />
-          </div>
-        </Content>
-      </Layout>
-    </Layout>
-  );
-};
+const App: React.FC = () => (
+  <BrowserRouter>
+    <Suspense fallback={<LoadingSpinner />}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path='/dashboard' element={<Dashboard />} />
+        <Route path="/course" element={<Course />} />
+        <Route path="/to-do" element={<ToDo />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/setting" element={<Setting />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Home />} />
+      </Routes>
+    </Suspense>
+  </BrowserRouter>
+);
 
 export default App;

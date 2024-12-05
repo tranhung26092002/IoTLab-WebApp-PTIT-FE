@@ -1,11 +1,23 @@
+// src/pages/About.tsx
 import React from 'react';
+import AppLayout from '../components/AppLayout';
+import { Hero } from '../components/about/Hero';
+import { Stats } from '../components/about/Stats';
+import { Mission } from '../components/about/Mission';
+import { Facilities } from '../components/about/Facilities';
+import { Team } from '../components/about/Team';
 
 const About: React.FC = () => {
   return (
-    <div>
-      <h1>About Us</h1>
-      <p>This is an app to demonstrate React with TypeScript and Ant Design.</p>
-    </div>
+    <AppLayout>
+      <div className="max-w-6xl mx-auto py-12 px-4">
+        <Hero />
+        <Stats />
+        <Mission />
+        <Facilities />
+        <Team />
+      </div>
+    </AppLayout>
   );
 };
 

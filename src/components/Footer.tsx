@@ -3,7 +3,7 @@ import { Layout } from 'antd';
 
 const { Footer } = Layout;
 
-const MyFooter: React.FC = () => {
+const CustomFooter: React.FC = () => {
   return (
     <Footer style={{ textAlign: 'center' }}>
       My Application ©2024 Created by Me
@@ -11,4 +11,4 @@ const MyFooter: React.FC = () => {
   );
 };
 
-export default MyFooter;
+export default CustomFooter;

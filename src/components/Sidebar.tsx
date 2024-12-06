@@ -10,7 +10,7 @@ import {
   SettingOutlined,
   HomeOutlined,
   ContactsOutlined,
-  DashboardOutlined,
+  DashboardOutlined
 } from "@ant-design/icons";
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
@@ -58,10 +58,10 @@ const Sidebar: React.FC = () => {
       path: "/course",
     },
     {
-      key: "/to-do",
+      key: "/task",
       icon: <OrderedListOutlined />,
-      label: "ToDo",
-      path: "/to-do",
+      label: "Tasks",
+      path: "/task",
     },
     {
       key: "/contact",

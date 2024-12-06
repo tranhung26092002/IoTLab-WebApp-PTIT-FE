@@ -1,7 +1,7 @@
 import React from "react";
 import { Menu, Image } from "antd";
 import { useLocation, useNavigate } from "react-router-dom"; // Import Link
-import logo from '../assets/logo-ptit.png'
+import logo from '../assets/login/logo-ptit.png'
 import {
   UserOutlined,
   LoginOutlined,

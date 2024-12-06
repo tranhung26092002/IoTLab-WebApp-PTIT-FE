@@ -3,9 +3,9 @@ import { motion } from "framer-motion";
 import { Typography } from "antd";
 import LoginForm from "../components/login/LoginForm";
 import RegisterForm from "../components/login/RegisterForm";
-import logo_left from "../assets/login_left.png";
-import logo_right from "../assets/login_right.png";
-import logo_main from "../assets/logo-ptit.png";
+import logo_left from "../assets/login/login_left.png";
+import logo_right from "../assets/login/login_right.png";
+import logo_main from "../assets/login/logo-ptit.png";
 import AppLayout from "../components/AppLayout";
 
 const { Title } = Typography;

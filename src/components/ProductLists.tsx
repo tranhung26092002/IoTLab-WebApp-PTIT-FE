@@ -1,8 +1,8 @@
 import React from 'react';
 import { Button, Typography, Card, Image, Space } from 'antd';
-import anh1 from '../assets/anh1.png';
-import anh2 from '../assets/anh2.png';
-import anh3 from '../assets/anh3.png';
+import anh1 from '../../assets/anh1.png';
+import anh2 from '../../assets/anh2.png';
+import anh3 from '../../assets/anh3.png';
 
 // Khai báo kiểu cho plantData
 interface Plant {

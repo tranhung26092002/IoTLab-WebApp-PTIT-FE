@@ -1,6 +1,6 @@
 import { Typography, Card, Image, Row, Col } from 'antd';
 import React from 'react';
-import plant from '../assets/anh2.png';
+import plant from '../../assets/anh2.png';
 
 const ContentSidebar: React.FC = () => {
     return (

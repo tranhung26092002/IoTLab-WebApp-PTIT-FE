@@ -1,4 +1,3 @@
-// components/AppLayout.tsx
 import React, { Suspense, useState, useEffect } from "react";
 import { Layout, Button } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
@@ -7,25 +6,37 @@ import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import "../App.css";
 import CustomFooter from "./Footer";
-import CustomHeader from "./Header";  
+import CustomHeader from "./header/Header";
 import LoadingSpinner from "./LoadingSpinner";
 import Sidebar from "./Sidebar";
 
 const { Sider, Header, Content } = Layout;
 
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+  // Initialize collapsed state from localStorage
+  const [collapsed, setCollapsed] = useState<boolean>(() => {
+    const saved = localStorage.getItem('sidebarCollapsed');
+    return saved ? JSON.parse(saved) : false;
+  });
   const [isLoading, setIsLoading] = useState(true);
 
+  // Update localStorage when collapsed state changes
   useEffect(() => {
-    NProgress.configure({ 
+    localStorage.setItem('sidebarCollapsed', JSON.stringify(collapsed));
+  }, [collapsed]);
+
+  useEffect(() => {
+    NProgress.configure({
       showSpinner: false,
       trickleSpeed: 200,
       minimum: 0.3,
     });
-
     setIsLoading(false);
   }, []);
+
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
 
   return (
     <Layout>
@@ -46,7 +57,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         <Button
           type="text"
           icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={toggleCollapsed}
           className="triger-btn"
         />
       </Sider>

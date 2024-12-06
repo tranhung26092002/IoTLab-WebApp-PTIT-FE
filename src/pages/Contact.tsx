@@ -1,6 +1,8 @@
 import React from "react";
 import AppLayout from "../components/AppLayout";
 import { motion } from "framer-motion";
+import { Typography } from "antd";
+import { ContactsOutlined } from "@ant-design/icons";
 
 const Contact: React.FC = () => {
   const fadeInUp = {
@@ -11,13 +13,16 @@ const Contact: React.FC = () => {
 
   return (
     <AppLayout>
+      <Typography.Title level={2} className="forest--dark--color m-0 flex items-center gap-2">
+        <ContactsOutlined /> Contact
+      </Typography.Title>
       <motion.div
         className="mb-24 xs:mb-14 shadow-xl rounded-lg overflow-hidden border-2"
         style={{ borderColor: '#d2e3c8' }}
         {...fadeInUp}
       >
         <iframe
-          src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d3725.28029825021!2d105.78630017525153!3d20.98139838940363!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1zNjhhLzYgUGjhu5EgQW8gU2VuLCBN4buZIExhbywgSMOgIMSQw7RuZywgSMOgIE7hu5lp!5e0!3m2!1svi!2s!4v1724994267750!5m2!1svi!2s"
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3725.2924013039187!2d105.78484157491434!3d20.980912980656438!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135accdd8a1ad71%3A0xa2f9b16036648187!2zSOG7jWMgdmnhu4duIEPDtG5nIG5naOG7hyBCxrB1IGNow61uaCB2aeG7hW4gdGjDtG5n!5e0!3m2!1svi!2s!4v1733414001712!5m2!1svi!2s"
           width="100%"
           height="350"
           style={{ border: 0 }}
@@ -54,7 +59,7 @@ const Contact: React.FC = () => {
                   <i className={`fa-solid fa-${item.icon} mr-3 pine--color text-xl`}></i>
                   <a
                     href={item.href}
-                    className="fern--color hover:text-[#4f6f52] transition-colors"
+                    className="forest--dark--color hover:text-[#4f6f52] transition-colors"
                   >
                     {item.text}
                   </a>

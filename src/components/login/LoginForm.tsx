@@ -1,5 +1,8 @@
+// src/components/login/LoginForm.tsx
 import React, { useState } from "react";
-import { notification } from "antd";
+import { Form, Input, Button, Checkbox, Typography, Space } from "antd";
+import { UserOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
+import { motion } from "framer-motion";
 
 interface LoginFormProps {
   email: string;
@@ -9,6 +12,8 @@ interface LoginFormProps {
   onToggleRegister: () => void;
 }
 
+const { Title } = Typography;
+
 const LoginForm: React.FC<LoginFormProps> = ({
   email,
   password,
@@ -16,120 +21,95 @@ const LoginForm: React.FC<LoginFormProps> = ({
   onPasswordChange,
   onToggleRegister,
 }) => {
-  // const dispatch: DispatchType = useDispatch();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
-
-  // Hàm để toggle chế độ hiển thị mật khẩu
-  const togglePasswordVisibility = (): void => {
-    setShowPassword(!showPassword);
-  };
-
-  // const handleLoginSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
-  //   e.preventDefault();
-  //   const loginData = { email, password };
-
-  //   dispatch(loginUser(loginData))
-  //     .then((action: any) => {
-  //       if (action.payload.status === 200) {
-  //         notification.success({
-  //           message: "Thành công",
-  //           description: "Đăng nhập thành công!",
-  //           duration: 1,
-  //         });
-  //       } else {
-  //         notification.error({
-  //           message: "Lỗi",
-  //           description: "Đăng nhập thất bại. Vui lòng thử lại!",
-  //           duration: 1,
-  //         });
-  //       }
-  //     })
-  //     .catch(() => {
-  //       notification.error({
-  //         message: "Lỗi",
-  //         description: "Đăng nhập thất bại. Vui lòng thử lại!",
-  //         duration: 1,
-  //       });
-  //     });
-  // };
-
   return (
-    <form
-      // onSubmit={handleLoginSubmit}
-      className="relative bg-white p-5 rounded-xl shadow-lg z-10 w-full max-w-[400px] ring-1 ring-gray-200"
-    >
-      <div className="w-full text-center mb-4">
-        <p className="text-2xl font-bold text-gray-800">Login</p>
-      </div>
+    <Form layout="vertical" className="space-y-4">
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Title level={2} className="text-center text-[#4f6f52]">
+          Login
+        </Title>
+      </motion.div>
 
-      <div className="w-full mb-4">
-        <label className="block font-semibold text-gray-700 mb-2">
-          Mã sinh viên:
-        </label>
-        <input
-          className="w-full h-10 px-4 border border-gray-300 rounded focus:border-blue-500 focus:outline-none"
-          type="text"
-          value={email}
-          onChange={(e) => onEmailChange(e.target.value)}
-          required
-        />
-      </div>
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <Form.Item
+          label="Mã sinh viên"
+          rules={[{ required: true, message: "Please input your student ID!" }]}
+        >
+          <Input
+            prefix={<UserOutlined className="text-[#86a789]" />}
+            value={email}
+            onChange={(e) => onEmailChange(e.target.value)}
+            className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
+          />
+        </Form.Item>
+      </motion.div>
 
-      <div className="w-full mb-4">
-        <label className="block font-semibold text-gray-700 mb-2">
-          Mật khẩu:
-        </label>
-        <div className="relative">
-          <input
-            className="w-full h-10 px-4 border border-gray-300 rounded focus:border-blue-500 focus:outline-none"
-            type={showPassword ? "text" : "password"} // Đổi kiểu input giữa text và password
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+      >
+        <Form.Item
+          label="Mật khẩu"
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
+          <Input.Password
+            prefix={<LockOutlined className="text-[#86a789]" />}
             value={password}
             onChange={(e) => onPasswordChange(e.target.value)}
-            required
+            iconRender={(visible) =>
+              visible ? (
+                <EyeTwoTone twoToneColor="#4f6f52" />
+              ) : (
+                <EyeInvisibleOutlined className="text-[#86a789]" />
+              )
+            }
+            className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
           />
-          <button
-            type="button"
-            onClick={togglePasswordVisibility}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
-          >
-            <i
-              className={`fa-solid ${
-                showPassword ? "fa-eye" : "fa-eye-slash"
-              } text-gray-500 w-5 h-5`}
-            ></i>
-          </button>
-        </div>
-      </div>
+        </Form.Item>
+      </motion.div>
 
-      <div className="w-full flex justify-between items-center mb-4">
-        <div className="flex items-center">
-          <input type="checkbox" className="mr-2" />
-          <label className="text-gray-600">Ghi nhớ đăng nhập</label>
-        </div>
-        <a
-          href="/home/password/reset"
-          className="text-blue-500 text-sm hover:underline"
-        >
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.3 }}
+        className="flex justify-between items-center"
+      >
+        <Checkbox className="text-[#4f6f52]">Ghi nhớ đăng nhập</Checkbox>
+        <a href="/forgot-password" className="text-[#4f6f52] hover:text-[#739072]">
           Quên mật khẩu?
         </a>
-      </div>
+      </motion.div>
 
-      <div className="w-full flex justify-between mt-4">
-        <button
-          type="submit"
-          className="flex-1 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors"
-        >
-          Đăng nhập
-        </button>
-        <button
-          type="button"
-          onClick={onToggleRegister}
-          className="flex-1 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors ml-2"
-        >
-          Đăng ký
-        </button>
-      </div>
-    </form>
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.4 }}
+      >
+        <Space className="w-full" direction="vertical" size="middle">
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="w-full h-12 bg-[#4f6f52] hover:bg-[#739072]"
+          >
+            Đăng nhập
+          </Button>
+          <Button
+            onClick={onToggleRegister}
+            className="w-full h-12 border-[#86a789] text-[#4f6f52] hover:bg-[#86a789] hover:text-white"
+          >
+            Đăng ký
+          </Button>
+        </Space>
+      </motion.div>
+    </Form>
   );
 };
 

@@ -1,5 +1,8 @@
+// src/components/login/RegisterForm.tsx
 import React, { useState } from "react";
-import { notification, Spin } from "antd";
+import { Form, Input, Button, Typography, Space, notification } from "antd";
+import { UserOutlined, MailOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
+import { motion } from "framer-motion";
 
 interface RegisterFormProps {
   username: string;
@@ -13,6 +16,8 @@ interface RegisterFormProps {
   onToggleLogin: () => void;
 }
 
+const { Title } = Typography;
+
 const RegisterForm: React.FC<RegisterFormProps> = ({
   username,
   email,
@@ -24,180 +29,188 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
   onConfirmPasswordChange,
   onToggleLogin,
 }) => {
-//   const dispatch: DispatchType = useDispatch();
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
 
-  // Kiểm tra email hợp lệ
-  const validateEmail = (email: string) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
-
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Kiểm tra đầu vào
-    if (!username.trim()) {
-      notification.error({
-        message: "Lỗi",
-        description: "Họ và tên không được để trống!",
-        duration: 1,
-      });
-      return;
-    }
-    if (!validateEmail(email)) {
-      notification.error({
-        message: "Lỗi",
-        description: "Email không hợp lệ!",
-        duration: 1,
-      });
-      return;
-    }
-    if (password.length < 6) {
-      notification.error({
-        message: "Lỗi",
-        description: "Mật khẩu phải có ít nhất 6 ký tự!",
-        duration: 1,
-      });
-      return;
-    }
-    if (password !== confirmPassword) {
-      notification.error({
-        message: "Lỗi",
-        description: "Mật khẩu xác nhận không khớp!",
-        duration: 1,
-      });
-      return;
-    }
-
-    const registerData = { name: username, email, password, role: "customer" };
-
+  const handleSubmit = async () => {
     try {
+      await form.validateFields();
       setLoading(true);
-      const action: any = await dispatch(registerUser(registerData));
-      setLoading(false);
 
-      if (action.payload?.status === 200) {
-        notification.success({
-          message: "Thành công",
-          description: "Đăng ký thành công!",
-          duration: 1,
-        });
-        onToggleLogin();
-      } else {
-        notification.error({
-          message: "Lỗi",
-          description: action.payload?.message || "Đăng ký thất bại!",
-          duration: 1,
-        });
-      }
+      const registerData = { 
+        name: username, 
+        email, 
+        password, 
+        role: "customer" 
+      };
+
+      // Your registration logic here
+      // const action = await dispatch(registerUser(registerData));
+
+      notification.success({
+        message: "Thành công",
+        description: "Đăng ký thành công!",
+        duration: 2,
+      });
+      onToggleLogin();
     } catch (error) {
-      setLoading(false);
       notification.error({
         message: "Lỗi",
-        description: "Có lỗi xảy ra, vui lòng thử lại!",
-        duration: 1,
+        description: "Vui lòng kiểm tra lại thông tin!",
+        duration: 2,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form
-      onSubmit={handleRegisterSubmit}
-      className="relative bg-white p-5 rounded-xl shadow-lg z-10 w-full max-w-[400px] ring-1 ring-gray-200"
+    <Form
+      form={form}
+      layout="vertical"
+      className="space-y-4"
+      onFinish={handleSubmit}
     >
-      <div className="w-full text-center mb-4">
-        <p className="text-2xl font-bold text-gray-800">Register</p>
-      </div>
-      <div className="w-full mb-4">
-        <label className="block font-semibold text-gray-700 mb-2">Họ và tên:</label>
-        <input
-          className="w-full h-10 px-4 border border-gray-300 rounded focus:border-blue-500 focus:outline-none"
-          type="text"
-          value={username}
-          onChange={(e) => onUsernameChange(e.target.value)}
-          required
-        />
-      </div>
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Title level={2} className="text-center text-[#4f6f52]">
+          Đăng ký
+        </Title>
+      </motion.div>
 
-      <div className="w-full mb-4">
-        <label className="block font-semibold text-gray-700 mb-2">Email:</label>
-        <input
-          className="w-full h-10 px-4 border border-gray-300 rounded focus:border-blue-500 focus:outline-none"
-          type="email"
-          value={email}
-          onChange={(e) => onEmailChange(e.target.value)}
-          required
-        />
-      </div>
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+      >
+        <Form.Item
+          label="Họ và tên"
+          name="username"
+          rules={[{ required: true, message: "Vui lòng nhập họ tên!" }]}
+        >
+          <Input
+            prefix={<UserOutlined className="text-[#86a789]" />}
+            value={username}
+            onChange={(e) => onUsernameChange(e.target.value)}
+            className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
+          />
+        </Form.Item>
+      </motion.div>
 
-      <div className="w-full mb-4">
-        <label className="block font-semibold text-gray-700 mb-2">Mật khẩu:</label>
-        <div className="relative">
-          <input
-            className="w-full h-10 px-4 border border-gray-300 rounded focus:border-blue-500 focus:outline-none"
-            type={showPassword ? "text" : "password"}
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.2 }}
+      >
+        <Form.Item
+          label="Email"
+          name="email"
+          rules={[
+            { required: true, message: "Vui lòng nhập email!" },
+            { type: "email", message: "Email không hợp lệ!" }
+          ]}
+        >
+          <Input
+            prefix={<MailOutlined className="text-[#86a789]" />}
+            value={email}
+            onChange={(e) => onEmailChange(e.target.value)}
+            className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
+          />
+        </Form.Item>
+      </motion.div>
+
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.3 }}
+      >
+        <Form.Item
+          label="Mật khẩu"
+          name="password"
+          rules={[
+            { required: true, message: "Vui lòng nhập mật khẩu!" },
+            { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" }
+          ]}
+        >
+          <Input.Password
+            prefix={<LockOutlined className="text-[#86a789]" />}
             value={password}
             onChange={(e) => onPasswordChange(e.target.value)}
-            required
+            iconRender={(visible) =>
+              visible ? (
+                <EyeTwoTone twoToneColor="#4f6f52" />
+              ) : (
+                <EyeInvisibleOutlined className="text-[#86a789]" />
+              )
+            }
+            className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
           />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
-          >
-            <i
-              className={`fa-solid ${
-                showPassword ? "fa-eye" : "fa-eye-slash"
-              } text-gray-500 w-5 h-5`}
-            ></i>
-          </button>
-        </div>
-      </div>
+        </Form.Item>
+      </motion.div>
 
-      <div className="w-full mb-4">
-        <label className="block font-semibold text-gray-700 mb-2">Xác nhận mật khẩu:</label>
-        <div className="relative">
-          <input
-            className="w-full h-10 px-4 border border-gray-300 rounded focus:border-blue-500 focus:outline-none"
-            type={showConfirmPassword ? "text" : "password"}
+      <motion.div
+        initial={{ x: -20, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.4 }}
+      >
+        <Form.Item
+          label="Xác nhận mật khẩu"
+          name="confirmPassword"
+          dependencies={['password']}
+          rules={[
+            { required: true, message: "Vui lòng xác nhận mật khẩu!" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('password') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
+              },
+            }),
+          ]}
+        >
+          <Input.Password
+            prefix={<LockOutlined className="text-[#86a789]" />}
             value={confirmPassword}
             onChange={(e) => onConfirmPasswordChange(e.target.value)}
-            required
+            iconRender={(visible) =>
+              visible ? (
+                <EyeTwoTone twoToneColor="#4f6f52" />
+              ) : (
+                <EyeInvisibleOutlined className="text-[#86a789]" />
+              )
+            }
+            className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
           />
-          <button
-            type="button"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="absolute right-3 top-1/2 transform -translate-y-1/2"
-          >
-            <i
-              className={`fa-solid ${
-                showConfirmPassword ? "fa-eye" : "fa-eye-slash"
-              } text-gray-500 w-5 h-5`}
-            ></i>
-          </button>
-        </div>
-      </div>
+        </Form.Item>
+      </motion.div>
 
-      <div className="w-full flex justify-between mt-4">
-        <button
-          className="flex-1 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
-          type="submit"
-          disabled={loading}
-        >
-          {loading ? <Spin size="small" /> : "Đăng ký"}
-        </button>
-        <button
-          className="flex-1 bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition-colors ml-2"
-          type="button"
-          onClick={onToggleLogin}
-        >
-          Hủy
-        </button>
-      </div>
-    </form>
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.3, delay: 0.5 }}
+      >
+        <Space className="w-full" direction="vertical" size="middle">
+          <Button
+            type="primary"
+            htmlType="submit"
+            loading={loading}
+            className="w-full h-12 bg-[#4f6f52] hover:bg-[#739072]"
+          >
+            Đăng ký
+          </Button>
+          <Button
+            onClick={onToggleLogin}
+            className="w-full h-12 border-[#86a789] text-[#4f6f52] hover:bg-[#86a789] hover:text-white"
+          >
+            Quay lại đăng nhập
+          </Button>
+        </Space>
+      </motion.div>
+    </Form>
   );
 };
 

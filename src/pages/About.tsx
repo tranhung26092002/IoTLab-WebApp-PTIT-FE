@@ -1,4 +1,3 @@
-// src/pages/About.tsx
 import React from 'react';
 import AppLayout from '../components/AppLayout';
 import { Hero } from '../components/about/Hero';

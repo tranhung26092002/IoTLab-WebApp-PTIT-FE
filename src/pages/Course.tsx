@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pagination, Spin } from 'antd';
+import { Pagination, Spin, Typography } from 'antd';
 import { CourseCard } from '../components/course/CourseCard';
 import { CourseFilters } from '../components/course/CourseFilters';
 import { coursesData } from '../data/coursesData';
@@ -7,6 +7,8 @@ import { filterCourses, sortCourses } from '../utils/courseUtils';
 import { CourseType } from '../types/course';
 import AppLayout from '../components/AppLayout';
 import { SortType } from '../types/course';
+import { motion } from 'framer-motion';
+import { BookOutlined } from '@ant-design/icons';
 
 const ITEMS_PER_PAGE = 6;
 
@@ -36,6 +38,17 @@ const Course: React.FC = () => {
   return (
     <AppLayout>
       <div className="container mx-auto px-4 py-8">
+        <motion.div
+          className="mb-8"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+
+        >
+          <Typography.Title level={2} className="forest--dark--color flex items-center gap-2">
+            <BookOutlined /> My Courses
+          </Typography.Title>
+        </motion.div>
         <CourseFilters
           onSearchChange={setSearchTerm}
           onCategoryChange={setCategory}

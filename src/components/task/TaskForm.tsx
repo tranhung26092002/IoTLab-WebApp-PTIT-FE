@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, Form, Input, DatePicker, Select, Button } from 'antd';
 import { motion } from 'framer-motion';
-import { Task } from '../../types/Task';
+import { Task } from '../../types/task';
 
 interface TaskFormProps {
     visible: boolean;

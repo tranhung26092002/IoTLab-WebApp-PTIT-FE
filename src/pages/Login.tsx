@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Typography } from "antd";
 import LoginForm from "../components/login/LoginForm";
 import RegisterForm from "../components/login/RegisterForm";
 import logo_left from "../assets/login/login_left.png";
@@ -8,11 +7,9 @@ import logo_right from "../assets/login/login_right.png";
 import logo_main from "../assets/login/logo-ptit.png";
 import AppLayout from "../components/AppLayout";
 
-const { Title } = Typography;
-
 const Login: React.FC = () => {
   const [username, setUserName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [isRegister, setIsRegister] = useState<boolean>(false);
@@ -71,20 +68,20 @@ const Login: React.FC = () => {
               >
                 {!isRegister ? (
                   <LoginForm
-                    email={email}
+                    phoneNumber={phoneNumber}
                     password={password}
-                    onEmailChange={setEmail}
+                    onPhoneNumberChange={setPhoneNumber}
                     onPasswordChange={setPassword}
                     onToggleRegister={() => setIsRegister(true)}
                   />
                 ) : (
                   <RegisterForm
                     username={username}
-                    email={email}
+                    phoneNumber={phoneNumber}
                     password={password}
                     confirmPassword={confirmPassword}
                     onUsernameChange={setUserName}
-                    onEmailChange={setEmail}
+                    onPhoneNumberChange={setPhoneNumber}
                     onPasswordChange={setPassword}
                     onConfirmPasswordChange={setConfirmPassword}
                     onToggleLogin={() => setIsRegister(false)}

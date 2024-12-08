@@ -5,4 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   assetsInclude: ['**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.gif', '**/*.svg'],
   plugins: [react()],
+  server: {
+    host: true, // Lắng nghe tất cả các địa chỉ
+    port: 5173, // Cổng chạy ứng dụng
+  },
 })

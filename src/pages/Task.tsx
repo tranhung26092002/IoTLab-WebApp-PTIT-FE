@@ -3,7 +3,7 @@ import { Button, Card, Col, Input, Row, Select, Space, Statistic, message } from
 import { TaskHeader } from '../components/task/TaskHeader';
 import { TaskList } from '../components/task/TaskList';
 import { TaskForm } from '../components/task//TaskForm';
-import { Task } from '../types/Task';
+import { Task } from '../types/task';
 import { v4 as uuidv4 } from 'uuid';
 import AppLayout from '../components/AppLayout';
 import { motion, AnimatePresence } from 'framer-motion';

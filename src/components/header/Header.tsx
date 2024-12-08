@@ -9,7 +9,7 @@ import { SearchComponent } from "./SearchBar";
 
 const { Search } = Input;
 
-const MyHeader: React.FC = () => {
+const CustomHeader: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const onSearch = (value: string) => {
@@ -53,4 +53,4 @@ const MyHeader: React.FC = () => {
   );
 };
 
-export default MyHeader;
+export default CustomHeader;

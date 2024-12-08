@@ -3,14 +3,15 @@ import React, { useState } from "react";
 import { Form, Input, Button, Typography, Space, notification } from "antd";
 import { UserOutlined, MailOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
+import { registerUser } from "../../services/api/authService"; // Import authService
 
 interface RegisterFormProps {
   username: string;
-  email: string;
+  phoneNumber: string;
   password: string;
   confirmPassword: string;
   onUsernameChange: (value: string) => void;
-  onEmailChange: (value: string) => void;
+  onPhoneNumberChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onConfirmPasswordChange: (value: string) => void;
   onToggleLogin: () => void;
@@ -20,11 +21,11 @@ const { Title } = Typography;
 
 const RegisterForm: React.FC<RegisterFormProps> = ({
   username,
-  email,
+  phoneNumber,
   password,
   confirmPassword,
   onUsernameChange,
-  onEmailChange,
+  onPhoneNumberChange,
   onPasswordChange,
   onConfirmPasswordChange,
   onToggleLogin,
@@ -34,33 +35,34 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
 
   const handleSubmit = async () => {
     try {
-      await form.validateFields();
-      setLoading(true);
+      await form.validateFields();  // Kiểm tra các trường hợp hợp lệ
+      setLoading(true);  // Bắt đầu quá trình đăng ký
 
-      const registerData = { 
-        name: username, 
-        email, 
-        password, 
-        role: "customer" 
+      const registerData = {
+        name: username,
+        phoneNumber: phoneNumber,
+        password: password,
+        role: "customer",
       };
 
-      // Your registration logic here
-      // const action = await dispatch(registerUser(registerData));
+      // Gọi hàm đăng ký từ authService
+      await registerUser(registerData);
 
       notification.success({
         message: "Thành công",
         description: "Đăng ký thành công!",
         duration: 2,
       });
-      onToggleLogin();
+
+      onToggleLogin();  // Chuyển sang màn hình đăng nhập
     } catch (error) {
       notification.error({
         message: "Lỗi",
-        description: "Vui lòng kiểm tra lại thông tin!",
+        description: error.message || "Vui lòng kiểm tra lại thông tin!",
         duration: 2,
       });
     } finally {
-      setLoading(false);
+      setLoading(false);  // Kết thúc quá trình đăng ký
     }
   };
 
@@ -106,17 +108,14 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         transition={{ duration: 0.3, delay: 0.2 }}
       >
         <Form.Item
-          label="Email"
-          name="email"
-          rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không hợp lệ!" }
-          ]}
+          label="Số điện thoại"
+          name="phoneNumber"
+          rules={[{ required: true, message: "Vui lòng nhập số điện thoại!" }]}
         >
           <Input
             prefix={<MailOutlined className="text-[#86a789]" />}
-            value={email}
-            onChange={(e) => onEmailChange(e.target.value)}
+            value={phoneNumber}
+            onChange={(e) => onPhoneNumberChange(e.target.value)}
             className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
           />
         </Form.Item>
@@ -130,10 +129,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         <Form.Item
           label="Mật khẩu"
           name="password"
-          rules={[
-            { required: true, message: "Vui lòng nhập mật khẩu!" },
-            { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" }
-          ]}
+          rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
         >
           <Input.Password
             prefix={<LockOutlined className="text-[#86a789]" />}
@@ -160,17 +156,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           label="Xác nhận mật khẩu"
           name="confirmPassword"
           dependencies={['password']}
-          rules={[
-            { required: true, message: "Vui lòng xác nhận mật khẩu!" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error('Mật khẩu xác nhận không khớp!'));
-              },
-            }),
-          ]}
+          rules={[{ required: true, message: "Vui lòng xác nhận mật khẩu!" }]}
         >
           <Input.Password
             prefix={<LockOutlined className="text-[#86a789]" />}
@@ -193,18 +179,18 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.3, delay: 0.5 }}
       >
-        <Space className="w-full" direction="vertical" size="middle">
+        <Space className="w-full flex justify-center" direction="horizontal" size="middle">
           <Button
             type="primary"
             htmlType="submit"
             loading={loading}
-            className="w-full h-12 bg-[#4f6f52] hover:bg-[#739072]"
+            className="w-[180px] h-12 bg-[#4f6f52] hover:bg-[#739072]"
           >
             Đăng ký
           </Button>
           <Button
             onClick={onToggleLogin}
-            className="w-full h-12 border-[#86a789] text-[#4f6f52] hover:bg-[#86a789] hover:text-white"
+            className="w-[180px] h-12 border-[#86a789] text-[#4f6f52] hover:bg-[#86a789] hover:text-white"
           >
             Quay lại đăng nhập
           </Button>

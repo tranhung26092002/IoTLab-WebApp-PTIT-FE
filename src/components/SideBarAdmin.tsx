@@ -6,16 +6,15 @@ import {
   UserOutlined,
   LoginOutlined,
   OrderedListOutlined,
-  CarryOutOutlined,
   SettingOutlined,
   HomeOutlined,
-  ContactsOutlined,
   DashboardOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
-const Sidebar: React.FC = () => {
+const SidebarAdmin: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -34,40 +33,28 @@ const Sidebar: React.FC = () => {
   // Danh sách các item của menu
   const menuItems = [
     {
-      key: "/",
-      icon: <HomeOutlined />,
-      label: "Home",
-      path: "/",
-    },
-    {
-      key: "/about",
-      icon: <UserOutlined />,
-      label: "About",
-      path: "/about",
-    },
-    {
-      key: "/dashboard",
+      key: "/admin",
       icon: <DashboardOutlined />,
-      label: "Dashboard",
-      path: "/dashboard",
+      label: "Overview",
+      path: "/admin",
     },
     {
-      key: "/course",
-      icon: <CarryOutOutlined />,
-      label: "My Courses",
-      path: "/course",
+      key: "/admin/user",
+      icon: <UserOutlined />,
+      label: "User Management",
+      path: "/admin/user-manager",
     },
     {
-      key: "/task",
+      key: "/admin/task",
       icon: <OrderedListOutlined />,
-      label: "Tasks",
-      path: "/task",
+      label: "Task Management",
+      path: "/admin/task-manager",
     },
     {
-      key: "/contact",
-      icon: <ContactsOutlined />,
-      label: "Contact",
-      path: "/contact",
+      key: "/admin/course",
+      icon: <BookOutlined />,
+      label: "Course Management",
+      path: "/admin/course-manager",
     },
     {
       key: "/setting",
@@ -76,10 +63,10 @@ const Sidebar: React.FC = () => {
       path: "/setting",
     },
     {
-      key: "/admin",
-      icon: <UserOutlined />,
-      label: "Admin",
-      path: "/admin",
+      key: "/",
+      icon: <HomeOutlined />,
+      label: "Home",
+      path: "/",
     },
     {
       key: "/login",
@@ -117,4 +104,4 @@ const Sidebar: React.FC = () => {
   );
 };
 
-export default Sidebar;
+export default SidebarAdmin;

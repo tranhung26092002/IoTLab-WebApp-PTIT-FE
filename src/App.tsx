@@ -1,5 +1,6 @@
 import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'; // Import QueryClientProvider
 import LoadingSpinner from './components/LoadingSpinner';
 import NotFound from './pages/NotFound';
 import PrivateRoute from './components/PrivateRoute';
@@ -14,15 +15,22 @@ const Course = React.lazy(() => import('./pages/Course'));
 const Task = React.lazy(() => import('./pages/Task'));
 const Setting = React.lazy(() => import('./pages/Setting'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const Admin = React.lazy(() => import('./pages/Admin'));
+const UserManager = React.lazy(() => import('./pages/UserManager'));
+const CourseManager = React.lazy(() => import('./pages/CourseManager'));
+const TaskManager = React.lazy(() => import('./pages/TaskManager'));
+
+// Tạo QueryClient
+const queryClient = new QueryClient();
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider>
-
-      <BrowserRouter>
-        <Suspense fallback={<LoadingSpinner />}>
-          <Routes>
-            {/* <Route path="/" element={<Home />} />
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
+        <BrowserRouter>
+          <Suspense fallback={<LoadingSpinner />}>
+            <Routes>
+              {/* <Route path="/" element={<Home />} />
         <Route path='/dashboard' element={<Dashboard />} />
         <Route path="/course" element={<Course />} />
         <Route path="/to-do" element={<ToDo />} />
@@ -31,26 +39,33 @@ const App: React.FC = () => {
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} /> */}
 
-            {/* Public Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
+              {/* Public Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
 
-            {/* Protected Routes */}
-            {/* <Route element={<PrivateRoute />}> */}
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/course" element={<Course />} />
-            <Route path="/task" element={<Task />} />
-            <Route path="/setting" element={<Setting />} />
-            {/* </Route> */}
+              {/* Protected Routes */}
+              {/* <Route element={<PrivateRoute />}> */}
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/course" element={<Course />} />
+              <Route path="/task" element={<Task />} />
+              <Route path="/setting" element={<Setting />} />
+              {/* </Route> */}
 
-            {/* Special Routes */}
-            <Route path="/404" element={<NotFound />} />
-            <Route path="*" element={<Navigate to="/404" replace />} />      </Routes>
-        </Suspense>
-      </BrowserRouter>
-    </ThemeProvider >
+              {/* Admin Route */}
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/user-manager" element={<UserManager />} />
+              <Route path="/admin/course-manager" element={<CourseManager />} />
+              <Route path="/admin/task-manager" element={<TaskManager />} />
+
+              {/* Special Routes */}
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<Navigate to="/404" replace />} />      </Routes>
+          </Suspense>
+        </BrowserRouter>
+      </ThemeProvider >
+    </QueryClientProvider>
   );
 };
 

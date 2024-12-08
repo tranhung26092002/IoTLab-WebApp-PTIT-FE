@@ -1,7 +1,7 @@
 import { List, Tag, Space, Button, Tooltip } from 'antd';
 import { EditOutlined, DeleteOutlined, CheckOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
-import { Task } from '../../types/Task';
+import { Task } from '../../types/task';
 
 const listVariants = {
     hidden: { opacity: 0 },

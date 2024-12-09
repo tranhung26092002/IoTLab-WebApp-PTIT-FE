@@ -12,16 +12,31 @@ export const authService = {
   // Đăng nhập
   signIn: async (signInDto: SignInDto): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('/auth/sign-in', signInDto);
-    // Store tokens on successful login
+    // Lưu token khi đăng nhập thành công
     tokenStorage.setTokens(response.data.accessToken, response.data.refreshToken);
-    return response.data;
+    return response.data; // Trả về dữ liệu AuthResponse
   },
 
-  signOut: () => {
+  signOut: async () => {
+    const refreshToken = tokenStorage.getRefreshToken();
+    if (!refreshToken) {
+      throw new Error('Refresh token not available');
+    }
+
+    // Gửi refreshToken về backend để thu hồi
+    await api.post('/auth/logout', null, {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`, // Gửi refreshToken trong header
+        'isLogoutRequest': 'true', // Thêm flag đặc biệt cho request logout
+      }
+    });
+
+    // Xóa token khi đăng xuất thành công
     tokenStorage.clearTokens();
+    tokenStorage.clearRememberedLogin();
   },
 
-  refreshToken: async () => {
+  refreshToken: async (): Promise<AuthResponse> => {
     const refreshToken = tokenStorage.getRefreshToken();
     if (!refreshToken) throw new Error('No refresh token');
 
@@ -29,7 +44,7 @@ export const authService = {
       refreshToken
     });
     tokenStorage.setTokens(response.data.accessToken, response.data.refreshToken);
-    return response.data;
+    return response.data; // Trả về dữ liệu mới từ việc làm mới token
   },
 
   // Quên mật khẩu và gửi OTP
@@ -40,12 +55,12 @@ export const authService = {
 
   // Add token management methods
   setTokens: (accessToken: string, refreshToken: string) => {
-    tokenStorage.setTokens(accessToken, refreshToken);
+    tokenStorage.setTokens(accessToken, refreshToken); // Lưu token vào local storage
   },
 
-  getAccessToken: () => tokenStorage.getAccessToken(),
+  getAccessToken: () => tokenStorage.getAccessToken(), // Lấy token truy cập từ storage
 
-  getRefreshToken: () => tokenStorage.getRefreshToken(),
+  getRefreshToken: () => tokenStorage.getRefreshToken(), // Lấy token làm mới từ storage
 
-  clearTokens: () => tokenStorage.clearTokens()
+  clearTokens: () => tokenStorage.clearTokens() // Xóa các token khỏi storage
 };

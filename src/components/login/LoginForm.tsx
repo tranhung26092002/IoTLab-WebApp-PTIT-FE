@@ -1,159 +1,206 @@
-import React from 'react';
-import { Form, Input, Button, Checkbox, Typography, Space, message } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Button, Checkbox, Typography, Space } from 'antd';
 import { UserOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import { ForgotPasswordModal } from '../forgotPassword/ForgotPasswordModal';
+import { ResetPasswordModal } from '../forgotPassword/ResetPasswordModal';
 
 const { Title } = Typography;
 
-interface LoginFormProps {
-  phoneNumber: string;
-  password: string;
-  onPhoneNumberChange: (value: string) => void;
-  onPasswordChange: (value: string) => void;
-  onToggleRegister: () => void;
-}
-
-const LoginForm: React.FC<LoginFormProps> = ({
-  phoneNumber,
-  password,
-  onPhoneNumberChange,
-  onPasswordChange,
-  onToggleRegister
-}) => {
+const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegister }) => {
   const navigate = useNavigate();
-  const { signIn, isSignInLoading, signInError } = useAuth();
+  const { signIn, forgotPassword, resetPassword, isSignInLoading, isForgotPasswordLoading, isResetPasswordLoading } = useAuth();
   const [form] = Form.useForm();
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const formatPhoneNumber = (phone: string) => {
+    if (/^0[0-9]{9}$/.test(phone)) {
+      return phone.replace(/^0/, "+84");
+    }
+    return phone;
+  };
+
+  const [rememberMe, setRememberMe] = useState(() =>
+    localStorage.getItem('rememberMe') === 'true'
+  );
 
   const handleSubmit = async () => {
     try {
-      await form.validateFields();
+      const values = await form.validateFields();
+      const { password } = values;
+      let { phoneNumber } = values;
 
-      // Validate phone number format
-      if (!/^\+?[0-9]{10,}$/.test(phoneNumber)) {
-        message.error('Số điện thoại không hợp lệ!');
+      phoneNumber = formatPhoneNumber(phoneNumber);
+
+      // Kiểm tra số điện thoại hợp lệ
+      if (/^0[0-9]{9}$/.test(phoneNumber)) {
+        // Thay thế số bắt đầu bằng 0 thành +84
+        phoneNumber = phoneNumber.replace(/^0/, "+84");
+      } else if (!/^\+84[0-9]{9}$/.test(phoneNumber)) {
+        // Số không hợp lệ
+        form.setFields([
+          {
+            name: "phoneNumber",
+            errors: ["Số điện thoại không hợp lệ!"],
+          },
+        ]);
         return;
       }
 
-      await signIn({ phoneNumber, password });
-      message.success('Đăng nhập thành công!');
-      // navigate('/dashboard');
-    } catch (error: any) {
-      if (error.response?.status === 403) {
-        message.error('Số điện thoại hoặc mật khẩu không chính xác!');
-      } else if (error.name === 'ValidationError') {
-        message.error('Vui lòng kiểm tra lại thông tin đăng nhập!');
+      form.setFieldsValue({ phoneNumber });
+
+      await signIn(
+        { phoneNumber, password },
+        {
+          onSuccess: () => {
+            navigate('/dashboard');
+          }
+        }
+      );
+
+      // Handle remember me
+      if (rememberMe) {
+        localStorage.setItem('rememberMe', 'true');
+        localStorage.setItem('phoneNumber', phoneNumber);
       } else {
-        message.error('Lỗi đăng nhập, vui lòng thử lại sau!');
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('phoneNumber');
       }
+    } catch (error) {
       console.error('Login error:', error);
     }
   };
 
-  // Add error display component
-  const renderError = () => {
-    if (!signInError) return null;
+  const handleForgotPasswordClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setShowForgotPassword(true);
+  };
 
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="text-red-500 text-center mt-2 p-2 bg-red-50 rounded"
-      >
-        {signInError.response?.status === 403
-          ? 'Số điện thoại hoặc mật khẩu không chính xác!'
-          : 'Lỗi đăng nhập, vui lòng thử lại sau!'}
-      </motion.div>
-    );
+  const handleForgotPassword = async (phone: string) => {
+    try {
+      const formattedPhone = formatPhoneNumber(phone);
+      await forgotPassword({ phoneNumber: formattedPhone });
+      setPhoneNumber(formattedPhone);
+      setShowForgotPassword(false);
+      setShowResetPassword(true);
+    } catch (error) {
+      console.error('Forgot password error:', error);
+    }
+  };
+
+  const handleResetPassword = async (values: { otp: string; newPassword: string; confirmNewPassword: string }) => {
+    try {
+      await resetPassword({
+        otp: values.otp,
+        newPassword: values.newPassword,
+        confirmNewPassword: values.confirmNewPassword
+      });
+      setShowResetPassword(false);
+    } catch (error) {
+      console.error('Reset password error:', error);
+    }
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={handleSubmit}
-      className="space-y-4"
-      disabled={isSignInLoading}
-    >
-      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3 }}>
-        <Title level={2} className="text-center text-[#4f6f52]">Login</Title>
-      </motion.div>
-
-      <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
-        <Form.Item
-          label="Số điện thoại"
-          name="phoneNumber"
-          rules={[
-            { required: true, message: 'Vui lòng nhập số điện thoại!' },
-            { pattern: /^\+?[0-9\s-]+$/, message: 'Số điện thoại không hợp lệ!' }
-          ]}
-        >
-          <Input
-            prefix={<UserOutlined className="text-[#86a789]" />}
-            value={phoneNumber}
-            onChange={(e) => onPhoneNumberChange(e.target.value)}
-            className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
-          />
-        </Form.Item>
-      </motion.div>
-
-      <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.2 }}>
-        <Form.Item
-          label="Mật khẩu"
-          name="password"
-          rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
-        >
-          <Input.Password
-            prefix={<LockOutlined className="text-[#86a789]" />}
-            value={password}
-            onChange={(e) => onPasswordChange(e.target.value)}
-            iconRender={(visible) =>
-              visible ? <EyeTwoTone twoToneColor="#4f6f52" /> : <EyeInvisibleOutlined className="text-[#86a789]" />
-            }
-            className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
-          />
-        </Form.Item>
-      </motion.div>
-
-      <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.3 }} className="flex justify-between items-center">
-        <Checkbox className="text-[#4f6f52]">Ghi nhớ đăng nhập</Checkbox>
-        <a href="/forgot-password" className="text-[#4f6f52] hover:text-[#739072]">
-          Quên mật khẩu?
-        </a>
-      </motion.div>
-
-      {signInError && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-red-500 text-center"
-        >
-          {signInError.message}
+    <>
+      <Form
+        form={form}
+        layout="vertical"
+        onFinish={handleSubmit}
+        className="space-y-4"
+        disabled={isSignInLoading}
+      >
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3 }}>
+          <Title level={2} className="text-center text-[#4f6f52]">Đăng nhập</Title>
         </motion.div>
-      )}
 
-      {renderError()}
+        <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
+          <Form.Item
+            label="Số điện thoại"
+            name="phoneNumber"
+            rules={[
+              { required: true, message: 'Vui lòng nhập số điện thoại!' },
+              { pattern: /^(\+84|0)[0-9]{9}$/, message: 'Số điện thoại không hợp lệ!' }
+            ]}
+          >
+            <Input
+              prefix={<UserOutlined className="text-[#86a789]" />}
+              className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
+              autoComplete="tel"
+            />
+          </Form.Item>
+        </motion.div>
 
-      <motion.div>
-        <Space className="w-full flex justify-center" direction="horizontal" size="middle">
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={isSignInLoading}
-            className="w-[180px] h-12 bg-[#4f6f52] hover:bg-[#739072]"
+        <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.2 }}>
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
           >
-            {isSignInLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-          </Button>
-          <Button
-            onClick={onToggleRegister}
-            className="w-[180px] h-12 border-[#86a789] text-[#4f6f52] hover:bg-[#86a789] hover:text-white"
+            <Input.Password
+              prefix={<LockOutlined className="text-[#86a789]" />}
+              iconRender={(visible) =>
+                visible ? <EyeTwoTone twoToneColor="#4f6f52" /> : <EyeInvisibleOutlined className="text-[#86a789]" />
+              }
+              className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
+              autoComplete="current-password" 
+            />
+          </Form.Item>
+        </motion.div>
+
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.3 }} className="flex justify-between items-center">
+          <Checkbox
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            className="text-[#4f6f52]"
           >
-            Đăng ký
-          </Button>
-        </Space>
-      </motion.div>
-    </Form>
+            Ghi nhớ đăng nhập
+          </Checkbox>
+          <a onClick={handleForgotPasswordClick} className="text-[#4f6f52] hover:text-[#739072]">
+            Quên mật khẩu?
+          </a>
+        </motion.div>
+
+        <motion.div>
+          <Space className="w-full flex justify-center" direction="horizontal" size="middle">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isSignInLoading}
+              className="w-[180px] h-12 bg-[#4f6f52] hover:bg-[#739072]"
+            >
+              {isSignInLoading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            </Button>
+            <Button
+              onClick={onToggleRegister}
+              disabled={isSignInLoading}
+              className="w-[180px] h-12 border-[#86a789] text-[#4f6f52] hover:bg-[#86a789] hover:text-white"
+            >
+              Đăng ký
+            </Button>
+          </Space>
+        </motion.div>
+      </Form>
+
+      <ForgotPasswordModal
+        visible={showForgotPassword}
+        onClose={() => setShowForgotPassword(false)}
+        onSuccess={handleForgotPassword}
+        loading={isForgotPasswordLoading}
+      />
+
+      <ResetPasswordModal
+        visible={showResetPassword}
+        onClose={() => setShowResetPassword(false)}
+        onSubmit={handleResetPassword}
+        loading={isResetPasswordLoading}
+        phoneNumber={phoneNumber}
+      />
+    </>
   );
 };
 

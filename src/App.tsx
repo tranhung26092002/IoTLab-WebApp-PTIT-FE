@@ -5,6 +5,7 @@ import LoadingSpinner from './components/LoadingSpinner';
 import NotFound from './pages/NotFound';
 import PrivateRoute from './components/PrivateRoute';
 import { ThemeProvider } from './contexts/ThemeContext';
+import AdminRoute from './components/AdminRoute';
 
 // Lazy load components
 const Home = React.lazy(() => import('./pages/Home'));
@@ -30,34 +31,28 @@ const App: React.FC = () => {
         <BrowserRouter>
           <Suspense fallback={<LoadingSpinner />}>
             <Routes>
-              {/* <Route path="/" element={<Home />} />
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path="/course" element={<Course />} />
-        <Route path="/to-do" element={<ToDo />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/setting" element={<Setting />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/login" element={<Login />} /> */}
 
               {/* Public Routes */}
+              <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
 
               {/* Protected Routes */}
-              {/* <Route element={<PrivateRoute />}> */}
-              <Route path="/" element={<Home />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/course" element={<Course />} />
-              <Route path="/task" element={<Task />} />
-              <Route path="/setting" element={<Setting />} />
-              {/* </Route> */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/course" element={<Course />} />
+                <Route path="/task" element={<Task />} />
+                <Route path="/setting" element={<Setting />} />
+              </Route>
 
               {/* Admin Route */}
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/admin/user-manager" element={<UserManager />} />
-              <Route path="/admin/course-manager" element={<CourseManager />} />
-              <Route path="/admin/task-manager" element={<TaskManager />} />
+              <Route element={<AdminRoute />}>
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/user-manager" element={<UserManager />} />
+                <Route path="/admin/course-manager" element={<CourseManager />} />
+                <Route path="/admin/task-manager" element={<TaskManager />} />
+              </Route>
 
               {/* Special Routes */}
               <Route path="/404" element={<NotFound />} />

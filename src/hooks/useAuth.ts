@@ -1,19 +1,30 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authService } from '../services/api/authService';
-import {
-  SignInDto,
-  SignUpDto,
-  PhoneNumberDto,
-  ResetPasswordDto,
-  AuthResponse,
-} from '../types/auth';
+import { SignInDto, SignUpDto, PhoneNumberDto, ResetPasswordDto, AuthResponse } from '../types/auth';
 import { User } from '../types/user';
 import { tokenStorage } from '../services/tokenStorage';
+import { ApiError } from '../types/ApiError';
+import { AxiosError } from 'axios';
+import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
+import { useEffect } from 'react';
+import { ERROR_MESSAGES } from '../utils/messages';
+import { notification } from 'antd';
 
 export const useAuth = () => {
   const queryClient = useQueryClient();
 
-  const signUpMutation = useMutation<AuthResponse, Error, SignUpDto>({
+  const handleSignInError = (error: AxiosError<ApiError>) => {
+    // Check for JWT signature error
+    if (error?.message?.includes('JWT signature')) {
+      tokenStorage.clearTokens();
+      notification.error({
+        message: 'Lỗi',
+        description: ERROR_MESSAGES.JWT_EXPIRED
+      });
+    }
+  };
+
+  const signUpMutation = useMutation<AuthResponse, AxiosError<ApiError>, SignUpDto>({
     mutationFn: async (signUpDto) => {
       const response = await authService.signUp(signUpDto);
       return response.data;
@@ -21,75 +32,105 @@ export const useAuth = () => {
     onSuccess: (data) => {
       queryClient.setQueryData(['user'], data.user);
       tokenStorage.setTokens(data.accessToken, data.refreshToken);
+      handleSuccess('SIGN_UP');
     },
-    onError: (error) => {
-      console.error('Sign up failed:', error);
-    }
+    onError: handleApiError
   });
 
-  const signInMutation = useMutation<AuthResponse, Error, SignInDto>({
+  const signInMutation = useMutation<AuthResponse, AxiosError<ApiError>, SignInDto & { rememberMe?: boolean }>({
     mutationFn: authService.signIn,
     onSuccess: (data) => {
+      tokenStorage.clearTokens();
+
       queryClient.setQueryData(['user'], data.user);
       tokenStorage.setTokens(data.accessToken, data.refreshToken);
+      handleSuccess('SIGN_IN');
     },
     onError: (error) => {
-      console.error('Sign in failed:', error);
+      handleSignInError(error);
+      handleApiError(error);
+      tokenStorage.clearRememberedLogin();
     }
   });
 
-  const signOutMutation = useMutation<void, Error, void>({
-    mutationFn: () => {
-      authService.signOut();
-      queryClient.clear();
-      return Promise.resolve();
-    },
+  const signOutMutation = useMutation<void, AxiosError<ApiError>, void>({
+    mutationFn: authService.signOut,
     onSuccess: () => {
       queryClient.removeQueries();
-    }
-  });
+      handleSuccess('SIGN_OUT');
 
-  const refreshTokenMutation = useMutation<AuthResponse, Error, void>({
-    mutationFn: authService.refreshToken,
-    onSuccess: (data) => {
-      queryClient.setQueryData(['user'], data.user);
-      authService.setTokens(data.accessToken, data.refreshToken);
+      // // Clear all tokens
+      // tokenStorage.clearTokens();
+      // // Clear all query cache
+      // queryClient.clear();
+      // // Remove specific queries if needed
+      // queryClient.removeQueries(['user']);
+      // // Show success message
+      // handleSuccess('SIGN_OUT');
     },
-    onError: () => {
-      authService.signOut();
+    onError: handleApiError
+  });
+
+  const refreshTokenMutation = useMutation<AuthResponse, AxiosError<ApiError>, void>({
+    mutationFn: authService.refreshToken,
+    retry: 2,
+    onError: (error) => {
+      handleApiError(error);
+      tokenStorage.clearTokens();
       queryClient.clear();
+      window.location.href = '/login'; // Force redirect to login
     }
   });
 
-  const sendOtpMutation = useMutation<void, Error, PhoneNumberDto>({
+  const sendOtpMutation = useMutation<void, AxiosError<ApiError>, PhoneNumberDto>({
     mutationFn: async (phoneNumberDto) => {
       await authService.sendOtp(phoneNumberDto);
     },
-    onError: (error) => {
-      console.error('Send OTP failed:', error);
-    }
+    onSuccess: () => {
+      handleSuccess('SEND_OTP');
+    },
+    onError: handleApiError
   });
 
-  const forgotPasswordMutation = useMutation<void, Error, PhoneNumberDto>({
+  const forgotPasswordMutation = useMutation<void, AxiosError<ApiError>, PhoneNumberDto>({
     mutationFn: async (phoneNumberDto) => {
       await authService.forgotPassword(phoneNumberDto);
     },
-    onError: (error) => {
-      console.error('Forgot password failed:', error);
-    }
+    onSuccess: () => {
+      handleSuccess('SEND_OTP');
+    },
+    onError: handleApiError
   });
 
-  const resetPasswordMutation = useMutation<void, Error, ResetPasswordDto>({
+  const resetPasswordMutation = useMutation<void, AxiosError<ApiError>, ResetPasswordDto>({
     mutationFn: async (resetPasswordDto) => {
       await authService.resetPassword(resetPasswordDto);
     },
-    onError: (error) => {
-      console.error('Reset password failed:', error);
-    }
+    onSuccess: () => {
+      handleSuccess('RESET_PASSWORD');
+    },
+    onError: handleApiError
   });
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const token = tokenStorage.getAccessToken();
+      if (token) {
+        try {
+          const decoded = JSON.parse(atob(token.split('.')[1]));
+          const timeUntilExpiry = decoded.exp * 1000 - Date.now();
+          if (timeUntilExpiry < 300000) { // 5 mins before expiry
+            refreshTokenMutation.mutate();
+          }
+        } catch {
+          tokenStorage.clearTokens();
+        }
+      }
+    }, 60000);
+    return () => clearInterval(interval);
+  }, [refreshTokenMutation]);
+
   return {
-    // Auth actions
     signUp: signUpMutation.mutate,
     signIn: signInMutation.mutate,
     signOut: signOutMutation.mutate,
@@ -98,7 +139,6 @@ export const useAuth = () => {
     forgotPassword: forgotPasswordMutation.mutate,
     resetPassword: resetPasswordMutation.mutate,
 
-    // Loading states
     isSignUpLoading: signUpMutation.isPending,
     isSignInLoading: signInMutation.isPending,
     isSignOutLoading: signOutMutation.isPending,
@@ -107,7 +147,6 @@ export const useAuth = () => {
     isForgotPasswordLoading: forgotPasswordMutation.isPending,
     isResetPasswordLoading: resetPasswordMutation.isPending,
 
-    // Errors
     signUpError: signUpMutation.error,
     signInError: signInMutation.error,
     signOutError: signOutMutation.error,
@@ -116,12 +155,7 @@ export const useAuth = () => {
     forgotPasswordError: forgotPasswordMutation.error,
     resetPasswordError: resetPasswordMutation.error,
 
-    // Auth state
-    isAuthenticated: !!authService.getAccessToken(),
+    isAuthenticated: !!tokenStorage.getAccessToken(),
     user: queryClient.getQueryData<User>(['user']),
-
-    // Helper methods
-    getAccessToken: authService.getAccessToken,
-    getRefreshToken: authService.getRefreshToken,
   };
 };

@@ -12,7 +12,9 @@ export interface OtpCodeDto {
 
 export interface SignUpDto {
     otpCodeDto: OtpCodeDto;
+    username: string;
     password: string;
+    confirmPassword: string;
 }
 
 export interface PhoneNumberDto {

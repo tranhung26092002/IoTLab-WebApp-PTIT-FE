@@ -34,9 +34,15 @@ const SidebarAdmin: React.FC = () => {
   const menuItems = [
     {
       key: "/admin",
-      icon: <DashboardOutlined />,
+      icon: <HomeOutlined />,
       label: "Overview",
       path: "/admin",
+    },
+    {
+      key: "/admin/dashboard",
+      icon: <DashboardOutlined />,
+      label: "Dashboard",
+      path: "/admin/dashboard",
     },
     {
       key: "/admin/user",

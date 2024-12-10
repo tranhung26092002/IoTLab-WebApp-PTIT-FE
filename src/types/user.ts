@@ -13,12 +13,12 @@ export interface User {
     updatedAt: string;
     id: number;
     userName: string;
-    fullName: string | null;
-    phoneNumber: string | null;
-    email: string | null;
-    gender: string | null;
+    fullName: string;
+    phoneNumber: string;
+    email: string;
+    gender?: 'MALE' | 'FEMALE' | 'OTHER';
     address: AddressResponse | null;
-    dateOfBirth: string | null;
+    dateOfBirth?: string;
     status: string;
     roleType: string;
 }

@@ -57,7 +57,7 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
         { phoneNumber, password },
         {
           onSuccess: () => {
-            navigate('/dashboard');
+            navigate('/');
           }
         }
       );

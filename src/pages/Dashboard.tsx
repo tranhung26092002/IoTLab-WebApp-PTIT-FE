@@ -9,7 +9,7 @@ import { SensorChart } from '../components/dashboard/SensorChart';
 import { INITIAL_DEVICES, MOCK_SENSOR_DATA, SENSORS } from '../data/dashboardData';
 import { toggleDevice } from '../utils/deviceUtils';
 import { generateChartConfigs } from '../utils/chartUtils';
-import AppLayout from '../components/AppLayout';
+import AppLayoutAdmin from '../components/AppLayoutAdmin';
 
 const Dashboard: React.FC = () => {
   const [devices, setDevices] = useState(INITIAL_DEVICES);
@@ -23,7 +23,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <AppLayout>
+    <AppLayoutAdmin>
       <div className="p-6 space-y-8 bg-gradient-to-br from-[#d2e3c8] via-[#86a789] to-[#4f6f52] py-10">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -67,7 +67,7 @@ const Dashboard: React.FC = () => {
           ))}
         </Row>
       </div>
-    </AppLayout>
+    </AppLayoutAdmin>
   );
 };
 

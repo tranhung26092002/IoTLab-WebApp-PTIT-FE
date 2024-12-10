@@ -12,7 +12,7 @@ import {
   SettingOutlined,
   HomeOutlined,
   ContactsOutlined,
-  DashboardOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
@@ -70,15 +70,15 @@ const Sidebar: React.FC = () => {
       label: "Contact",
       path: "/contact",
     },
+    {
+      key: "/device",
+      icon: <DatabaseOutlined />,
+      label: "Device",
+      path: "/device",
+    },
   ];
 
   const getAuthenticatedMenuItems = (): MenuItem[] => [
-    {
-      key: "/dashboard",
-      icon: <DashboardOutlined />,
-      label: "Dashboard",
-      path: "/dashboard",
-    },
     {
       key: "/course",
       icon: <CarryOutOutlined />,

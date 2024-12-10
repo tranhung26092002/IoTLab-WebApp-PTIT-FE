@@ -20,6 +20,8 @@ const Admin = React.lazy(() => import('./pages/Admin'));
 const UserManager = React.lazy(() => import('./pages/UserManager'));
 const CourseManager = React.lazy(() => import('./pages/CourseManager'));
 const TaskManager = React.lazy(() => import('./pages/TaskManager'));
+const Device = React.lazy(() => import('./pages/HardDevice'));
+// const DeviceManager = React.lazy(() => import('./pages/DeviceManager'));
 
 // Tạo QueryClient
 const queryClient = new QueryClient();
@@ -40,7 +42,7 @@ const App: React.FC = () => {
 
               {/* Protected Routes */}
               <Route element={<PrivateRoute />}>
-                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/device" element={<Device />} />
                 <Route path="/course" element={<Course />} />
                 <Route path="/task" element={<Task />} />
                 <Route path="/setting" element={<Setting />} />
@@ -49,6 +51,7 @@ const App: React.FC = () => {
               {/* Admin Route */}
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/user-manager" element={<UserManager />} />
                 <Route path="/admin/course-manager" element={<CourseManager />} />
                 <Route path="/admin/task-manager" element={<TaskManager />} />

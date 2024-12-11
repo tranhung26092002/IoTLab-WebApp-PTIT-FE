@@ -1,88 +1,142 @@
-// components/device/LendingHistoryTable.tsx
 import React, { useState } from 'react';
-import { Table, Tag, Input, DatePicker } from 'antd';
+import { Table, Tag, Input, DatePicker, Tooltip } from 'antd';
 import type { TableProps } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import { LendingHistoryRecord, HardDevice } from '../../types/hardDevice';
+import { ClockCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { Device, BorrowRecord, DeviceFormValues } from '../../types/hardDevice';
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+
+// Register plugins
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isSameOrAfter);
 
 interface Props {
-    lendingHistory: LendingHistoryRecord[];
-    devices: HardDevice[];
+    borrowRecords: BorrowRecord[];
+    devices: Device[];
+    loading?: boolean;
 }
 
-export const LendingHistoryTable: React.FC<Props> = ({ lendingHistory, devices }) => {
+export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading }) => {
     const [searchText, setSearchText] = useState('');
-    const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null]>([null, null]);
+    const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
+    const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
 
-    const columns: TableProps<LendingHistoryRecord>['columns'] = [
+    const columns: TableProps<BorrowRecord>['columns'] = [
         {
-            title: 'Device Name',
-            dataIndex: 'deviceId',
-            key: 'deviceId',
-            render: (deviceId: string) => {
-                const device = devices.find(d => d.id === deviceId);
-                return device?.name || deviceId;
-            },
+            title: 'Device Info',
+            dataIndex: 'device',
+            key: 'device',
+            render: (device: DeviceFormValues) => (
+                <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500">Name:</span>
+                        <span className="font-medium">{device.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-500">Code:</span>
+                        <span className="text-gray-600 text-sm">{device.code}</span>
+                    </div>
+                </div>
+            ),
         },
         {
-            title: 'Student ID',
-            dataIndex: 'studentId',
-            key: 'studentId',
-        },
-        {
-            title: 'Student Name',
-            dataIndex: 'studentName',
-            key: 'studentName',
+            title: 'Note',
+            dataIndex: 'note',
+            key: 'note',
+            render: (note?: string) => (
+                note ? (
+                    <Tooltip title={note}>
+                        <div className="max-w-[200px] truncate">{note}</div>
+                    </Tooltip>
+                ) : '-'
+            ),
         },
         {
             title: 'Borrow Date',
-            dataIndex: 'borrowDate',
-            key: 'borrowDate',
-            render: (date: string) => dayjs(date).format('YYYY-MM-DD'),
-            sorter: (a, b) => dayjs(a.borrowDate).unix() - dayjs(b.borrowDate).unix(),
+            dataIndex: 'borrowedAt',
+            key: 'borrowedAt',
+            render: (date: string) => (
+                <span>{dayjs(date).format('DD/MM/YYYY')}</span>
+            ),
+            sorter: (a, b) => dayjs(a.borrowedAt).unix() - dayjs(b.borrowedAt).unix(),
+        },
+        {
+            title: 'Expiry Date',
+            dataIndex: 'expiredAt',
+            key: 'expiredAt',
+            render: (date: string) => {
+                const isExpired = dayjs().isAfter(date);
+                const isClose = dayjs().add(3, 'day').isAfter(date);
+
+                return (
+                    <Tag
+                        icon={isClose ? <ClockCircleOutlined /> : null}
+                        color={isExpired ? 'red' : (isClose ? 'warning' : 'default')}
+                    >
+                        {dayjs(date).format('DD/MM/YYYY')}
+                    </Tag>
+                );
+            },
         },
         {
             title: 'Return Date',
-            dataIndex: 'returnDate',
-            key: 'returnDate',
-            render: (date?: string) => date ? dayjs(date).format('YYYY-MM-DD') : '-',
+            dataIndex: 'returnedAt',
+            key: 'returnedAt',
+            render: (date?: string) => date ? (
+                <span>{dayjs(date).format('DD/MM/YYYY')}</span>
+            ) : '-',
         },
         {
             title: 'Status',
             dataIndex: 'status',
             key: 'status',
-            render: (status: 'active' | 'returned') => (
-                <Tag color={status === 'active' ? 'processing' : 'success'}>
-                    {status.toUpperCase()}
-                </Tag>
-            ),
+            render: (status: 'BORROWED' | 'RETURNED') => {
+                const color = status === 'BORROWED' ? 'blue' : 'green';
+                const icon = status === 'BORROWED' ? '🔄' : '✅';
+                return (
+                    <Tag color={color}>
+                        {icon} {status}
+                    </Tag>
+                );
+            },
             filters: [
-                { text: 'Active', value: 'active' },
-                { text: 'Returned', value: 'returned' },
+                { text: 'Borrowed', value: 'BORROWED' },
+                { text: 'Returned', value: 'RETURNED' },
             ],
             onFilter: (value, record) => record.status === value,
-        },
-        {
-            title: 'Notes',
-            dataIndex: 'notes',
-            key: 'notes',
-            render: (notes?: string) => notes || '-',
-        },
+        }
     ];
 
-    const filterData = (data: LendingHistoryRecord[]) => {
+    const filterData = (data: BorrowRecord[]) => {
         return data.filter(record => {
+            // Text search
             const matchesSearch = searchText ? (
-                record.studentName.toLowerCase().includes(searchText.toLowerCase()) ||
-                record.studentId.toLowerCase().includes(searchText.toLowerCase())
+                record.device.name.toLowerCase().includes(searchText.toLowerCase()) ||
+                record.device.code.toLowerCase().includes(searchText.toLowerCase())
             ) : true;
 
-            const matchesDateRange = dateRange[0] && dateRange[1] ? (
-                dayjs(record.borrowDate).isBetween(dateRange[0], dateRange[1], 'day', '[]')
-            ) : true;
+            // Date filtering
+            const borrowDate = dayjs(record.borrowedAt);
 
-            return matchesSearch && matchesDateRange;
+            // Handle start date only
+            if (startDate && !endDate) {
+                return matchesSearch && borrowDate.isSameOrAfter(startDate, 'day');
+            }
+
+            // Handle end date only
+            if (!startDate && endDate) {
+                return matchesSearch && borrowDate.isSameOrBefore(endDate, 'day');
+            }
+
+            // Handle both dates
+            if (startDate && endDate) {
+                return matchesSearch && borrowDate.isBetween(startDate, endDate, 'day', '[]');
+            }
+
+            return matchesSearch;
         });
     };
 
@@ -90,22 +144,36 @@ export const LendingHistoryTable: React.FC<Props> = ({ lendingHistory, devices }
         <div className="space-y-4">
             <div className="flex flex-wrap gap-4">
                 <Input
-                    placeholder="Search by student"
+                    placeholder="Search by device name/code"
                     prefix={<SearchOutlined />}
                     value={searchText}
                     onChange={e => setSearchText(e.target.value)}
                     className="max-w-xs"
                 />
-                <DatePicker.RangePicker
-                    onChange={(dates) => setDateRange(dates)}
-                    className="max-w-xs"
-                />
+                <div className="flex items-center gap-2">
+                    <DatePicker
+                        placeholder="Start Date"
+                        onChange={setStartDate}
+                        value={startDate}
+                        className="w-40"
+                        disabledDate={current => endDate ? current > endDate : false}
+                    />
+                    <span className="text-gray-500">to</span>
+                    <DatePicker
+                        placeholder="End Date"
+                        onChange={setEndDate}
+                        value={endDate}
+                        className="w-40"
+                        disabledDate={current => startDate ? current < startDate : false}
+                    />
+                </div>
             </div>
 
             <Table
                 columns={columns}
-                dataSource={filterData(lendingHistory)}
+                dataSource={filterData(borrowRecords)}
                 rowKey="id"
+                loading={loading}
                 className="bg-white rounded-lg shadow-sm"
                 pagination={{
                     pageSize: 10,

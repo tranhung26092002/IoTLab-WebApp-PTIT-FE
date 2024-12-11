@@ -1,40 +1,150 @@
-import { useState, useEffect } from 'react';
-import { HardDevice, FilterParams } from '../types/hardDevice';
-import { hardDevices } from '../data/hardDeviceData';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { deviceService } from '../services/api/deviceService';
+import { Device, BorrowRecord, DeviceFilterParams, PageResponse, BorrowDeviceRequest } from '../types/hardDevice';
+import { AxiosError } from 'axios';
+import { ApiError } from '../types/ApiError';
+import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
 
-export const useHardDevices = (filters: FilterParams) => {
-    const [devices, setDevices] = useState<HardDevice[]>([]);
-    const [loading, setLoading] = useState(false);
+export const useHardDevices = () => {
+    const queryClient = useQueryClient();
 
-    useEffect(() => {
-        const filterDevices = () => {
-            setLoading(true);
-            try {
-                let filteredDevices = [...hardDevices];
+    // Queries
+    const useDevices = (page = 0, size = 10) =>
+        useQuery<PageResponse<Device>>({
+            queryKey: ['devices', page, size],
+            queryFn: () => deviceService.getAllDevices(page, size)
+        });
 
-                if (filters.search) {
-                    const searchLower = filters.search.toLowerCase();
-                    filteredDevices = filteredDevices.filter(device =>
-                        device.name.toLowerCase().includes(searchLower) ||
-                        device.brand.toLowerCase().includes(searchLower) ||
-                        device.model.toLowerCase().includes(searchLower)
-                    );
-                }
+    const useDevice = (id: number) =>
+        useQuery<Device>({
+            queryKey: ['device', id],
+            queryFn: () => deviceService.getDeviceById(id),
+            enabled: !!id
+        });
 
-                if (filters.type) {
-                    filteredDevices = filteredDevices.filter(device =>
-                        device.type === filters.type
-                    );
-                }
+    const useDeviceByCode = (code: string) =>
+        useQuery<Device>({
+            queryKey: ['device', 'code', code],
+            queryFn: () => deviceService.getDeviceByCode(code),
+            enabled: !!code
+        });
 
-                setDevices(filteredDevices);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const useFilteredDevices = (filters: DeviceFilterParams = {}, page = 0, size = 10) =>
+        useQuery<PageResponse<Device>>({
+            queryKey: ['devices', 'filter', { ...filters, page, size }],
+            queryFn: () => deviceService.filterDevices(filters, page, size),
+        });
 
-        filterDevices();
-    }, [filters]);
+    // Mutations
+    const createDeviceMutation = useMutation<Device, AxiosError<ApiError>, Partial<Device>>({
+        mutationFn: (device) => deviceService.createDevice(device),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['devices'] });
+            handleSuccess('CREATE_DEVICE');
+        },
+        onError: handleApiError
+    });
 
-    return { devices, loading };
+    const updateDeviceMutation = useMutation<
+        Device,
+        AxiosError<ApiError>,
+        { id: number; device: Partial<Device>; file?: File }
+    >({
+        mutationFn: ({ id, device, file }) => deviceService.updateDevice(id, device, file),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['devices'] });
+            handleSuccess('UPDATE_DEVICE');
+        },
+        onError: handleApiError
+    });
+
+    const deleteDeviceMutation = useMutation<void, AxiosError<ApiError>, number>({
+        mutationFn: (id) => deviceService.deleteDevice(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['devices'] });
+            handleSuccess('DELETE_DEVICE');
+        },
+        onError: handleApiError
+    });
+
+    // Borrow history queries
+    const useBorrowHistory = (page = 0, size = 10) =>
+        useQuery<PageResponse<BorrowRecord>>({
+            queryKey: ['borrow-history', page, size],
+            queryFn: () => deviceService.getBorrowHistoryByUser(page, size)
+        });
+
+    const useDevicesBorrowedByUser = (page = 0, size = 10) =>
+        useQuery<PageResponse<Device>>({
+            queryKey: ['borrowed-devices', page, size],
+            queryFn: () => deviceService.getDevicesBorrowedByUser(page, size)
+        });
+
+    const useDeviceBorrowHistory = (deviceId: number, page = 0, size = 10) =>
+        useQuery<PageResponse<BorrowRecord>>({
+            queryKey: ['device-borrow-history', deviceId, page, size],
+            queryFn: () => deviceService.getBorrowHistoryByDevice(deviceId, page, size),
+            enabled: !!deviceId
+        });
+
+    const borrowDeviceMutation = useMutation<
+        BorrowRecord,
+        AxiosError<ApiError>,
+        BorrowDeviceRequest
+    >({
+        mutationFn: (request) => deviceService.borrowDevice(request),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['devices'] });
+            queryClient.invalidateQueries({ queryKey: ['borrow-history'] });
+            queryClient.invalidateQueries({ queryKey: ['borrowed-devices'] });
+            handleSuccess('BORROW_DEVICE');
+        },
+        onError: handleApiError
+    });
+
+    const returnDeviceMutation = useMutation<
+        BorrowRecord,
+        AxiosError<ApiError>,
+        number
+    >({
+        mutationFn: (deviceId) => deviceService.returnDevice(deviceId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['devices'] });
+            queryClient.invalidateQueries({ queryKey: ['borrow-history'] });
+            handleSuccess('RETURN_DEVICE');
+        },
+        onError: handleApiError
+    });
+
+    return {
+        // Queries
+        useDevices,
+        useDevice,
+        useDeviceByCode,
+        useFilteredDevices,
+        useBorrowHistory,
+        useDevicesBorrowedByUser,
+        useDeviceBorrowHistory,
+
+        // Mutation Methods
+        createDevice: createDeviceMutation.mutate,
+        updateDevice: updateDeviceMutation.mutate,
+        deleteDevice: deleteDeviceMutation.mutate,
+        borrowDevice: borrowDeviceMutation.mutate,
+        returnDevice: returnDeviceMutation.mutate,
+
+        // Loading States
+        isCreating: createDeviceMutation.isPending,
+        isUpdating: updateDeviceMutation.isPending,
+        isDeleting: deleteDeviceMutation.isPending,
+        isBorrowing: borrowDeviceMutation.isPending,
+        isReturning: returnDeviceMutation.isPending,
+
+        // Errors
+        createError: createDeviceMutation.error,
+        updateError: updateDeviceMutation.error,
+        deleteError: deleteDeviceMutation.error,
+        borrowError: borrowDeviceMutation.error,
+        returnError: returnDeviceMutation.error
+    };
 };

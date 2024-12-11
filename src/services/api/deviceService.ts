@@ -1,25 +1,104 @@
-// services/hardDeviceApi.ts
-import { HardDevice, LendingRecord, FilterParams } from '../../types/hardDevice';
+// services/deviceService.ts
 import api from '../axios';
+import { Device, BorrowRecord, DeviceFilterParams, PageResponse, BorrowDeviceRequest } from '../../types/hardDevice';
 
 export const deviceService = {
-    getDevices: async (params: FilterParams) => {
-        const response = await api.get<HardDevice[]>(`/devices`, { params });
-        return response.data;
-    },
+  // Device CRUD operations
+  getAllDevices: async (page = 0, size = 10) => {
+    const response = await api.get<PageResponse<Device>>('device/devices', {
+      params: { page, size }
+    });
+    return response.data;
+  },
 
-    getLendingHistory: async (deviceId?: string) => {
-        const response = await api.get<LendingRecord[]>(`/lending-history`, {
-            params: { deviceId }
-        });
-        return response.data;
-    },
+  getDeviceById: async (id: number) => {
+    const response = await api.get<Device>(`device/devices/${id}`);
+    return response.data;
+  },
 
-    lendDevice: async (deviceId: string, studentId: string) => {
-        return api.post(`/lend`, { deviceId, studentId });
-    },
+  getDeviceByCode: async (code: string) => {
+    const response = await api.get<Device>('device/devices/code', {
+      params: { code }
+    });
+    return response.data;
+  },
 
-    returnDevice: async (lendingId: string) => {
-        return api.post(`/return/${lendingId}`);
+  filterDevices: async (
+    filterParams: DeviceFilterParams,
+    page = 0,
+    size = 10,
+    sortField = 'id'
+  ) => {
+    const response = await api.get<PageResponse<Device>>('device/devices/filter', {
+      params: {
+        ...filterParams,
+        page,
+        size,
+        sortField
+      }
+    });
+    return response.data;
+  },
+
+  createDevice: async (device: Partial<Device>) => {
+    const response = await api.post<Device>('device/devices', device);
+    return response.data;
+  },
+
+  updateDevice: async (id: number, device: Partial<Device>, file?: File) => {
+    const formData = new FormData();
+    formData.append('device', JSON.stringify(device));
+    if (file) {
+      formData.append('file', file);
     }
+
+    const response = await api.put<Device>(`device/devices/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+
+  deleteDevice: async (id: number) => {
+    await api.delete(`device/devices/${id}`);
+  },
+
+  // Borrow Record operations
+  getBorrowHistoryByUser: async (page = 0, size = 10) => {
+    const response = await api.get<PageResponse<BorrowRecord>>('device/borrow-records/history-of-user', {
+      params: { page, size }
+    });
+    return response.data;
+  },
+
+  getDevicesBorrowedByUser: async (page = 0, size = 10) => {
+    const response = await api.get<PageResponse<Device>>('device/borrow-records/devices-of-user', {
+      params: { page, size }
+    });
+    return response.data;
+  },
+
+  getBorrowHistoryByDevice: async (deviceId: number, page = 0, size = 10) => {
+    const response = await api.get<PageResponse<BorrowRecord>>('device/borrow-records/history-of-device', {
+      params: { deviceId, page, size }
+    });
+    return response.data;
+  },
+
+  borrowDevice: async (request: BorrowDeviceRequest) => {
+    const response = await api.post<BorrowRecord>('device/borrow-records/borrow', null, {
+      params: {
+        deviceId: request.deviceId,
+        note: request.note,
+        expiredAt: request.expiredAt
+      }
+    });
+    return response.data;
+  },
+
+  returnDevice: async (deviceId: number) => {
+    const response = await api.post<BorrowRecord>('device/borrow-records/return', null, {
+      params: { deviceId }
+    });
+    return response.data;
+  }
 };

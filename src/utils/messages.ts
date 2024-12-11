@@ -19,7 +19,14 @@ export const SUCCESS_MESSAGES = {
     // Task management
     CREATE_TASK: 'Tạo nhiệm vụ thành công!',
     UPDATE_TASK: 'Cập nhật nhiệm vụ thành công!',
-    DELETE_TASK: 'Xóa nhiệm vụ thành công!'
+    DELETE_TASK: 'Xóa nhiệm vụ thành công!',
+
+    // Device management
+    CREATE_DEVICE: 'Tạo thiết bị thành công!',
+    UPDATE_DEVICE: 'Cập nhật thiết bị thành công!',
+    DELETE_DEVICE: 'Xóa thiết bị thành công!',
+    BORROW_DEVICE: 'Mượn thiết bị thành công!',
+    RETURN_DEVICE: 'Trả thiết bị thành công!'
 } as const;
 
 export const ERROR_MESSAGES = {
@@ -45,5 +52,14 @@ export const ERROR_MESSAGES = {
     // Resource errors
     USER_NOT_FOUND: 'Không tìm thấy người dùng',
     COURSE_NOT_FOUND: 'Không tìm thấy khóa học',
-    TASK_NOT_FOUND: 'Không tìm thấy nhiệm vụ'
+    TASK_NOT_FOUND: 'Không tìm thấy nhiệm vụ',
+
+    // Device errors
+    DEVICE_NOT_FOUND: 'Không tìm thấy thiết bị',
+    DEVICE_UNAVAILABLE: 'Thiết bị không khả dụng',
+    DEVICE_ALREADY_BORROWED: 'Thiết bị đã được mượn',
+    DEVICE_NOT_BORROWED: 'Thiết bị chưa được mượn',
+    DEVICE_CODE_EXISTS: 'Mã thiết bị đã tồn tại',
+    UNAUTHORIZED_BORROW: 'Bạn không có quyền mượn thiết bị này',
+    UNAUTHORIZED_RETURN: 'Bạn không có quyền trả thiết bị này'
 } as const;

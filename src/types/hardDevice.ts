@@ -1,47 +1,64 @@
-export interface HardDevice {
-    id: string;
+// Device related interfaces
+export interface Device {
+    id: number;
+    code: string;
     name: string;
     type: string;
-    brand: string;
-    model: string;
-    status: 'available' | 'borrowed';
-    imageUrl: string;
-    specifications: Record<string, string>;
     description?: string;
+    imageUrl?: string;
+    status: 'AVAILABLE' | 'BORROWED';
+    currentBorrower?: number;
+    totalBorrowed: number;
+    createdAt: string | number[]; // Support both formats
+    updatedAt?: string | number[];
 }
 
-export interface LendingRecord {
-    id: string;
-    hardDeviceId: string;
-    studentId: string;
-    studentName: string;
-    borrowDate: Date;
-    returnDate?: Date;
-    status: 'active' | 'returned';
-    notes?: string;
+export interface DeviceFormValues {
+    id: number;
+    code: string;
+    name: string;
 }
 
-export interface FilterParams {
+// BorrowRecord related interfaces
+export interface BorrowRecord {
+    id: number;
+    device: DeviceFormValues;
+    userId: number;
+    note: string;
+    borrowedAt: string;
+    expiredAt: string;
+    returnedAt?: string;
+    status: 'BORROWED' | 'RETURNED';
+}
+
+// Filter parameters for searching devices
+export interface DeviceFilterParams {
     search?: string;
     type?: string;
-    brand?: string;
-    status?: string;
+    status?: 'AVAILABLE' | 'BORROWED';
+    page?: number;
+    size?: number;
 }
 
-export interface BorrowFormData {
-    studentId: string;
-    studentName: string;
+// Data required when creating a new borrow record
+export interface CreateBorrowRequest {
+    deviceId: number;
+    expiredAt: string;
     notes?: string;
-    expectedReturnDate?: Date;
 }
 
-export interface LendingHistoryRecord {
-    id: string;
-    deviceId: string;
-    studentId: string;
-    studentName: string;
-    borrowDate: string;
-    returnDate?: string;
-    status: 'active' | 'returned';
-    notes?: string;
+export interface PageResponse<T> {
+    data: T[];
+    metadata: {
+        page: number;
+        size: number;
+        total: number;
+        totalPage: number;
+    };
+}
+
+export interface BorrowDeviceRequest {
+    deviceId: number;
+    note: string;
+    expiredAt: string;
 }

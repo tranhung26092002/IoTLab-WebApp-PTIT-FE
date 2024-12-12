@@ -21,7 +21,7 @@ const UserManager = React.lazy(() => import('./pages/UserManager'));
 const CourseManager = React.lazy(() => import('./pages/CourseManager'));
 const TaskManager = React.lazy(() => import('./pages/TaskManager'));
 const Device = React.lazy(() => import('./pages/HardDevice'));
-// const DeviceManager = React.lazy(() => import('./pages/DeviceManager'));
+const HardDeviceManager = React.lazy(() => import('./pages/HardDeviceManager'));
 
 // Tạo QueryClient
 const queryClient = new QueryClient();
@@ -55,11 +55,13 @@ const App: React.FC = () => {
                 <Route path="/admin/user-manager" element={<UserManager />} />
                 <Route path="/admin/course-manager" element={<CourseManager />} />
                 <Route path="/admin/task-manager" element={<TaskManager />} />
+                <Route path="/admin/device-manager" element={<HardDeviceManager />} />
               </Route>
 
               {/* Special Routes */}
               <Route path="/404" element={<NotFound />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />      </Routes>
+              <Route path="*" element={<Navigate to="/404" replace />} />
+            </Routes>
           </Suspense>
         </BrowserRouter>
       </ThemeProvider >

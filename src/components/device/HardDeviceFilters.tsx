@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input, Select, Space, Button } from 'antd';
+import { Input, Select, Button } from 'antd';
 import { DeviceFilterParams } from '../../types/hardDevice';
 import { SearchOutlined, FilterOutlined, ClearOutlined } from '@ant-design/icons';
 
@@ -29,55 +29,49 @@ export const HardDeviceFilters: React.FC<Props> = ({ filters, onFilterChange }) 
     };
 
     return (
-        <Space direction="vertical" className="w-full">
-            <div className="flex gap-4">
-                <Input
-                    placeholder="Search by name or code"
-                    value={filters.search}
-                    onChange={e => onFilterChange({ ...filters, search: e.target.value })}
-                    prefix={<SearchOutlined />}
-                    allowClear
-                    className="flex-1"
-                />
-                <Button
-                    icon={<ClearOutlined />}
-                    onClick={handleClearFilters}
-                >
-                    Clear
-                </Button>
-            </div>
-
-            <div className="flex gap-4">
-                <Select
-                    placeholder="Device Type"
-                    value={filters.type}
-                    onChange={value => onFilterChange({ ...filters, type: value })}
-                    allowClear
-                    className="flex-1"
-                    suffixIcon={<FilterOutlined />}
-                >
-                    {deviceTypes.map(type => (
-                        <Option key={type.value} value={type.value}>
-                            {type.label}
-                        </Option>
-                    ))}
-                </Select>
-
-                <Select
-                    placeholder="Status"
-                    value={filters.status}
-                    onChange={value => onFilterChange({ ...filters, status: value })}
-                    allowClear
-                    className="flex-1"
-                    suffixIcon={<FilterOutlined />}
-                >
-                    {statusOptions.map(status => (
-                        <Option key={status.value} value={status.value}>
-                            {status.label}
-                        </Option>
-                    ))}
-                </Select>
-            </div>
-        </Space>
+        <div className="flex items-center gap-4">
+            <Input
+                placeholder="Search by name or code"
+                value={filters.search}
+                onChange={e => onFilterChange({ ...filters, search: e.target.value })}
+                prefix={<SearchOutlined />}
+                allowClear
+                className="flex-1"
+            />
+            <Select
+                placeholder="Device Type"
+                value={filters.type}
+                onChange={value => onFilterChange({ ...filters, type: value })}
+                allowClear
+                className="w-48"
+                suffixIcon={<FilterOutlined />}
+            >
+                {deviceTypes.map(type => (
+                    <Option key={type.value} value={type.value}>
+                        {type.label}
+                    </Option>
+                ))}
+            </Select>
+            <Select
+                placeholder="Status"
+                value={filters.status}
+                onChange={value => onFilterChange({ ...filters, status: value })}
+                allowClear
+                className="w-36"
+                suffixIcon={<FilterOutlined />}
+            >
+                {statusOptions.map(status => (
+                    <Option key={status.value} value={status.value}>
+                        {status.label}
+                    </Option>
+                ))}
+            </Select>
+            <Button
+                icon={<ClearOutlined />}
+                onClick={handleClearFilters}
+            >
+                Clear
+            </Button>
+        </div>
     );
 };

@@ -14,6 +14,7 @@ export interface User {
     id: number;
     userName: string;
     fullName: string;
+    avatarUrl: string;
     phoneNumber: string;
     email: string;
     gender?: 'MALE' | 'FEMALE' | 'OTHER';
@@ -21,4 +22,19 @@ export interface User {
     dateOfBirth?: string;
     status: string;
     roleType: string;
+}
+
+export interface PageResponse<T> {
+    data: T[];
+    metadata: {
+        page: number;
+        size: number;
+        total: number;
+    };
+}
+
+export interface ApiResponse<T> {
+    data: T;
+    message?: string;
+    status: number;
 }

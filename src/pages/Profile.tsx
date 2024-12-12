@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Avatar, Typography, Descriptions, Tag, Space, Spin, Button, Input, DatePicker, Form, Select } from 'antd';
-import { IdcardOutlined, TeamOutlined, MailOutlined, PhoneOutlined, UserOutlined, CalendarOutlined } from '@ant-design/icons';
+import { Modal, Avatar, Typography, Descriptions, Tag, Space, Spin, Button, Input, DatePicker, Form, Select, Upload } from 'antd';
+import { IdcardOutlined, TeamOutlined, MailOutlined, PhoneOutlined, UserOutlined, CalendarOutlined, CameraOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { useUsers } from '../hooks/useUsers';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { User } from '../types/user';
+import { useImageView } from '../services/api/storageService';
+import defaultImage from '../assets/default-device.png';
 
 interface ProfileProps {
   isOpen: boolean;
@@ -17,6 +19,40 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
   const { getMe, me, isLoadingMe, updateMe, isUpdatingMe } = useUsers();
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
+
+
+  const { viewImage } = useImageView();
+  const [avatarUrl, setAvatarUrl] = useState<string>(defaultImage);
+
+  useEffect(() => {
+    let cleanup: (() => void) | undefined;
+
+    const loadAvatar = async () => {
+      if (me?.avatarUrl) {
+        setIsLoadingAvatar(true);
+        try {
+          const { url, cleanup: cleanupFn } = await viewImage(me.avatarUrl);
+          setAvatarUrl(url);
+          cleanup = cleanupFn;
+        } catch (error) {
+          console.error('Failed to load avatar:', error);
+          setAvatarUrl(defaultImage);
+        } finally {
+          setIsLoadingAvatar(false);
+        }
+      }
+    };
+
+    loadAvatar();
+
+    return () => {
+      if (cleanup) cleanup();
+      setAvatarUrl(defaultImage);
+    };
+  }, [me?.avatarUrl]);
 
   useEffect(() => {
     if (isOpen && getMe) {
@@ -36,15 +72,27 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
     }
   }, [me, form]);
 
+
+  const handleAvatarChange = (info: any) => {
+    if (info.file) {
+      setAvatarFile(info.file);
+      const previewUrl = URL.createObjectURL(info.file);
+      setAvatarPreview(previewUrl);
+      return () => URL.revokeObjectURL(previewUrl);
+    }
+  };
+
   const handleSave = async () => {
     try {
       const values = await form.validateFields();
+      const userData = {
+        ...values,
+        dateOfBirth: values.dateOfBirth?.format('YYYY-MM-DD')
+      };
+
       await updateMe({
-        id: me?.id || 0,
-        data: {
-          ...values,
-          dateOfBirth: values.dateOfBirth?.format('YYYY-MM-DD')
-        }
+        data: userData,
+        file: avatarFile || undefined
       });
       setIsEditing(false);
     } catch (error) {
@@ -131,12 +179,29 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
         transition={{ duration: 0.3 }}
         className="p-6"
       >
-        <div className="text-center mb-8">
-          <Avatar
-            size={120}
-            src={`https://i.pravatar.cc/150?img=${me?.id || 2}`}
-            className="border-4 border-[#4f6f52] shadow-lg"
-          />
+        <div className="text-center mb-8 relative">
+          <div className="relative inline-block">
+            <Avatar
+              size={120}
+              src={avatarPreview || avatarUrl}
+              className="border-4 border-[#4f6f52] shadow-lg"
+            />
+            {isEditing && (
+              <Upload
+                showUploadList={false}
+                beforeUpload={(file) => {
+                  handleAvatarChange({ file });
+                  return false;
+                }}
+              >
+                <Button
+                  icon={<CameraOutlined />}
+                  className="absolute bottom-0 right-0 rounded-full"
+                  type="primary"
+                />
+              </Upload>
+            )}
+          </div>
           <Typography.Title level={2} className="mt-4 mb-1 primary--color">
             {me?.fullName || 'N/A'}
           </Typography.Title>

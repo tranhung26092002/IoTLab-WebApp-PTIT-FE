@@ -1,9 +1,12 @@
-import { User } from '../../types/user';
+import { PageResponse, User, ApiResponse } from '../../types/user';
 import api from '../axios';
 import { tokenStorage } from '../tokenStorage';
 
 export const userService = {
-    getUsers: () => api.get<User[]>('user/users'),
+    getUsers: (page = 0, size = 10) =>
+        api.get<PageResponse<User>>('user/users', {
+            params: { page, size }
+        }),
 
     getMe: () => {
         const accessToken = tokenStorage.getAccessToken();
@@ -17,20 +20,20 @@ export const userService = {
             }
         });
     },
-    
+
     getUser: (id: number) => api.get<User>(`user/users/${id}`),
     createUser: (data: Partial<User>) => api.post<User>('user/users', data),
     updateUser: (id: number, data: Partial<User>) => api.put<User>(`user/users/update/${id}`, data),
-    updateMe: (data: Partial<User>) => {
-        const accessToken = tokenStorage.getAccessToken();
-        if (!accessToken) {
-            throw new Error('Access token not available');
+    updateMe: (formData: FormData) => {
+        // Validate if formData has at least one required field
+        if (!formData.has('user') && !formData.has('file')) {
+            throw new Error('At least one of user or file must be provided');
         }
 
-        return api.put<User>('user/users/me', data, {
+        return api.put<ApiResponse<User>>('user/users/me', formData, {
             headers: {
-                Authorization: `Bearer ${accessToken}`
-            }
+                'Content-Type': 'multipart/form-data',
+            },
         });
     },
     deleteUser: (id: number) => api.delete(`user/users/${id}`),

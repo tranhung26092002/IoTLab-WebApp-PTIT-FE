@@ -1,13 +1,12 @@
 import React from 'react'
 import AppLayoutAdmin from '../components/AppLayoutAdmin'
 
-const CourseManager: React.FC = () => {
+const HardDeviceManager: React.FC = () => {
   return (
     <AppLayoutAdmin>
-      <div>CourseManager</div>
-
+        <div>HardDeviceManager</div>
     </AppLayoutAdmin>
   )
 }
 
-export default CourseManager
+export default HardDeviceManager

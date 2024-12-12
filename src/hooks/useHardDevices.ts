@@ -29,11 +29,31 @@ export const useHardDevices = () => {
             enabled: !!code
         });
 
-    const useFilteredDevices = (filters: DeviceFilterParams = {}, page = 0, size = 10) =>
-        useQuery<PageResponse<Device>>({
-            queryKey: ['devices', 'filter', { ...filters, page, size }],
-            queryFn: () => deviceService.filterDevices(filters, page, size),
+    const useFilteredDevices = (filters: DeviceFilterParams = {}) => {
+        const { data, isLoading, refetch } = useQuery<PageResponse<Device>>({
+            queryKey: ['devices', 'filter', filters],
+            queryFn: () => deviceService.filterDevices(
+                filters,
+                filters.page || 0,
+                filters.size || 10
+            ),
         });
+
+        return {
+            devices: data?.data || [],
+            isLoading,
+            metadata: data?.metadata,
+            handlePageChange: (newPage: number) => {
+                filters.page = newPage;
+                refetch();
+            },
+            handleSizeChange: (newSize: number) => {
+                filters.size = newSize;
+                filters.page = 0;
+                refetch();
+            }
+        };
+    };
 
     // Mutations
     const createDeviceMutation = useMutation<Device, AxiosError<ApiError>, Partial<Device>>({
@@ -77,7 +97,8 @@ export const useHardDevices = () => {
     const useDevicesBorrowedByUser = (page = 0, size = 10) =>
         useQuery<PageResponse<Device>>({
             queryKey: ['borrowed-devices', page, size],
-            queryFn: () => deviceService.getDevicesBorrowedByUser(page, size)
+            queryFn: () => deviceService.getDevicesBorrowedByUser(page, size),
+            placeholderData: (previousData) => previousData // Smooth pagination transitions
         });
 
     const useDeviceBorrowHistory = (deviceId: number, page = 0, size = 10) =>

@@ -72,9 +72,10 @@ export const HardDeviceCard: React.FC<Props> = ({ device, onBorrow }) => {
                 }
                 actions={[
                     <Button
-                        type="primary"
+                        type={device.status === 'BORROWED' ? 'default' : 'primary'}
                         disabled={device.status === 'BORROWED'}
                         onClick={() => onBorrow(device)}
+                        className={device.status === 'BORROWED' ? 'text-gray-500 bg-gray-100' : ''}
                     >
                         {device.status === 'BORROWED' ? 'Borrowed' : 'Borrow'}
                     </Button>

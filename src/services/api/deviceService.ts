@@ -26,15 +26,13 @@ export const deviceService = {
   filterDevices: async (
     filterParams: DeviceFilterParams,
     page = 0,
-    size = 10,
-    sortField = 'id'
+    size = 10
   ) => {
     const response = await api.get<PageResponse<Device>>('device/devices/filter', {
       params: {
         ...filterParams,
         page,
-        size,
-        sortField
+        size
       }
     });
     return response.data;

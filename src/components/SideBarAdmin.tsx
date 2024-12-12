@@ -6,32 +6,52 @@ import {
   UserOutlined,
   LoginOutlined,
   OrderedListOutlined,
-  SettingOutlined,
   HomeOutlined,
   DashboardOutlined,
   BookOutlined,
+  LogoutOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import { useAuth } from "../hooks/useAuth";
+
+type MenuItem = {
+  key: string;
+  icon: React.ReactNode;
+  label: string;
+  path?: string;
+  onClick?: () => void;  // onClick là tùy chọn
+};
 
 const SidebarAdmin: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, signOut } = useAuth();
 
   const handleMenuClick = (path: string) => {
-    // Start loading animation
     NProgress.start();
-
-    // Add small delay for visual feedback
     setTimeout(() => {
       navigate(path);
-      // Complete loading animation after navigation
       NProgress.done();
     }, 300);
   };
 
+  const handleLogout = async () => {
+    NProgress.start(); // Bắt đầu thanh tiến trình
+
+    try {
+      await signOut(); // Thực hiện đăng xuất
+      NProgress.done(); // Dừng thanh tiến trình khi đăng xuất thành công
+      // window.location.href = '/login';
+    } catch (error) {
+      NProgress.done(); // Dừng thanh tiến trình khi có lỗi
+      console.error('Logout failed:', error);
+    }
+  };
+
   // Danh sách các item của menu
-  const menuItems = [
+  const getAuthenticatedMenuItems = (): MenuItem[] => [
     {
       key: "/admin",
       icon: <HomeOutlined />,
@@ -45,28 +65,28 @@ const SidebarAdmin: React.FC = () => {
       path: "/admin/dashboard",
     },
     {
-      key: "/admin/user",
+      key: "/admin/user-manager",
       icon: <UserOutlined />,
       label: "User Management",
       path: "/admin/user-manager",
     },
     {
-      key: "/admin/task",
+      key: "/admin/task-manager",
       icon: <OrderedListOutlined />,
       label: "Task Management",
       path: "/admin/task-manager",
     },
     {
-      key: "/admin/course",
+      key: "/admin/course-manager",
       icon: <BookOutlined />,
       label: "Course Management",
       path: "/admin/course-manager",
     },
     {
-      key: "/setting",
-      icon: <SettingOutlined />,
-      label: "Setting",
-      path: "/setting",
+      key: "/admin/device-manager",
+      icon: <DatabaseOutlined />,
+      label: "Device Manager",
+      path: "/admin/device-manager",
     },
     {
       key: "/",
@@ -75,11 +95,22 @@ const SidebarAdmin: React.FC = () => {
       path: "/",
     },
     {
-      key: "/login",
-      icon: <LoginOutlined />,
-      label: "Login",
-      path: "/login",
+      key: "logout",
+      icon: <LogoutOutlined />,
+      label: "Logout",
+      onClick: handleLogout,
     },
+  ];
+
+  const getLoginMenuItem = () => ({
+    key: "/login",
+    icon: <LoginOutlined />,
+    label: "Login",
+    path: "/login",
+  });
+
+  const menuItems: MenuItem[] = [
+    ...(isAuthenticated ? getAuthenticatedMenuItems() : [getLoginMenuItem()]),
   ];
 
   return (
@@ -98,11 +129,14 @@ const SidebarAdmin: React.FC = () => {
           key: item.key,
           icon: item.icon,
           label: item.label,
+          onClick: item.onClick,
         }))}
         onClick={({ key }) => {
           const item = menuItems.find(item => item.key === key);
-          if (item) {
+          if (item?.path) {
             handleMenuClick(item.path);
+          } else if (item?.onClick) {
+            item.onClick();  // Gọi onClick nếu tồn tại
           }
         }}
       />

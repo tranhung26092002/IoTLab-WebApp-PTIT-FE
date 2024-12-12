@@ -38,8 +38,16 @@ export const deviceService = {
     return response.data;
   },
 
-  createDevice: async (device: Partial<Device>) => {
-    const response = await api.post<Device>('device/devices', device);
+  createDevice: async (device: Partial<Device>, file?: File) => {
+    const formData = new FormData();
+    formData.append('device', JSON.stringify(device));
+    if (file) {
+      formData.append('file', file);
+    }
+
+    const response = await api.post<Device>('device/devices', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
     return response.data;
   },
 
@@ -63,6 +71,13 @@ export const deviceService = {
   // Borrow Record operations
   getBorrowHistoryByUser: async (page = 0, size = 10) => {
     const response = await api.get<PageResponse<BorrowRecord>>('device/borrow-records/history-of-user', {
+      params: { page, size }
+    });
+    return response.data;
+  },
+
+  getBorrowHistory: async (page = 0, size = 10) => {
+    const response = await api.get<PageResponse<BorrowRecord>>('device/borrow-records/history', {
       params: { page, size }
     });
     return response.data;

@@ -6,8 +6,7 @@ import { useUsers } from '../hooks/useUsers';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { User } from '../types/user';
-import { useImageView } from '../services/api/storageService';
-import defaultImage from '../assets/default-device.png';
+import { useAvatar } from '../hooks/useAvatar';
 
 interface ProfileProps {
   isOpen: boolean;
@@ -21,38 +20,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
   const [form] = Form.useForm();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
-  const [isLoadingAvatar, setIsLoadingAvatar] = useState(false);
-
-
-  const { viewImage } = useImageView();
-  const [avatarUrl, setAvatarUrl] = useState<string>(defaultImage);
-
-  useEffect(() => {
-    let cleanup: (() => void) | undefined;
-
-    const loadAvatar = async () => {
-      if (me?.avatarUrl) {
-        setIsLoadingAvatar(true);
-        try {
-          const { url, cleanup: cleanupFn } = await viewImage(me.avatarUrl);
-          setAvatarUrl(url);
-          cleanup = cleanupFn;
-        } catch (error) {
-          console.error('Failed to load avatar:', error);
-          setAvatarUrl(defaultImage);
-        } finally {
-          setIsLoadingAvatar(false);
-        }
-      }
-    };
-
-    loadAvatar();
-
-    return () => {
-      if (cleanup) cleanup();
-      setAvatarUrl(defaultImage);
-    };
-  }, [me?.avatarUrl]);
+  const { imageUrl, isLoading: isLoadingAvatar } = useAvatar(me?.avatarUrl);
 
   useEffect(() => {
     if (isOpen && getMe) {
@@ -73,7 +41,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
   }, [me, form]);
 
 
-  const handleAvatarChange = (info: any) => {
+  const handleAvatarChange = (info: { file: File }) => {
     if (info.file) {
       setAvatarFile(info.file);
       const previewUrl = URL.createObjectURL(info.file);
@@ -106,7 +74,20 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
       if (!value) return 'N/A';
 
       if (key === 'dateOfBirth') {
-        return dayjs(value).format('DD-MM-YYYY');
+        if (typeof value === 'string') {
+          // Handle comma-separated date string
+          if (value.includes(',')) {
+            const [year, month, day] = value.split(',').map(Number);
+            return `${year}-${month}-${day}`;
+          }
+          // Handle regular date string
+          return dayjs(value).format('YYYY-MM-DD');
+        }
+        // Handle array format
+        if (Array.isArray(value)) {
+          const [year, month, day] = value;
+          return `${year}-${month}-${day}`;
+        }
       }
 
       if (key === 'gender') {
@@ -115,7 +96,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
           FEMALE: 'Nữ',
           OTHER: 'Khác'
         };
-        return genderMap[value] || value;
+        return genderMap[value as string] || String(value);
       }
 
       return String(value);
@@ -183,7 +164,8 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
           <div className="relative inline-block">
             <Avatar
               size={120}
-              src={avatarPreview || avatarUrl}
+              src={avatarPreview || imageUrl}
+              icon={isLoadingAvatar ? <Spin /> : undefined}
               className="border-4 border-[#4f6f52] shadow-lg"
             />
             {isEditing && (

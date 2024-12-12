@@ -11,11 +11,21 @@ interface Props {
 }
 
 const deviceTypes = [
+    { value: 'actuator', label: 'Actuator' },
     { value: 'arduino', label: 'Arduino' },
+    { value: 'communication', label: 'Communication' },
+    { value: 'cooling', label: 'Cooling' },
+    { value: 'display', label: 'Display' },
+    { value: 'driver', label: 'Driver' },
     { value: 'esp', label: 'ESP' },
-    { value: 'raspberry', label: 'Raspberry Pi' },
+    { value: 'lighting', label: 'Lighting' },
+    { value: 'lock', label: 'Lock' },
+    { value: 'module', label: 'Module' },
+    { value: 'navigation', label: 'Navigation' },
+    { value: 'power', label: 'Power' },
+    { value: 'raspberry', label: 'Raspberry' },
     { value: 'sensor', label: 'Sensor' },
-    { value: 'other', label: 'Other' }
+    { value: 'switch', label: 'Switch' }
 ];
 
 const statusOptions = [

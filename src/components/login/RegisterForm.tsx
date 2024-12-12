@@ -26,7 +26,7 @@ const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }
   }, [isOtpModalVisible, timer]);
 
   const resetOtpState = () => {
-    setTimer(60);
+    setTimer(10);
     setIsResendAllowed(false);
     setOtpValue("");
   };
@@ -170,11 +170,17 @@ const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }
           label="Mật khẩu"
           name="password"
           rules={[
-            { required: true, message: "Vui lòng nhập mật khẩu!" },
-            { min: 6, message: "Mật khẩu phải có ít nhất 6 ký tự!" },
             {
-              pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/,
-              message: "Mật khẩu phải chứa cả chữ và số!"
+              required: true,
+              message: "Vui lòng nhập mật khẩu!"
+            },
+            {
+              min: 6,
+              message: "Mật khẩu phải có ít nhất 6 ký tự!"
+            },
+            {
+              pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%#*?&]{6,}$/,
+              message: "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường, 1 số và 1 ký tự đặc biệt (@$!%*?&)!"
             }
           ]}
         >

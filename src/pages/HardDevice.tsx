@@ -26,14 +26,14 @@ const HardDevicePage: React.FC = () => {
     const [borrowModalVisible, setBorrowModalVisible] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(8);
     const [borrowedCurrentPage, setBorrowedCurrentPage] = useState(1);
-    const [borrowedPageSize, setBorrowedPageSize] = useState(10);
+    const [borrowedPageSize, setBorrowedPageSize] = useState(8);
 
     const {
         useFilteredDevices,
         useDevicesBorrowedByUser,  // Add this
-        useBorrowHistory,          // Add this
+        useBorrowHistoryByUser,          // Add this
         borrowDevice,
         isBorrowing
     } = useHardDevices();
@@ -56,7 +56,7 @@ const HardDevicePage: React.FC = () => {
         isLoading: isLoadingBorrowed
     } = useDevicesBorrowedByUser(borrowedCurrentPage - 1, borrowedPageSize);
 
-    const { data: borrowHistoryData, isLoading: isLoadingHistory } = useBorrowHistory();
+    const { data: borrowHistoryData, isLoading: isLoadingHistory } = useBorrowHistoryByUser();
 
     // const devices = devicesData?.data || [];
 
@@ -128,7 +128,7 @@ const HardDevicePage: React.FC = () => {
                     >
                         <Title level={2} className={`text-[${COLORS.primary}] flex items-center gap-3 mb-6`}>
                             <DatabaseOutlined className="text-2xl" />
-                            Hardware Devices Management
+                            Hardware Devices
                         </Title>
 
                         {/* Filters Section */}

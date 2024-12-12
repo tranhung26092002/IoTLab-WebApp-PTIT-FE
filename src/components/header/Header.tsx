@@ -1,16 +1,18 @@
 import React, { useState } from "react";
-import { Avatar, Space, Typography, Input } from "antd";
+import { Avatar, Space, Typography, Spin } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import Profile from '../../pages/Profile';
 import { motion } from "framer-motion";
 import { MessageDropdown } from "./MessageDropdown";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { SearchComponent } from "./SearchBar";
-
-const { Search } = Input;
+import { useAvatar } from "../../hooks/useAvatar";
+import { useUsers } from "../../hooks/useUsers";
 
 const CustomHeader: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { me } = useUsers();
+  const { imageUrl, isLoading } = useAvatar(me?.avatarUrl);
 
   const onSearch = (value: string) => {
     console.log("Search query:", value);
@@ -39,8 +41,8 @@ const CustomHeader: React.FC = () => {
           <motion.div whileHover={{ scale: 1.05 }}>
             <Avatar
               size="large"
-              icon={<UserOutlined />}
-              src={`https://i.pravatar.cc/150?img=${2}`}
+              icon={isLoading ? <Spin /> : <UserOutlined />}
+              src={!isLoading ? imageUrl : undefined}
               className="cursor-pointer hover:opacity-80 transition-opacity"
               onClick={() => setIsModalOpen(true)}
             />

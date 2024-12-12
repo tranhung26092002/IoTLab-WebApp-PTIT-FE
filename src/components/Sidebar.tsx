@@ -44,7 +44,7 @@ const Sidebar: React.FC = () => {
     try {
       await signOut(); // Thực hiện đăng xuất
       NProgress.done(); // Dừng thanh tiến trình khi đăng xuất thành công
-      // window.location.href = '/login';
+      window.location.href = '/login';
     } catch (error) {
       NProgress.done(); // Dừng thanh tiến trình khi có lỗi
       console.error('Logout failed:', error);

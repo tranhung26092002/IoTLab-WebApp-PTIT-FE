@@ -56,8 +56,12 @@ export const useHardDevices = () => {
     };
 
     // Mutations
-    const createDeviceMutation = useMutation<Device, AxiosError<ApiError>, Partial<Device>>({
-        mutationFn: (device) => deviceService.createDevice(device),
+    const createDeviceMutation = useMutation<
+        Device,
+        AxiosError<ApiError>,
+        { device: Partial<Device>; file?: File }
+    >({
+        mutationFn: ({ device, file }) => deviceService.createDevice(device, file),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['devices'] });
             handleSuccess('CREATE_DEVICE');
@@ -91,6 +95,12 @@ export const useHardDevices = () => {
     const useBorrowHistory = (page = 0, size = 10) =>
         useQuery<PageResponse<BorrowRecord>>({
             queryKey: ['borrow-history', page, size],
+            queryFn: () => deviceService.getBorrowHistory(page, size)
+        });
+
+    const useBorrowHistoryByUser = (page = 0, size = 10) =>
+        useQuery<PageResponse<BorrowRecord>>({
+            queryKey: ['borrow-history-user', page, size],
             queryFn: () => deviceService.getBorrowHistoryByUser(page, size)
         });
 
@@ -116,7 +126,7 @@ export const useHardDevices = () => {
         mutationFn: (request) => deviceService.borrowDevice(request),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['devices'] });
-            queryClient.invalidateQueries({ queryKey: ['borrow-history'] });
+            queryClient.invalidateQueries({ queryKey: ['borrow-history-user'] });
             queryClient.invalidateQueries({ queryKey: ['borrowed-devices'] });
             handleSuccess('BORROW_DEVICE');
         },
@@ -131,7 +141,7 @@ export const useHardDevices = () => {
         mutationFn: (deviceId) => deviceService.returnDevice(deviceId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['devices'] });
-            queryClient.invalidateQueries({ queryKey: ['borrow-history'] });
+            queryClient.invalidateQueries({ queryKey: ['borrow-history-user'] });
             handleSuccess('RETURN_DEVICE');
         },
         onError: handleApiError
@@ -144,6 +154,7 @@ export const useHardDevices = () => {
         useDeviceByCode,
         useFilteredDevices,
         useBorrowHistory,
+        useBorrowHistoryByUser,
         useDevicesBorrowedByUser,
         useDeviceBorrowHistory,
 

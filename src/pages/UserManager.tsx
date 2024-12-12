@@ -53,7 +53,7 @@ const UserManager: React.FC = () => {
         try {
             await deleteUser(id);
             message.success('User deleted successfully');
-        } catch (error) {
+        } catch {
             message.error('Failed to delete user');
         }
     };
@@ -70,7 +70,7 @@ const UserManager: React.FC = () => {
             setIsModalOpen(false);
             form.resetFields();
             setEditingUser(null);
-        } catch (error) {
+        } catch {
             message.error('Operation failed');
         }
     };
@@ -111,8 +111,8 @@ const UserManager: React.FC = () => {
             dataIndex: 'roleType',
             key: 'roleType',
             filters: roleOptions.map(role => ({ text: role, value: role })),
-            onFilter: (value: string | number | boolean, record: User) =>
-                record.roleType === value.toString(),
+            onFilter: (value: any, record: User) =>
+                record.roleType === String(value),
         },
         {
             title: 'Status',
@@ -124,8 +124,8 @@ const UserManager: React.FC = () => {
                 </span>
             ),
             filters: statusOptions.map(status => ({ text: status, value: status })),
-            onFilter: (value: string | number | boolean, record: User) =>
-                record.status === value.toString(),
+            onFilter: (value: any, record: User) =>
+                record.status === String(value),
         },
         {
             title: 'Actions',

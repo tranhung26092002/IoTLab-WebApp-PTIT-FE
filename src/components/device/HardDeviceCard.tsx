@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Card, Button, Tag, Typography, Tooltip, Spin, Image } from 'antd';
 import { Device } from '../../types/hardDevice';
 import { motion } from 'framer-motion';
 import { CalendarOutlined } from '@ant-design/icons';
-import { useImageView } from '../../services/api/storageService';
 import defaultImage from '../../assets/default-device.png';
+import { useAvatar } from '../../hooks/useAvatar';
 
 const { Text } = Typography;
 interface Props {
@@ -13,35 +13,7 @@ interface Props {
 }
 
 export const HardDeviceCard: React.FC<Props> = ({ device, onBorrow }) => {
-    const { viewImage } = useImageView();
-    const [imageUrl, setImageUrl] = useState<string>(defaultImage);
-    const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        let cleanup: (() => void) | undefined;
-
-        const loadImage = async () => {
-            if (device.imageUrl) {
-                setLoading(true);
-                try {
-                    const { url, cleanup: cleanupFn } = await viewImage(device.imageUrl);
-                    setImageUrl(url);
-                    cleanup = cleanupFn;
-                } catch (error) {
-                    console.error('Failed to load image:', error);
-                    setImageUrl(defaultImage);
-                } finally {
-                    setLoading(false);
-                }
-            }
-        };
-
-        loadImage();
-
-        return () => {
-            if (cleanup) cleanup();
-        };
-    }, [device.imageUrl]);
+    const { imageUrl, isLoading: isLoadingDeviceImage } = useAvatar(device.imageUrl);
 
     return (
         <motion.div
@@ -53,7 +25,7 @@ export const HardDeviceCard: React.FC<Props> = ({ device, onBorrow }) => {
                 hoverable
                 cover={
                     <div className="h-48 flex items-center justify-center bg-gray-50">
-                        {loading ? (
+                        {isLoadingDeviceImage ? (
                             <Spin />
                         ) : (
                             <Image

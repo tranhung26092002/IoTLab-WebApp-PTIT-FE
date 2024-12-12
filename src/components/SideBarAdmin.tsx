@@ -43,7 +43,7 @@ const SidebarAdmin: React.FC = () => {
     try {
       await signOut(); // Thực hiện đăng xuất
       NProgress.done(); // Dừng thanh tiến trình khi đăng xuất thành công
-      // window.location.href = '/login';
+      window.location.href = '/login';
     } catch (error) {
       NProgress.done(); // Dừng thanh tiến trình khi có lỗi
       console.error('Logout failed:', error);
@@ -71,6 +71,12 @@ const SidebarAdmin: React.FC = () => {
       path: "/admin/user-manager",
     },
     {
+      key: "/admin/device-manager",
+      icon: <DatabaseOutlined />,
+      label: "Device Management",
+      path: "/admin/device-manager",
+    },
+    {
       key: "/admin/task-manager",
       icon: <OrderedListOutlined />,
       label: "Task Management",
@@ -81,12 +87,6 @@ const SidebarAdmin: React.FC = () => {
       icon: <BookOutlined />,
       label: "Course Management",
       path: "/admin/course-manager",
-    },
-    {
-      key: "/admin/device-manager",
-      icon: <DatabaseOutlined />,
-      label: "Device Manager",
-      path: "/admin/device-manager",
     },
     {
       key: "/",

@@ -26,7 +26,20 @@ export const SUCCESS_MESSAGES = {
     UPDATE_DEVICE: 'Cập nhật thiết bị thành công!',
     DELETE_DEVICE: 'Xóa thiết bị thành công!',
     BORROW_DEVICE: 'Mượn thiết bị thành công!',
-    RETURN_DEVICE: 'Trả thiết bị thành công!'
+    RETURN_DEVICE: 'Trả thiết bị thành công!',
+
+    // Practice management
+    CREATE_PRACTICE: 'Tạo bài thực hành thành công!',
+    UPDATE_PRACTICE: 'Cập nhật bài thực hành thành công!',
+    DELETE_PRACTICE: 'Xóa bài thực hành thành công!',
+    ADD_VIDEO: 'Thêm video thành công!',
+    DELETE_VIDEO: 'Xóa video thành công!',
+    ADD_FILE: 'Thêm tài liệu thành công!',
+    DELETE_FILE: 'Xóa tài liệu thành công!',
+    ADD_GUIDE: 'Thêm hướng dẫn thành công!',
+    UPDATE_GUIDE: 'Cập nhật hướng dẫn thành công!',
+    DELETE_GUIDE: 'Xóa hướng dẫn thành công!',
+    CHANGE_PASSWORD: 'Đổi mật khẩu thành công!',
 } as const;
 
 export const ERROR_MESSAGES = {
@@ -61,5 +74,15 @@ export const ERROR_MESSAGES = {
     DEVICE_NOT_BORROWED: 'Thiết bị chưa được mượn',
     DEVICE_CODE_EXISTS: 'Mã thiết bị đã tồn tại',
     UNAUTHORIZED_BORROW: 'Bạn không có quyền mượn thiết bị này',
-    UNAUTHORIZED_RETURN: 'Bạn không có quyền trả thiết bị này'
+    UNAUTHORIZED_RETURN: 'Bạn không có quyền trả thiết bị này',
+
+    // Practice errors
+    PRACTICE_NOT_FOUND: 'Không tìm thấy bài thực hành',
+    VIDEO_NOT_FOUND: 'Không tìm thấy video',
+    FILE_NOT_FOUND: 'Không tìm thấy tài liệu',
+    GUIDE_NOT_FOUND: 'Không tìm thấy hướng dẫn',
+    INVALID_VIDEO_FORMAT: 'Định dạng video không hợp lệ',
+    INVALID_FILE_FORMAT: 'Định dạng tài liệu không hợp lệ',
+    FILE_TOO_LARGE: 'Kích thước tập tin quá lớn',
+    UNAUTHORIZED_PRACTICE: 'Bạn không có quyền thao tác với bài thực hành này'
 } as const;

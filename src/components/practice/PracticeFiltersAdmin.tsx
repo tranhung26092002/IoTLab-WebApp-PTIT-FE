@@ -1,30 +1,30 @@
 import React from 'react';
 import { Input, Select } from 'antd';
 import { SearchOutlined, FilterOutlined, DownOutlined, SortAscendingOutlined } from '@ant-design/icons';
-import { SortType } from '../../types/course';
+import { PracticeStatus } from '../../types/practice';
 
-interface CourseFiltersProps {
-    onSearchChange: (value: string) => void;
-    onCategoryChange: (value: string) => void;
-    onSortChange: (value: SortType) => void;  // Update type here
-    selectedCategory: string;
-    selectedSort: SortType;  // Update type here
+interface PracticeFiltersProps {
+    onTitleSearch: (value: string) => void;
+    onStatusChange: (value: PracticeStatus | 'ALL') => void;
+    onSortChange: (value: 'newest' | 'oldest') => void;
+    selectedStatus: PracticeStatus | 'ALL';
+    selectedSort: 'newest' | 'oldest';
 }
 
-export const CourseFilters: React.FC<CourseFiltersProps> = ({
-    onSearchChange,
-    onCategoryChange,
+export const PracticeFiltersAdmin: React.FC<PracticeFiltersProps> = ({
+    onTitleSearch,
+    onStatusChange,
     onSortChange,
-    selectedCategory,
+    selectedStatus,
     selectedSort
 }) => (
     <div className="mb-8 p-6 bg-[#2c4a2d] rounded-lg shadow-lg animate-fadeIn">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center gap-6">
             <div className="flex-1 min-w-[300px]">
                 <Input.Search
-                    placeholder="Search courses..."
+                    placeholder="Tìm kiếm bài thực hành..."
                     size="large"
-                    onChange={(e) => onSearchChange(e.target.value)}
+                    onChange={(e) => onTitleSearch(e.target.value)}
                     prefix={<SearchOutlined className="text-[#4f6f52]" />}
                 />
             </div>
@@ -33,25 +33,23 @@ export const CourseFilters: React.FC<CourseFiltersProps> = ({
                 <Select
                     className="w-full"
                     size="large"
-                    placeholder="Category"
-                    onChange={onCategoryChange}
-                    value={selectedCategory}
+                    placeholder="Trạng thái"
+                    value={selectedStatus}
+                    onChange={onStatusChange}
                     suffixIcon={<DownOutlined className="text-[#4f6f52]" />}
                     dropdownRender={menu => (
                         <div>
                             <div className="px-4 py-3 flex items-center gap-3 border-b border-[#4f6f52]">
                                 <FilterOutlined className="text-[#4f6f52]" />
-                                <span className="text-[#4f6f52]">Filter by Category</span>
+                                <span className="text-[#4f6f52]">Lọc theo trạng thái</span>
                             </div>
                             {menu}
                         </div>
                     )}
                 >
-                    <Select.Option value="all">All Categories</Select.Option>
-                    <Select.Option value="programming">Programming</Select.Option>
-                    <Select.Option value="design">Design</Select.Option>
-                    <Select.Option value="business">Business</Select.Option>
-                    <Select.Option value="marketing">Marketing</Select.Option>
+                    <Select.Option value="ALL">Tất cả</Select.Option>
+                    <Select.Option value={PracticeStatus.PUBLISHED}>Đã xuất bản</Select.Option>
+                    <Select.Option value={PracticeStatus.DRAFT}>Bản nháp</Select.Option>
                 </Select>
             </div>
 
@@ -59,27 +57,26 @@ export const CourseFilters: React.FC<CourseFiltersProps> = ({
                 <Select
                     className="w-full"
                     size="large"
-                    placeholder="Sort by"
-                    onChange={onSortChange}
+                    placeholder="Sắp xếp"
                     value={selectedSort}
+                    onChange={onSortChange}
                     suffixIcon={<DownOutlined className="text-[#4f6f52]" />}
                     dropdownRender={menu => (
                         <div>
                             <div className="px-4 py-3 flex items-center gap-3 border-b border-[#4f6f52]">
                                 <SortAscendingOutlined className="text-[#4f6f52]" />
-                                <span className="text-[#4f6f52]">Sort by</span>
+                                <span className="text-[#4f6f52]">Sắp xếp theo</span>
                             </div>
                             {menu}
                         </div>
                     )}
                 >
-                    <Select.Option value="rating">Highest Rated</Select.Option>
-                    <Select.Option value="price">Price</Select.Option>
-                    <Select.Option value="enrolledStudents">Most Popular</Select.Option>
+                    <Select.Option value="newest">Mới nhất</Select.Option>
+                    <Select.Option value="oldest">Cũ nhất</Select.Option>
                 </Select>
             </div>
         </div>
     </div>
 );
 
-export default CourseFilters;
+export default PracticeFiltersAdmin;

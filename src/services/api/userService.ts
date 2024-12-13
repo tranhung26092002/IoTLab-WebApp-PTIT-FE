@@ -1,4 +1,4 @@
-import { PageResponse, User, ApiResponse } from '../../types/user';
+import { PageResponse, User, ApiResponse, ChangePasswordDto } from '../../types/user';
 import api from '../axios';
 import { tokenStorage } from '../tokenStorage';
 
@@ -36,5 +36,9 @@ export const userService = {
             },
         });
     },
+
+    changePassword: (data: ChangePasswordDto) =>
+        api.post<{ message: string }>('user/users/change-password', data),
+
     deleteUser: (id: number) => api.delete(`user/users/${id}`),
 };

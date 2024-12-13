@@ -59,12 +59,6 @@ const SidebarAdmin: React.FC = () => {
       path: "/admin",
     },
     {
-      key: "/admin/dashboard",
-      icon: <DashboardOutlined />,
-      label: "Dashboard",
-      path: "/admin/dashboard",
-    },
-    {
       key: "/admin/user-manager",
       icon: <UserOutlined />,
       label: "User Management",
@@ -77,16 +71,22 @@ const SidebarAdmin: React.FC = () => {
       path: "/admin/device-manager",
     },
     {
+      key: "/admin/practice-manager",
+      icon: <BookOutlined />,
+      label: "Practice Management",
+      path: "/admin/practice-manager",
+    },
+    {
+      key: "/admin/dashboard",
+      icon: <DashboardOutlined />,
+      label: "Dashboard",
+      path: "/admin/dashboard",
+    },
+    {
       key: "/admin/task-manager",
       icon: <OrderedListOutlined />,
       label: "Task Management",
       path: "/admin/task-manager",
-    },
-    {
-      key: "/admin/course-manager",
-      icon: <BookOutlined />,
-      label: "Course Management",
-      path: "/admin/course-manager",
     },
     {
       key: "/",

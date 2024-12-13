@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Card, Switch, Typography, Form, Radio, Button, Divider, message } from 'antd';
+import React, { useContext, useState } from 'react';
+import { Card, Switch, Typography, Form, Radio, Button, Divider, message, Input, Modal } from 'antd';
 import {
   BulbOutlined,
   BellOutlined,
@@ -15,12 +15,18 @@ import {
 } from '@ant-design/icons';
 import { ThemeContext } from '../contexts/ThemeContext';
 import AppLayout from '../components/AppLayout';
+import { useUsers } from '../hooks/useUsers';
+import { ChangePasswordDto } from '../types/user';
 
 const { Title } = Typography;
 
 const Setting: React.FC = () => {
   const { isDark, toggleTheme } = useContext(ThemeContext);
   const [form] = Form.useForm();
+
+  const [isChangePasswordModalVisible, setIsChangePasswordModalVisible] = useState(false);
+  const [changePasswordForm] = Form.useForm();
+  const { changePassword, isChangingPassword } = useUsers();
 
   const styles = {
     container: `
@@ -94,65 +100,65 @@ const Setting: React.FC = () => {
         </div>
       )
     },
-    {
-      icon: <CloudOutlined />,
-      title: "Cloud Storage",
-      content: (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <span>Auto Backup</span>
-            <Switch className={styles.switch} />
-          </div>
-          <div className="flex justify-between items-center">
-            <span>Sync Across Devices</span>
-            <Switch className={styles.switch} />
-          </div>
-        </div>
-      )
-    },
-    {
-      icon: <DatabaseOutlined />,
-      title: "Data Management",
-      content: (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <span>Data Analytics</span>
-            <Switch className={styles.switch} />
-          </div>
-          <Button danger>Clear All Data</Button>
-        </div>
-      )
-    },
-    {
-      icon: <TeamOutlined />,
-      title: "Account Settings",
-      content: (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <span>Public Profile</span>
-            <Switch className={styles.switch} />
-          </div>
-          <Button className={styles.button}>
-            Manage Account
-          </Button>
-        </div>
-      )
-    },
-    {
-      icon: <ApiOutlined />,
-      title: "API Access",
-      content: (
-        <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <span>Enable API Access</span>
-            <Switch className={styles.switch} />
-          </div>
-          <Button className={styles.button}>
-            Generate API Key
-          </Button>
-        </div>
-      )
-    },
+    // {
+    //   icon: <CloudOutlined />,
+    //   title: "Cloud Storage",
+    //   content: (
+    //     <div className="space-y-4">
+    //       <div className="flex justify-between items-center">
+    //         <span>Auto Backup</span>
+    //         <Switch className={styles.switch} />
+    //       </div>
+    //       <div className="flex justify-between items-center">
+    //         <span>Sync Across Devices</span>
+    //         <Switch className={styles.switch} />
+    //       </div>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   icon: <DatabaseOutlined />,
+    //   title: "Data Management",
+    //   content: (
+    //     <div className="space-y-4">
+    //       <div className="flex justify-between items-center">
+    //         <span>Data Analytics</span>
+    //         <Switch className={styles.switch} />
+    //       </div>
+    //       <Button danger>Clear All Data</Button>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   icon: <TeamOutlined />,
+    //   title: "Account Settings",
+    //   content: (
+    //     <div className="space-y-4">
+    //       <div className="flex justify-between items-center">
+    //         <span>Public Profile</span>
+    //         <Switch className={styles.switch} />
+    //       </div>
+    //       <Button className={styles.button}>
+    //         Manage Account
+    //       </Button>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   icon: <ApiOutlined />,
+    //   title: "API Access",
+    //   content: (
+    //     <div className="space-y-4">
+    //       <div className="flex justify-between items-center">
+    //         <span>Enable API Access</span>
+    //         <Switch className={styles.switch} />
+    //       </div>
+    //       <Button className={styles.button}>
+    //         Generate API Key
+    //       </Button>
+    //     </div>
+    //   )
+    // },
     {
       icon: <TranslationOutlined />,
       title: "IoT Device Settings",
@@ -236,15 +242,25 @@ const Setting: React.FC = () => {
           <Button
             type="primary"
             className={styles.button}
-            onClick={() => message.success('Password reset email sent!')}
+            onClick={() => setIsChangePasswordModalVisible(true)}
           >
-            Reset Password
+            Change Password
           </Button>
         </div>
       )
     },
     ...additionalSections
   ];
+
+  const handleChangePassword = async (values: ChangePasswordDto) => {
+    try {
+      await changePassword(values);
+      setIsChangePasswordModalVisible(false);
+      changePasswordForm.resetFields();
+    } catch {
+      // Error handled by mutation
+    }
+  };
 
   const handleSave = () => {
     message.success('Settings saved successfully!');
@@ -283,6 +299,79 @@ const Setting: React.FC = () => {
           ))}
         </Form>
       </div>
+
+      <Modal
+        title="Change Password"
+        open={isChangePasswordModalVisible}
+        onCancel={() => {
+          setIsChangePasswordModalVisible(false);
+          changePasswordForm.resetFields();
+        }}
+        footer={null}
+      >
+        <Form
+          form={changePasswordForm}
+          layout="vertical"
+          onFinish={handleChangePassword}
+        >
+          <Form.Item
+            name="currentPassword"
+            label="Current Password"
+            rules={[
+              { required: true, message: 'Please input your current password!' }
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item
+            name="newPassword"
+            label="New Password"
+            rules={[
+              { required: true, message: 'Please input your new password!' },
+              { min: 6, message: 'Password must be at least 6 characters!' }
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item
+            name="confirmNewPassword"
+            label="Confirm New Password"
+            dependencies={['newPassword']}
+            rules={[
+              { required: true, message: 'Please confirm your new password!' },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue('newPassword') === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('The new passwords do not match!'));
+                },
+              }),
+            ]}
+          >
+            <Input.Password />
+          </Form.Item>
+
+          <Form.Item className="mb-0 text-right">
+            <Button onClick={() => {
+              setIsChangePasswordModalVisible(false);
+              changePasswordForm.resetFields();
+            }} className="mr-2">
+              Cancel
+            </Button>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={isChangingPassword}
+              className={styles.button}
+            >
+              Update Password
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
     </AppLayout>
   );
 };

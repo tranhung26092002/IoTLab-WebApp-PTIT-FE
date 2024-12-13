@@ -1,9 +1,19 @@
 import api from '../axios';
 
-interface ImageData {
-    content: Blob;
+export interface FileData {
+    url: string;
     mimeType: string;
+    cleanup: () => void;
 }
+
+const ALLOWED_MIME_TYPES = [
+    "image/jpeg",
+    "image/png",
+    "application/pdf",
+    "application/msword",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "video/mp4"
+];
 
 export const storageService = {
     // Upload file with timestamp
@@ -21,7 +31,7 @@ export const storageService = {
 
     // Download file by name
     downloadFile: async (fileName: string): Promise<void> => {
-        const response = await api.get(`/storage/files/${fileName}`, {
+        const response = await api.get(`/storage/download/${fileName}`, {
             responseType: 'blob'
         });
 
@@ -36,15 +46,24 @@ export const storageService = {
         window.URL.revokeObjectURL(url);
     },
 
-    viewImage: async (fileName: string): Promise<ImageData> => {
-        const response = await api.get(`/storage/images/${fileName}`, {
+    viewFile: async (fileName: string): Promise<FileData> => {
+        const response = await api.get(`/storage/load/${fileName}`, {
             responseType: 'blob'
         });
 
-        const mimeType = response.headers['content-type'];
+        const mimeType = response.headers['content-type'] || 'application/octet-stream';
+
+        if (!ALLOWED_MIME_TYPES.includes(mimeType)) {
+            throw new Error('Unsupported file type');
+        }
+
+        const blob = new Blob([response.data], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+
         return {
-            content: response.data,
-            mimeType: mimeType || 'image/jpeg' // fallback mime type
+            url,
+            mimeType,
+            cleanup: () => URL.revokeObjectURL(url)
         };
     },
 
@@ -74,23 +93,17 @@ export const useFileUpload = () => {
     return { uploadFile };
 };
 
-export const useImageView = () => {
-    const viewImage = async (fileName: string) => {
+export const useFileView = () => {
+    const viewFile = async (fileName: string) => {
         try {
-            const imageData = await storageService.viewImage(fileName);
-            const imageUrl = URL.createObjectURL(imageData.content);
-            return {
-                url: imageUrl,
-                mimeType: imageData.mimeType,
-                cleanup: () => URL.revokeObjectURL(imageUrl)
-            };
+            return await storageService.viewFile(fileName);
         } catch (error) {
-            console.error('Failed to view image:', error);
+            console.error('Failed to view file:', error);
             throw error;
         }
     };
 
-    return { viewImage };
+    return { viewFile };
 };
 
 export const useFileDownload = () => {

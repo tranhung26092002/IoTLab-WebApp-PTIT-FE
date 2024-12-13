@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { userService } from '../services/api/userService';
-import { PageResponse, User } from '../types/user';
+import { ChangePasswordDto, PageResponse, User } from '../types/user';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
@@ -80,6 +80,18 @@ export const useUsers = (page = 0, size = 10) => {
         onError: handleApiError,
     });
 
+    // Change password
+    const changePasswordMutation = useMutation<{ message: string }, AxiosError<ApiError>, ChangePasswordDto>({
+        mutationFn: async (data) => {
+            const response = await userService.changePassword(data);
+            return response.data;
+        },
+        onSuccess: () => {
+            handleSuccess('CHANGE_PASSWORD');
+        },
+        onError: handleApiError
+    });
+
     // Delete user
     const deleteUserMutation = useMutation<void, AxiosError<ApiError>, number>({
         mutationFn: async (id) => {
@@ -103,6 +115,7 @@ export const useUsers = (page = 0, size = 10) => {
         addUser: addUserMutation.mutate,
         updateUser: updateUserMutation.mutate,
         updateMe: updateMeMutation.mutate,
+        changePassword: changePasswordMutation.mutate,
         deleteUser: deleteUserMutation.mutate,
 
         // Loading states
@@ -111,6 +124,7 @@ export const useUsers = (page = 0, size = 10) => {
         isAddingUser: addUserMutation.isPending,
         isUpdatingUser: updateUserMutation.isPending,
         isUpdatingMe: updateMeMutation.isPending,
+        isChangingPassword: changePasswordMutation.isPending,
         isDeletingUser: deleteUserMutation.isPending,
 
         // Errors
@@ -118,6 +132,7 @@ export const useUsers = (page = 0, size = 10) => {
         addUserError: addUserMutation.error,
         updateUserError: updateUserMutation.error,
         updateMeError: updateMeMutation.error,
+        changePasswordError: changePasswordMutation.error,
         deleteUserError: deleteUserMutation.error,
     };
 };

@@ -12,16 +12,18 @@ const Home = React.lazy(() => import('./pages/Home'));
 const About = React.lazy(() => import('./pages/About'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Contact = React.lazy(() => import('./pages/Contact'));
-const Course = React.lazy(() => import('./pages/Course'));
+const Practice = React.lazy(() => import('./pages/Practice'));
 const Task = React.lazy(() => import('./pages/Task'));
 const Setting = React.lazy(() => import('./pages/Setting'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const Admin = React.lazy(() => import('./pages/Admin'));
 const UserManager = React.lazy(() => import('./pages/UserManager'));
-const CourseManager = React.lazy(() => import('./pages/CourseManager'));
 const TaskManager = React.lazy(() => import('./pages/TaskManager'));
 const Device = React.lazy(() => import('./pages/HardDevice'));
 const HardDeviceManager = React.lazy(() => import('./pages/HardDeviceManager'));
+const PracticeDetail = React.lazy(() => import('./pages/PracticeDetail'));
+const PracticeManager = React.lazy(() => import('./pages/PracticeManager'));
+const PracticeDetailManager = React.lazy(() => import('./pages/PracticeDetailManager'));
 
 // Tạo QueryClient
 const queryClient = new QueryClient();
@@ -43,7 +45,8 @@ const App: React.FC = () => {
               {/* Protected Routes */}
               <Route element={<PrivateRoute />}>
                 <Route path="/device" element={<Device />} />
-                <Route path="/course" element={<Course />} />
+                <Route path="/practice" element={<Practice />} />
+                <Route path="/practice/:id" element={<PracticeDetail />} />
                 <Route path="/task" element={<Task />} />
                 <Route path="/setting" element={<Setting />} />
               </Route>
@@ -53,7 +56,8 @@ const App: React.FC = () => {
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />
                 <Route path="/admin/user-manager" element={<UserManager />} />
-                <Route path="/admin/course-manager" element={<CourseManager />} />
+                <Route path="/admin/practice-manager" element={<PracticeManager />} />
+                <Route path="/admin/practice-manager/:id" element={<PracticeDetailManager />} />
                 <Route path="/admin/task-manager" element={<TaskManager />} />
                 <Route path="/admin/device-manager" element={<HardDeviceManager />} />
               </Route>

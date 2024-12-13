@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useImageView } from '../services/api/storageService';
+import { useFileView } from '../services/api/storageService';
 import defaultImage from '../assets/default-device.png';
 
 export const useAvatar = (avatarUrl?: string) => {
     const [imageUrl, setImageUrl] = useState<string>(defaultImage);
     const [isLoading, setIsLoading] = useState(false);
-    const { viewImage } = useImageView();
+    const { viewFile } = useFileView();
 
     useEffect(() => {
         let cleanup: (() => void) | undefined;
@@ -14,7 +14,7 @@ export const useAvatar = (avatarUrl?: string) => {
             if (avatarUrl) {
                 setIsLoading(true);
                 try {
-                    const { url, cleanup: cleanupFn } = await viewImage(avatarUrl);
+                    const { url, cleanup: cleanupFn } = await viewFile(avatarUrl);
                     setImageUrl(url);
                     cleanup = cleanupFn;
                 } catch (error) {

@@ -1,74 +1,57 @@
-// src/pages/Dashboard.tsx
-import React, { useMemo, useState } from 'react';
-import { Row, Col, Typography } from 'antd';
+import React from 'react';
+import { Spin, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import { DashboardOutlined } from '@ant-design/icons';
-import { DeviceCard } from '../components/dashboard/DeviceCard';
-import { SensorCard } from '../components/dashboard/SensorCard';
-import { SensorChart } from '../components/dashboard/SensorChart';
-import { INITIAL_DEVICES, MOCK_SENSOR_DATA, SENSORS } from '../data/dashboardData';
-import { toggleDevice } from '../utils/deviceUtils';
-import { generateChartConfigs } from '../utils/chartUtils';
 import AppLayoutAdmin from '../components/AppLayoutAdmin';
+import { useDashboard } from '../hooks/useDashboard';
+import { DeviceCardDashboard } from '../components/dashboard/DeviceCardDashboard';
 
 const Dashboard: React.FC = () => {
-  const [devices, setDevices] = useState(INITIAL_DEVICES);
-  const chartConfigs = useMemo(() =>
-    generateChartConfigs(SENSORS, MOCK_SENSOR_DATA),
-    []
-  );
+    const { devices, isLoading } = useDashboard();
 
-  const handleDeviceToggle = (index: number) => (checked: boolean) => {
-    setDevices(toggleDevice(devices, index, checked));
-  };
+    if (isLoading) {
+        return (
+            <AppLayoutAdmin>
+                <div className="flex justify-center items-center h-[80vh]">
+                    <Spin size="large" />
+                </div>
+            </AppLayoutAdmin>
+        );
+    }
 
-  return (
-    <AppLayoutAdmin>
-      <div className="p-6 space-y-8 bg-gradient-to-br from-[#d2e3c8] via-[#86a789] to-[#4f6f52] py-10">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <Typography.Title level={2} className="forest--dark--color flex items-center gap-2">
-            <DashboardOutlined /> IoT Dashboard
-          </Typography.Title>
-        </motion.div>
+    return (
+        <AppLayoutAdmin>
+            <div className="p-6 space-y-8 bg-gradient-to-br from-[#d2e3c8] via-[#86a789] to-[#4f6f52] min-h-screen">
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                >
+                    <Typography.Title level={2} className="flex items-center gap-2 text-[#2c4a2d]">
+                        <DashboardOutlined /> IoT Devices Dashboard
+                    </Typography.Title>
+                </motion.div>
 
-        <Row gutter={[16, 16]}>
-          {devices.map((device, index) => (
-            <Col xs={24} sm={12} md={6} key={device.id}>
-              <DeviceCard
-                device={device}
-                index={index}
-                onToggle={handleDeviceToggle(index)}
-              />
-            </Col>
-          ))}
-        </Row>
-
-        <Row gutter={[16, 16]}>
-          {SENSORS.map((sensor, index) => (
-            <Col xs={24} sm={12} md={6} key={sensor.key}>
-              <SensorCard sensor={sensor} index={index} />
-            </Col>
-          ))}
-        </Row>
-
-        <Row gutter={[16, 16]}>
-          {SENSORS.map((sensor, index) => (
-            <Col xs={24} lg={12} key={sensor.key}>
-              <SensorChart
-                sensor={sensor}
-                index={index}
-                chartConfig={chartConfigs[index]}
-              />
-            </Col>
-          ))}
-        </Row>
-      </div>
-    </AppLayoutAdmin>
-  );
+                <motion.div 
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                    {devices?.data.map((device, index) => (
+                        <motion.div
+                            key={device.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: index * 0.1 }}
+                        >
+                            <DeviceCardDashboard device={device} />
+                        </motion.div>
+                    ))}
+                </motion.div>
+            </div>
+        </AppLayoutAdmin>
+    );
 };
 
 export default Dashboard;

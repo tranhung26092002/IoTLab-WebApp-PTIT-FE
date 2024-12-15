@@ -24,6 +24,7 @@ const HardDeviceManager = React.lazy(() => import('./pages/HardDeviceManager'));
 const PracticeDetail = React.lazy(() => import('./pages/PracticeDetail'));
 const PracticeManager = React.lazy(() => import('./pages/PracticeManager'));
 const PracticeDetailManager = React.lazy(() => import('./pages/PracticeDetailManager'));
+const DashboardDetail = React.lazy(() => import('./pages/DashboardDetail'));
 
 // Tạo QueryClient
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ const App: React.FC = () => {
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/dashboard" element={<Dashboard />} />
+                <Route path="/admin/dashboard/:id" element={<DashboardDetail />} />
                 <Route path="/admin/user-manager" element={<UserManager />} />
                 <Route path="/admin/practice-manager" element={<PracticeManager />} />
                 <Route path="/admin/practice-manager/:id" element={<PracticeDetailManager />} />

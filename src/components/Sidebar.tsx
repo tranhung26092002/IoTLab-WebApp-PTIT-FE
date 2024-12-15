@@ -70,12 +70,6 @@ const Sidebar: React.FC = () => {
       label: "Contact",
       path: "/contact",
     },
-    {
-      key: "/device",
-      icon: <DatabaseOutlined />,
-      label: "Device",
-      path: "/device",
-    },
   ];
 
   const getAuthenticatedMenuItems = (): MenuItem[] => [
@@ -84,6 +78,12 @@ const Sidebar: React.FC = () => {
       icon: <CarryOutOutlined />,
       label: "Practices",
       path: "/practice",
+    },
+    {
+      key: "/device",
+      icon: <DatabaseOutlined />,
+      label: "Device",
+      path: "/device",
     },
     {
       key: "/task",

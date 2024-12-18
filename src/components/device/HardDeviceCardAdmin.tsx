@@ -89,6 +89,25 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
         }
     };
 
+    const { returnDevice, isReturning } = useHardDevices();
+
+    const handleReturn = async () => {
+        // Get the active borrow record (status: BORROWED)
+        const activeBorrowRecord = device.borrowRecords.find(
+            record => record.status === 'BORROWED'
+        );
+
+        if (!activeBorrowRecord) return;
+
+        try {
+            await returnDevice(activeBorrowRecord.id);
+            setIsUserModalOpen(false);
+            setCurrentUser(null);
+        } catch (error) {
+            console.error('Failed to return device:', error);
+        }
+    };
+
     return (
         <motion.div
             whileHover={{ scale: 1.03 }}
@@ -195,7 +214,26 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
                 title="Current Borrower Details"
                 open={isUserModalOpen}
                 onCancel={() => setIsUserModalOpen(false)}
-                footer={null}
+                footer={
+                    <div className="flex justify-end">
+                        <Popconfirm
+                            title="Return Device"
+                            description="Are you sure you want to return this device?"
+                            onConfirm={handleReturn}
+                            okText="Yes"
+                            cancelText="No"
+                            okButtonProps={{ className: 'bg-[#4f6f52]' }}
+                        >
+                            <Button
+                                type="primary"
+                                loading={isReturning}
+                                className="bg-[#4f6f52] hover:bg-[#2c4a2d]"
+                            >
+                                Return Device
+                            </Button>
+                        </Popconfirm>
+                    </div>
+                }
             >
                 {currentUser && (
                     <div className="space-y-4">

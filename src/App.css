@@ -79,6 +79,9 @@
 .header {
     padding-top: 12px;
     background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 100;
 }
 
 .content {

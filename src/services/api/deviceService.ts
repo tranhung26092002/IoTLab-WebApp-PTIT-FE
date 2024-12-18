@@ -108,10 +108,8 @@ export const deviceService = {
     return response.data;
   },
 
-  returnDevice: async (deviceId: number) => {
-    const response = await api.post<BorrowRecord>('device/borrow-records/return', null, {
-      params: { deviceId }
-    });
+  returnDevice: async (borrowRecordId: number) => {
+    const response = await api.post<BorrowRecord>(`device/borrow-records/return/${borrowRecordId}`);
     return response.data;
-  }
+  },
 };

@@ -138,7 +138,7 @@ export const useHardDevices = () => {
         AxiosError<ApiError>,
         number
     >({
-        mutationFn: (deviceId) => deviceService.returnDevice(deviceId),
+        mutationFn: (borrowRecordId) => deviceService.returnDevice(borrowRecordId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['devices'] });
             queryClient.invalidateQueries({ queryKey: ['borrow-history-user'] });

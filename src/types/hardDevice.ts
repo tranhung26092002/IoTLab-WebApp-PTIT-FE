@@ -11,6 +11,7 @@ export interface Device {
     totalBorrowed: number;
     createdAt: string | number[]; // Support both formats
     updatedAt?: string | number[];
+    borrowRecords: BorrowRecord[];
 }
 
 export interface DeviceFormValues {

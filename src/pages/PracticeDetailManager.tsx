@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Spin, Tag, Typography, Divider, List, Tooltip, Button, Modal, Form, Upload, Input, Select, message, Popconfirm } from 'antd';
+import { Card, Spin, Tag, Typography, Divider, List, Tooltip, Button, Modal, Form, Upload, Input, Select, message, Popconfirm, Empty } from 'antd';
 import { useAvatar } from '../hooks/useAvatar';
 import { usePractice } from '../hooks/usePractice';
 import { Practice, PracticeGuide, PracticeVideo } from '../types/practice';
@@ -268,7 +268,7 @@ export const PracticeDetailManager: React.FC = () => {
                                             onClick={() => setIsEditModalVisible(true)}
                                             className="absolute top-4 right-4 bg-[#4f6f52] hover:bg-[#2c4a2d]"
                                         >
-                                            Cập nhật
+                                            Update practice
                                         </Button>
                                     </>
                                 )}
@@ -281,23 +281,24 @@ export const PracticeDetailManager: React.FC = () => {
                             <Paragraph className="text-gray-600 text-lg">{practice?.description}</Paragraph>
 
                             {/* Files Section */}
-                            {practice?.practiceFiles && practice.practiceFiles.length > 0 && (
-                                <div className="mt-6">
-                                    <Divider orientation="left">
-                                        <div className="flex items-center gap-2">
-                                            <Title level={4}>Documents</Title>
-                                            <Tag color="blue">{practice.practiceFiles.length} Files</Tag>
-                                            <Button
-                                                type="primary"
-                                                icon={<PlusOutlined />}
-                                                onClick={() => setIsAddFileModalVisible(true)}
-                                                className="ml-auto bg-[#4f6f52] hover:bg-[#2c4a2d]"
-                                            >
-                                                Thêm file
-                                            </Button>
-                                        </div>
-                                    </Divider>
-                                    <div className="grid grid-cols-3 gap-4">
+                            <div className="mt-6">
+                                <Divider orientation="left">
+                                    <div className="flex items-center gap-2">
+                                        <Title level={4}>Documents</Title>
+                                        <Tag color="blue">{practice?.practiceFiles?.length || 0} Files</Tag>
+                                        <Button
+                                            type="primary"
+                                            icon={<PlusOutlined />}
+                                            onClick={() => setIsAddFileModalVisible(true)}
+                                            className="ml-auto bg-[#4f6f52] hover:bg-[#2c4a2d]"
+                                        >
+                                            Add file
+                                        </Button>
+                                    </div>
+                                </Divider>
+
+                                {practice?.practiceFiles && practice.practiceFiles.length > 0 ? (
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                         {practice.practiceFiles.map((file) => (
                                             <div key={file.id} className="relative">
                                                 <Tooltip title={`Open ${file.fileName}`}>
@@ -305,8 +306,8 @@ export const PracticeDetailManager: React.FC = () => {
                                                         onClick={() => handleDocumentClick(file.fileUrl)}
                                                         loading={documentLoading}
                                                         className="w-full h-[100px] flex flex-col items-center justify-center gap-2 
-                                                                    hover:shadow-lg transition-all rounded-lg border-2 border-gray-100
-                                                                    hover:border-blue-100 hover:bg-blue-50"
+                                    hover:shadow-lg transition-all rounded-lg border-2 border-gray-100
+                                    hover:border-blue-100 hover:bg-blue-50"
                                                     >
                                                         <div className="text-2xl">
                                                             {getFileIcon(file.fileType)}
@@ -342,24 +343,35 @@ export const PracticeDetailManager: React.FC = () => {
                                             </div>
                                         ))}
                                     </div>
-                                </div>
-                            )}
+                                ) : (
+                                    <Empty
+                                        image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                        description={
+                                            <span className="text-gray-500">
+                                                No documents uploaded yet
+                                            </span>
+                                        }
+                                        className="my-8"
+                                    />
+                                )}
+                            </div>
                         </Card>
 
                         {/* Guides Section */}
-                        {practice?.practiceGuides && (
-                            <Card className="mt-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <Title level={3}>Practice Guides</Title>
-                                    <Button
-                                        type="primary"
-                                        icon={<PlusOutlined />}
-                                        onClick={() => setIsAddGuideModalVisible(true)}
-                                        className="bg-[#4f6f52] hover:bg-[#2c4a2d]"
-                                    >
-                                        Thêm hướng dẫn
-                                    </Button>
-                                </div>
+                        <Card className="mt-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <Title level={3}>Practice Guides</Title>
+                                <Button
+                                    type="primary"
+                                    icon={<PlusOutlined />}
+                                    onClick={() => setIsAddGuideModalVisible(true)}
+                                    className="bg-[#4f6f52] hover:bg-[#2c4a2d]"
+                                >
+                                    Add guide
+                                </Button>
+                            </div>
+
+                            {practice?.practiceGuides && practice.practiceGuides.length > 0 ? (
                                 <List
                                     itemLayout="vertical"
                                     dataSource={practice.practiceGuides}
@@ -401,15 +413,25 @@ export const PracticeDetailManager: React.FC = () => {
                                         </List.Item>
                                     )}
                                 />
-                            </Card>
-                        )}
+                            ) : (
+                                <Empty
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    description={
+                                        <span className="text-gray-500">
+                                            No guides created yet
+                                        </span>
+                                    }
+                                    className="my-8"
+                                />
+                            )}
+                        </Card>
                     </div>
 
                     {/* Right Column - Videos */}
                     <div className="col-span-4">
+                        {/* Video Player Section */}
                         {practice?.practiceVideos && practice.practiceVideos.length > 0 && (
-                            <div className="top-4">
-                                {/* Main Video Player */}
+                            <div className="top-4 mb-4">
                                 <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl mb-4">
                                     <VideoPlayer
                                         video={selectedVideo || practice.practiceVideos[0]}
@@ -421,60 +443,73 @@ export const PracticeDetailManager: React.FC = () => {
                                         </h3>
                                     </div>
                                 </div>
-
-                                {/* Video Playlist */}
-                                <Card className="bg-gray-50">
-                                    <div className="flex items-center justify-between mb-4">
-                                        <Title level={4}>Video Playlist</Title>
-                                        <Button
-                                            type="primary"
-                                            icon={<PlusOutlined />}
-                                            onClick={() => setIsAddVideoModalVisible(true)}
-                                            className="bg-[#4f6f52] hover:bg-[#2c4a2d]"
-                                        >
-                                            Thêm video
-                                        </Button>
-                                    </div>
-                                    <div className="space-y-3">
-                                        {practice.practiceVideos.map((video) => (
-                                            <div
-                                                key={video.id}
-                                                className={`cursor-pointer p-3 rounded transition-all
-                    ${selectedVideo?.id === video.id
-                                                        ? 'bg-blue-50 ring-1 ring-blue-500'
-                                                        : 'hover:bg-gray-100'}`}
-                                            >
-                                                <div className="flex items-center justify-between">
-                                                    <div
-                                                        className="flex flex-col gap-2 flex-1"
-                                                        onClick={() => setSelectedVideo(video)}
-                                                    >
-                                                        <VideoThumbnail video={video} />
-                                                        <span className="text-sm font-medium truncate">
-                                                            {video.videoName}
-                                                        </span>
-                                                    </div>
-                                                    <Popconfirm
-                                                        title="Xóa video"
-                                                        description="Bạn có chắc chắn muốn xóa video này?"
-                                                        onConfirm={() => handleDeleteVideo(video.id)}
-                                                        okButtonProps={{ className: 'bg-[#4f6f52]' }}
-                                                    >
-                                                        <Button
-                                                            danger
-                                                            icon={<DeleteOutlined />}
-                                                            size="small"
-                                                            type="text"
-                                                            loading={isDeletingVideo}
-                                                        />
-                                                    </Popconfirm>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </Card>
                             </div>
                         )}
+
+                        {/* Video Playlist Section */}
+                        <Card className="bg-gray-50">
+                            <div className="flex items-center justify-between mb-4">
+                                <Title level={4}>Video Playlist</Title>
+                                <Button
+                                    type="primary"
+                                    icon={<PlusOutlined />}
+                                    onClick={() => setIsAddVideoModalVisible(true)}
+                                    className="bg-[#4f6f52] hover:bg-[#2c4a2d]"
+                                >
+                                    Add video
+                                </Button>
+                            </div>
+
+                            {practice?.practiceVideos && practice.practiceVideos.length > 0 ? (
+                                <div className="space-y-3">
+                                    {practice.practiceVideos.map((video) => (
+                                        <div
+                                            key={video.id}
+                                            className={`cursor-pointer p-3 rounded transition-all
+                            ${selectedVideo?.id === video.id
+                                                    ? 'bg-blue-50 ring-1 ring-blue-500'
+                                                    : 'hover:bg-gray-100'}`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div
+                                                    className="flex flex-col gap-2 flex-1"
+                                                    onClick={() => setSelectedVideo(video)}
+                                                >
+                                                    <VideoThumbnail video={video} />
+                                                    <span className="text-sm font-medium truncate">
+                                                        {video.videoName}
+                                                    </span>
+                                                </div>
+                                                <Popconfirm
+                                                    title="Xóa video"
+                                                    description="Bạn có chắc chắn muốn xóa video này?"
+                                                    onConfirm={() => handleDeleteVideo(video.id)}
+                                                    okButtonProps={{ className: 'bg-[#4f6f52]' }}
+                                                >
+                                                    <Button
+                                                        danger
+                                                        icon={<DeleteOutlined />}
+                                                        size="small"
+                                                        type="text"
+                                                        loading={isDeletingVideo}
+                                                    />
+                                                </Popconfirm>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <Empty
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    description={
+                                        <span className="text-gray-500">
+                                            No videos uploaded yet
+                                        </span>
+                                    }
+                                    className="my-8"
+                                />
+                            )}
+                        </Card>
                     </div>
                 </div>
             </div>

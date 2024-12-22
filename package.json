@@ -9,8 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "start": "vite preview"
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@ant-design/charts": "^2.2.3",

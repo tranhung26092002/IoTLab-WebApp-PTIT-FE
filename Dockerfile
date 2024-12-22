@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Cài đặt các phụ thuộc
-RUN npm install
+RUN npm ci
 
 # Sao chép toàn bộ mã nguồn vào container
 COPY . .

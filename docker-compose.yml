@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  react-app:
+    build: .
+    container_name: react-app-dev
+    image: react-app-dev:latest  # Đặt tên image duy nhất
+    ports:
+      - "5173:5173"  # Ánh xạ cổng 5173
+    networks:
+      - app-network
+    volumes:
+      - .:/app  # Đồng bộ mã nguồn từ máy host vào container
+      - /app/node_modules  # Tránh lỗi về thư mục node_modules khi sử dụng volume
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge

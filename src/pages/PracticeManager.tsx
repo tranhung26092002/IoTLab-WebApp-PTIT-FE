@@ -65,7 +65,7 @@ const PracticeManager: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <Typography.Title level={2} className="forest--dark--color flex items-center gap-2">
-            <ExperimentOutlined /> Bài thực hành
+            <ExperimentOutlined /> Practice Manager
           </Typography.Title>
         </motion.div>
 

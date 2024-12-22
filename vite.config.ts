@@ -15,7 +15,7 @@ export default defineConfig({
         secure: false,
         configure: (proxy, _options) => {
           proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('Origin', 'http://localhost:5173');
+            proxyReq.setHeader('Origin', 'http://14.225.255.177:5173'); // Địa chỉ frontend cụ thể
           });
         },
       },

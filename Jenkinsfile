@@ -21,6 +21,15 @@ pipeline {
             }
         }
 
+        stage('Grant Permissions') {
+            steps {
+                script {
+                    // Cấp quyền đầy đủ cho thư mục workspace
+                    sh 'sudo chmod -R 777 /var/lib/jenkins/workspace/${JOB_NAME}'
+                }
+            }
+        }
+
         stage('Build Docker Image') {
             steps {
                 script {

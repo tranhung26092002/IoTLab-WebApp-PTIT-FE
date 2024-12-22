@@ -7,6 +7,15 @@ pipeline {
     }
 
     stages {
+        stage('Grant Permissions') {
+            steps {
+                script {
+                    // Cấp quyền cho thư mục node_modules và workspace
+                    sh 'sudo chmod -R 777 /var/lib/jenkins/workspace/Front-end-do_an'
+                }
+            }
+        }
+
         stage('Clean Old Containers') {
             steps {
                 script {
@@ -17,15 +26,6 @@ pipeline {
                         docker rm ${CONTAINER_NAME}
                     fi
                     """
-                }
-            }
-        }
-
-        stage('Grant Permissions') {
-            steps {
-                script {
-                    // Cấp quyền đầy đủ cho thư mục workspace
-                    sh 'sudo chmod -R 777 /var/lib/jenkins/workspace/${JOB_NAME}'
                 }
             }
         }

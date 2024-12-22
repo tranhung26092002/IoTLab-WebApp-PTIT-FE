@@ -6,28 +6,18 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 5173,
-    cors: {
-      origin: 'http://14.225.255.177:5173', // Chỉ cho phép từ frontend
-      methods: ['GET', 'POST', 'PUT', 'DELETE'],
-      allowedHeaders: ['Content-Type', 'Authorization'],
-    },
     proxy: {
       '/mqtt/ws': {
         target: 'http://localhost:8085',
         changeOrigin: true,
         ws: true,
         secure: false,
-        configure: (proxy, _options) => {
+        configure: (proxy) => {
           proxy.on('proxyReq', (proxyReq) => {
             proxyReq.setHeader('Origin', 'http://14.225.255.177:5173'); // Địa chỉ frontend cụ thể
           });
         },
-      },
-      '/api': {
-        target: 'http://localhost:8088',
-        changeOrigin: true,
-        secure: false,
-      },
+      }
     },
   },
   define: {

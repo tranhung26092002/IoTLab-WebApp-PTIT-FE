@@ -6,7 +6,11 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 5173,
-    cors: true,
+    cors: {
+      origin: 'http://14.225.255.177:5173', // Chỉ cho phép từ frontend
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      allowedHeaders: ['Content-Type', 'Authorization'],
+    },
     proxy: {
       '/mqtt/ws': {
         target: 'http://localhost:8085',

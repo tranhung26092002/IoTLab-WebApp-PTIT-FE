@@ -1,8 +1,10 @@
 export interface Notification {
-  id: string;
-  userId: string;
-  type: 'info' | 'warning' | 'success' | 'error';
+  id: number;
+  userId: number;
+  borrowRecordId: number;
+  title: string;
   message: string;
-  isRead: boolean;
+  read: boolean;
+  type: string;
   createdAt: string;
 }

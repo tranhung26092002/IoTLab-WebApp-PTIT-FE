@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 import { DeviceCommand, SensorData } from "../types/deviceData";
+import { API_BASE_URL } from '../config/env';
 
 export const useSensorData = (id: string) => {
     const stompClientRef = useRef<Client | null>(null);
@@ -20,7 +21,7 @@ export const useSensorData = (id: string) => {
     });
 
     useEffect(() => {
-        const sock = new SockJS("http://localhost:8085/mqtt/ws");
+        const sock = new SockJS(`${API_BASE_URL}/mqtt/ws`);
         const stompClient = new Client({
             webSocketFactory: () => sock,
             debug: (str) => console.log(str),

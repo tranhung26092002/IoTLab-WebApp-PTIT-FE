@@ -1,8 +1,29 @@
-import api from '../axios';
 import { Notification } from '../../types/notification';
+import api from '../axios';
 
-export const notificationService = {
-    getAll: () => api.get<Notification[]>('/notifications'),
-    markAsRead: (id: string) => api.patch(`/notifications/${id}/read`),
-    delete: (id: string) => api.delete(`/notifications/${id}`),
+const notificationService = {
+    getAllNotifications: async (userId: number) => {
+        const response = await api.get<Notification[]>(`/notification/${userId}`);
+        return response.data;
+    },
+
+    markAsRead: async (notificationId: number) => {
+        const response = await api.put<Notification>(`/notification/${notificationId}/read`);
+        return response.data;
+    },
+
+    markAllAsRead: async (userId: number) => {
+        const response = await api.put<Notification[]>(`/notification/${userId}/read-all`);
+        return response.data;
+    },
+
+    deleteNotification: async (notificationId: number) => {
+        await api.delete(`/notification/${notificationId}`);
+    },
+
+    deleteAllNotifications: async (userId: number) => {
+        await api.delete(`/notification/${userId}/all`);
+    },
 };
+
+export default notificationService;

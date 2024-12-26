@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { API_BASE_URL } from './src/config/env';
 
 export default defineConfig({
   plugins: [react()],
@@ -8,13 +9,24 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/mqtt/ws': {
-        target: 'http://localhost:8085',
+        target: `http://192.168.1.4:8088`,
         changeOrigin: true,
         ws: true,
         secure: false,
         configure: (proxy) => {
           proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('Origin', 'http://14.225.255.177:5173'); // Địa chỉ frontend cụ thể
+            proxyReq.setHeader('Origin', 'http://192.168.1.4:5173'); // Địa chỉ frontend cụ thể
+          });
+        },
+      },
+      '/notification/ws': {
+        target: `http://192.168.1.4:8088`,
+        changeOrigin: true,
+        ws: true,
+        secure: false,
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            proxyReq.setHeader('Origin', 'http://192.168.1.4:5173'); // Địa chỉ frontend cụ thể
           });
         },
       }

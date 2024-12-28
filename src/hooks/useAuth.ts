@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authService } from '../services/api/authService';
-import { SignInDto, SignUpDto, PhoneNumberDto, ResetPasswordDto, AuthResponse } from '../types/auth';
+import { SignInDto, SignUpDto, EmailDto, ResetPasswordDto, AuthResponse } from '../types/auth';
 import { User } from '../types/user';
 import { tokenStorage } from '../services/tokenStorage';
 import { ApiError } from '../types/ApiError';
@@ -82,9 +82,9 @@ export const useAuth = () => {
     }
   });
 
-  const sendOtpMutation = useMutation<void, AxiosError<ApiError>, PhoneNumberDto>({
-    mutationFn: async (phoneNumberDto) => {
-      await authService.sendOtp(phoneNumberDto);
+  const sendOtpMutation = useMutation<void, AxiosError<ApiError>, EmailDto>({
+    mutationFn: async (emailDto) => {
+      await authService.sendOtp(emailDto);
     },
     onSuccess: () => {
       handleSuccess('SEND_OTP');
@@ -92,9 +92,9 @@ export const useAuth = () => {
     onError: handleApiError
   });
 
-  const forgotPasswordMutation = useMutation<void, AxiosError<ApiError>, PhoneNumberDto>({
-    mutationFn: async (phoneNumberDto) => {
-      await authService.forgotPassword(phoneNumberDto);
+  const forgotPasswordMutation = useMutation<void, AxiosError<ApiError>, EmailDto>({
+    mutationFn: async (emailDto) => {
+      await authService.forgotPassword(emailDto);
     },
     onSuccess: () => {
       handleSuccess('SEND_OTP');

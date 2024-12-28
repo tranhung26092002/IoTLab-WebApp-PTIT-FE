@@ -34,29 +34,11 @@ const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }
   const handleSendOtp = async () => {
     try {
       const values = await form.validateFields();
-      let { phoneNumber } = values;
+      const { email } = values;
 
-      // Kiểm tra số điện thoại hợp lệ
-      if (/^0[0-9]{9}$/.test(phoneNumber)) {
-        // Thay thế số bắt đầu bằng 0 thành +84
-        phoneNumber = phoneNumber.replace(/^0/, "+84");
-      } else if (!/^\+84[0-9]{9}$/.test(phoneNumber)) {
-        // Số không hợp lệ
-        form.setFields([
-          {
-            name: "phoneNumber",
-            errors: ["Số điện thoại không hợp lệ!"],
-          },
-        ]);
-        return;
-      }
-
-      // Lưu lại giá trị số điện thoại đã chuẩn hóa vào form
-      form.setFieldsValue({ phoneNumber });
-
-      // Gửi OTP
+      // Send OTP
       await sendOtp(
-        { phoneNumber },
+        { email },
         {
           onSuccess: () => {
             setIsOtpModalVisible(true);
@@ -79,9 +61,9 @@ const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }
     }
 
     try {
-      const { username, phoneNumber, password, confirmPassword } = form.getFieldsValue();
+      const { username, email, password, confirmPassword } = form.getFieldsValue();
       await signUp({
-        otpCodeDto: { phoneNumber, otpCode: otpValue },
+        otpCodeDto: { email, otpCode: otpValue },
         username,
         password,
         confirmPassword,
@@ -93,7 +75,6 @@ const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }
           }
         }
       );
-
     } catch {
       notification.error({
         message: "Đăng ký không thành công",
@@ -103,17 +84,17 @@ const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }
   };
 
   const handleResendOtp = async () => {
-    const phoneNumber = form.getFieldValue("phoneNumber");
-    if (!phoneNumber) {
+    const email = form.getFieldValue("email");
+    if (!email) {
       notification.error({
         message: "Lỗi",
-        description: "Không tìm thấy số điện thoại. Vui lòng nhập lại!",
+        description: "Không tìm thấy email. Vui lòng nhập lại!",
       });
       return;
     }
 
     try {
-      await sendOtp({ phoneNumber });
+      await sendOtp({ email });
       notification.success({
         message: "Thành công",
         description: "Mã OTP mới đã được gửi!",
@@ -153,16 +134,22 @@ const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }
         </Form.Item>
 
         <Form.Item
-          label="Số điện thoại"
-          name="phoneNumber"
+          label="Email"
+          name="email"
           rules={[
-            { required: true, message: 'Vui lòng nhập số điện thoại!' },
-            { pattern: /^(\+84|0)[0-9]{9}$/, message: 'Số điện thoại không hợp lệ!' }
+            { required: true, message: 'Vui lòng nhập email!' },
+            { type: 'email', message: 'Email không hợp lệ!' },
+            {
+              pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+              message: 'Email không đúng định dạng!'
+            }
           ]}
         >
           <Input
+            prefix={<UserOutlined className="text-[#86a789]" />}
             className="h-12"
-            autoComplete="tel"
+            autoComplete="email"
+            placeholder="Nhập email của bạn"
           />
         </Form.Item>
 
@@ -247,7 +234,7 @@ const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }
           className="h-12 mb-4"
         />
         <p className="text-gray-500">
-          Mã OTP đã được gửi đến số điện thoại {form.getFieldValue("phoneNumber") || "chưa xác định"}
+          Mã OTP đã được gửi đến email {form.getFieldValue("email") || "chưa xác định"}
         </p>
       </Modal>
     </>

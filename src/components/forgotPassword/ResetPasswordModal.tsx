@@ -6,7 +6,7 @@ interface ResetPasswordModalProps {
     onClose: () => void;
     onSubmit: (values: { otp: string; newPassword: string; confirmNewPassword: string }) => void;
     loading: boolean;
-    phoneNumber: string;
+    email: string;
 }
 
 export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
@@ -14,7 +14,7 @@ export const ResetPasswordModal: React.FC<ResetPasswordModalProps> = ({
     onClose,
     onSubmit,
     loading,
-    phoneNumber
+    email
 }) => {
     const [form] = Form.useForm();
 

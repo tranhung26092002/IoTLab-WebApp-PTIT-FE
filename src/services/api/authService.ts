@@ -1,10 +1,10 @@
-import { SignInDto, SignUpDto, PhoneNumberDto, ResetPasswordDto, AuthResponse } from '../../types/auth';
+import { SignInDto, SignUpDto, EmailDto, ResetPasswordDto, AuthResponse } from '../../types/auth';
 import api from '../axios';
 import { tokenStorage } from '../tokenStorage';
 
 export const authService = {
   // Gửi OTP kiểm tra số điện thoại
-  sendOtp: (phoneNumberDto: PhoneNumberDto) => api.post('user/auth/check-phone-number', phoneNumberDto),
+  sendOtp: (emailDto: EmailDto) => api.post('user/auth/check-email', emailDto),
 
   // Đăng ký người dùng
   signUp: (signUpDto: SignUpDto) => api.post('user/auth/sign-up', signUpDto),
@@ -48,7 +48,7 @@ export const authService = {
   },
 
   // Quên mật khẩu và gửi OTP
-  forgotPassword: (phoneNumberDto: PhoneNumberDto) => api.post('user/auth/forgot-password', phoneNumberDto),
+  forgotPassword: (emailDto: EmailDto) => api.post('user/auth/forgot-password', emailDto),
 
   // Đặt lại mật khẩu
   resetPassword: (resetPasswordDto: ResetPasswordDto) => api.post('user/auth/reset-password', resetPasswordDto),

@@ -5,7 +5,7 @@ import { UserOutlined } from '@ant-design/icons';
 interface ForgotPasswordModalProps {
     visible: boolean;
     onClose: () => void;
-    onSuccess: (phone: string) => void;
+    onSuccess: (email: string) => void;
     loading: boolean;
 }
 
@@ -19,14 +19,8 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
 
     const handleSubmit = async () => {
         try {
-            const values = await form.validateFields();
-            let { phoneNumber } = values;
-
-            if (/^0[0-9]{9}$/.test(phoneNumber)) {
-                phoneNumber = phoneNumber.replace(/^0/, "+84");
-            }
-
-            await onSuccess(phoneNumber);
+            const { email } = await form.validateFields();
+            await onSuccess(email);
             form.resetFields();
         } catch (error) {
             console.error('Form validation error:', error);
@@ -42,16 +36,20 @@ export const ForgotPasswordModal: React.FC<ForgotPasswordModalProps> = ({
         >
             <Form form={form} layout="vertical" onFinish={handleSubmit}>
                 <Form.Item
-                    label="Số điện thoại"
-                    name="phoneNumber"
+                    label="Email"
+                    name="email"
                     rules={[
-                        { required: true, message: 'Vui lòng nhập số điện thoại!' },
-                        { pattern: /^(\+84|0)[0-9]{9}$/, message: 'Số điện thoại không hợp lệ!' }
+                        { required: true, message: 'Vui lòng nhập email!' },
+                        { type: 'email', message: 'Email không hợp lệ!' },
+                        {
+                            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                            message: 'Email không đúng định dạng!'
+                        }
                     ]}
                 >
                     <Input
                         prefix={<UserOutlined />}
-                        placeholder="Nhập số điện thoại"
+                        placeholder="Nhập email của bạn"
                     />
                 </Form.Item>
 

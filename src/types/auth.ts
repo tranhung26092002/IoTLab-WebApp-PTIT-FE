@@ -1,12 +1,12 @@
 import { User } from "./user";
 
 export interface SignInDto {
-    phoneNumber: string;
+    email: string;
     password: string;
 }
 
 export interface OtpCodeDto {
-    phoneNumber: string;
+    email: string;
     otpCode: string;
 }
 
@@ -17,8 +17,8 @@ export interface SignUpDto {
     confirmPassword: string;
 }
 
-export interface PhoneNumberDto {
-    phoneNumber: string;
+export interface EmailDto {
+    email: string;
 }
 
 export interface ResetPasswordDto {

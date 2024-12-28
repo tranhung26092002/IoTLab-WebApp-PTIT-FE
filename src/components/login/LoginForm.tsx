@@ -15,14 +15,7 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
   const [form] = Form.useForm();
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState('');
-
-  const formatPhoneNumber = (phone: string) => {
-    if (/^0[0-9]{9}$/.test(phone)) {
-      return phone.replace(/^0/, "+84");
-    }
-    return phone;
-  };
+  const [email, setEmail] = useState('');
 
   const [rememberMe, setRememberMe] = useState(() =>
     localStorage.getItem('rememberMe') === 'true'
@@ -31,30 +24,10 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const { password } = values;
-      let { phoneNumber } = values;
-
-      phoneNumber = formatPhoneNumber(phoneNumber);
-
-      // Kiểm tra số điện thoại hợp lệ
-      if (/^0[0-9]{9}$/.test(phoneNumber)) {
-        // Thay thế số bắt đầu bằng 0 thành +84
-        phoneNumber = phoneNumber.replace(/^0/, "+84");
-      } else if (!/^\+84[0-9]{9}$/.test(phoneNumber)) {
-        // Số không hợp lệ
-        form.setFields([
-          {
-            name: "phoneNumber",
-            errors: ["Số điện thoại không hợp lệ!"],
-          },
-        ]);
-        return;
-      }
-
-      form.setFieldsValue({ phoneNumber });
+      const { email, password } = values;
 
       await signIn(
-        { phoneNumber, password },
+        { email, password },
         {
           onSuccess: () => {
             navigate('/');
@@ -65,10 +38,10 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
       // Handle remember me
       if (rememberMe) {
         localStorage.setItem('rememberMe', 'true');
-        localStorage.setItem('phoneNumber', phoneNumber);
+        localStorage.setItem('email', email);
       } else {
         localStorage.removeItem('rememberMe');
-        localStorage.removeItem('phoneNumber');
+        localStorage.removeItem('email');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -80,11 +53,10 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
     setShowForgotPassword(true);
   };
 
-  const handleForgotPassword = async (phone: string) => {
+  const handleForgotPassword = async (email: string) => {
     try {
-      const formattedPhone = formatPhoneNumber(phone);
-      await forgotPassword({ phoneNumber: formattedPhone });
-      setPhoneNumber(formattedPhone);
+      await forgotPassword({ email });
+      setEmail(email);
       setShowForgotPassword(false);
       setShowResetPassword(true);
     } catch (error) {
@@ -120,17 +92,22 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
 
         <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
           <Form.Item
-            label="Số điện thoại"
-            name="phoneNumber"
+            label="Email"
+            name="email"
             rules={[
-              { required: true, message: 'Vui lòng nhập số điện thoại!' },
-              { pattern: /^(\+84|0)[0-9]{9}$/, message: 'Số điện thoại không hợp lệ!' }
+              { required: true, message: 'Vui lòng nhập email!' },
+              { type: 'email', message: 'Email không hợp lệ!' },
+              {
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: 'Email không đúng định dạng!'
+              }
             ]}
           >
             <Input
               prefix={<UserOutlined className="text-[#86a789]" />}
               className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
-              autoComplete="tel"
+              autoComplete="email"
+              placeholder="Nhập email của bạn"
             />
           </Form.Item>
         </motion.div>
@@ -198,7 +175,7 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
         onClose={() => setShowResetPassword(false)}
         onSubmit={handleResetPassword}
         loading={isResetPasswordLoading}
-        phoneNumber={phoneNumber}
+        email={email} // Update prop name
       />
     </>
   );

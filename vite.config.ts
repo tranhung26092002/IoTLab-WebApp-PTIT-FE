@@ -5,27 +5,27 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: "0.0.0.0",
-    port: 5173,
+    port: 3000,
     proxy: {
       '/mqtt/ws': {
-        target: `http://localhost:8088`,
+        target: `http://14.225.255.177:8088`,
         changeOrigin: true,
         ws: true,
         secure: false,
         configure: (proxy) => {
           proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('Origin', 'http://localhost:5173'); // Địa chỉ frontend cụ thể
+            proxyReq.setHeader('Origin', 'http://14.225.255.177:3000'); // Địa chỉ frontend cụ thể
           });
         },
       },
       '/notification/ws': {
-        target: `http://localhost:8088`,
+        target: `http://14.225.255.177:8088`,
         changeOrigin: true,
         ws: true,
         secure: false,
         configure: (proxy) => {
           proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('Origin', 'http://localhost:5173'); // Địa chỉ frontend cụ thể
+            proxyReq.setHeader('Origin', 'http://14.225.255.177:3000'); // Địa chỉ frontend cụ thể
           });
         },
       }

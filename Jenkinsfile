@@ -11,7 +11,7 @@ pipeline {
             steps {
                 script {
                     // Cấp quyền cho thư mục node_modules và workspace
-                    sh 'sudo chmod -R 777 /var/lib/jenkins/workspace/Front-end-do_an'
+                    sh 'sudo chmod -R 777 /var/lib/jenkins/workspace/Front-end'
                 }
             }
         }

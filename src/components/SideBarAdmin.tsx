@@ -82,12 +82,12 @@ const SidebarAdmin: React.FC = () => {
       label: "Dashboard",
       path: "/admin/dashboard",
     },
-    {
-      key: "/admin/task-manager",
-      icon: <OrderedListOutlined />,
-      label: "Task Management",
-      path: "/admin/task-manager",
-    },
+    // {
+    //   key: "/admin/task-manager",
+    //   icon: <OrderedListOutlined />,
+    //   label: "Task Management",
+    //   path: "/admin/task-manager",
+    // },
     {
       key: "/",
       icon: <HomeOutlined />,

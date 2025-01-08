@@ -13,8 +13,8 @@ RUN npm ci
 # Sao chép toàn bộ mã nguồn vào container
 COPY . .
 
-# Mở cổng 5173 (dùng cho Vite dev server)
-EXPOSE 5173
+# Mở cổng 3000 (dùng cho Vite dev server)
+EXPOSE 3000
 
 # Chạy ứng dụng React/Vite ở chế độ development
 CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]

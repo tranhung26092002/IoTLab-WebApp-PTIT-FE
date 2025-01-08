@@ -27,32 +27,48 @@ const CustomHeader: React.FC = () => {
     <Space
       direction="horizontal"
       align="center"
-      style={{ width: "100%", justifyContent: "space-between" }}
+      style={{
+        width: "100%",
+        justifyContent: "space-between",
+        padding: "16px 32px"
+      }}
     >
-      <Typography.Title level={3} className="!m-0 forest--dark--color">
-        Welcome to IoT Lab - Học viện Công nghệ Bưu chính Viễn thông
+      {/* Left section - Title */}
+      <Typography.Title
+        level={1}
+        className="!m-0 forest--dark--color"
+        style={{
+          fontSize: '36px',
+          fontWeight: 700,
+          textShadow: '0 2px 4px rgba(0,0,0,0.15)',
+        }}
+      >
+        Welcome to IoT Lab - PTIT
       </Typography.Title>
 
-      <Space align="center" size="large">
+      {/* Right section - Search & Controls */}
+      <Space align="center" size={24}>
         <SearchComponent onSearch={onSearch} />
-        <Space align="center" size="middle">
-          <MessageDropdown />
-          <Badge count={unreadNotifications.length}>
-            <NotificationDropdown
-              notifications={notifications}
-              isLoading={isNotificationLoading}
-            />
-          </Badge>
-          <motion.div whileHover={{ scale: 1.05 }}>
-            <Avatar
-              size="large"
-              icon={isAvatarLoading ? <Spin /> : <UserOutlined />}
-              src={!isAvatarLoading ? imageUrl : undefined}
-              className="cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => setIsModalOpen(true)}
-            />
-          </motion.div>
-        </Space>
+        <MessageDropdown />
+        <Badge
+          count={unreadNotifications.length}
+          size="default"  // Changed from "large" to "default"
+          style={{ fontSize: '16px' }}
+        >
+          <NotificationDropdown
+            notifications={notifications}
+            isLoading={isNotificationLoading}
+          />
+        </Badge>
+        <motion.div whileHover={{ scale: 1.05 }}>
+          <Avatar
+            size={48}
+            icon={isAvatarLoading ? <Spin /> : <UserOutlined style={{ fontSize: '24px' }} />}
+            src={!isAvatarLoading ? imageUrl : undefined}
+            className="cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => setIsModalOpen(true)}
+          />
+        </motion.div>
       </Space>
 
       <Profile isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

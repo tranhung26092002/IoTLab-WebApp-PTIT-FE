@@ -49,7 +49,7 @@ const AppLayoutAdmin: React.FC<{ children: React.ReactNode }> = ({ children }) =
       >
         <motion.div
           initial={false}
-          animate={{ width: collapsed ? 80 : 200 }}
+          animate={{ width: collapsed ? 80 : 250 }}  // Changed from 200 to 250
           transition={{ duration: 0.2 }}
         >
           <SidebarAdmin />

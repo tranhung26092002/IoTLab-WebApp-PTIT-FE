@@ -118,10 +118,10 @@ const HardDevicePage: React.FC = () => {
     return (
         <AppLayout>
             <div className={`min-h-screen bg-gradient-to-br ${COLORS.background}`}>
-                <div className="container mx-auto px-4 py-8">
+                <div className="container mx-auto px-4 py-6">
                     {/* Header Section with Title and Filters */}
                     <motion.div
-                        className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8"
+                        className=" p-6 mb-1"
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.5 }}
@@ -146,8 +146,7 @@ const HardDevicePage: React.FC = () => {
 
                     {/* Main Content Area */}
                     <motion.div
-                        className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg"
-                        initial={{ opacity: 0 }}
+                        className="bg-[#dde3d8] rounded-xl shadow-xl border-2 border-[#bbc4b6]"
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.5, delay: 0.3 }}
                     >
@@ -158,7 +157,7 @@ const HardDevicePage: React.FC = () => {
                             items={[
                                 {
                                     key: 'all',
-                                    label: 'All Devices',
+                                    label: <span className="text-lg font-semibold">All Devices</span>,
                                     children: (
                                         <div className="py-6">
                                             <HardDeviceGrid
@@ -181,7 +180,7 @@ const HardDevicePage: React.FC = () => {
                                 {
                                     key: 'borrowed',
                                     label: (
-                                        <span className="flex items-center gap-2">
+                                        <span className="flex items-center gap-2 text-lg font-semibold">
                                             Borrowed Devices
                                             <span className={`px-2 py-0.5 text-sm bg-[${COLORS.primary}]/10 text-[${COLORS.primary}] rounded-full`}>
                                                 {borrowedDevicesData?.metadata?.total || 0}
@@ -210,7 +209,7 @@ const HardDevicePage: React.FC = () => {
                                 {
                                     key: 'history',
                                     label: (
-                                        <span className="flex items-center gap-2">
+                                        <span className="flex items-center gap-2 text-lg font-semibold">
                                             <HistoryOutlined />
                                             Lending History
                                         </span>

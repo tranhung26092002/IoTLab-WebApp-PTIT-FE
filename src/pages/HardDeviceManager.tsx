@@ -113,10 +113,10 @@ const HardDeviceManager: React.FC = () => {
   return (
     <AppLayoutAdmin>
       <div className={`min-h-screen bg-gradient-to-br ${COLORS.background}`}>
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-6">
           {/* Header Section with Title and Filters */}
           <motion.div
-            className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8"
+            className=" p-6 mb-1"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
@@ -150,7 +150,7 @@ const HardDeviceManager: React.FC = () => {
 
           {/* Main Content Area */}
           <motion.div
-            className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg"
+            className="bg-[#dde3d8] rounded-xl shadow-xl border-2 border-[#bbc4b6]"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -162,7 +162,7 @@ const HardDeviceManager: React.FC = () => {
               items={[
                 {
                   key: 'all',
-                  label: 'All Devices',
+                  label: <span className="text-lg font-semibold">All Devices</span>,
                   children: (
                     <div className="py-6">
                       <HardDeviceGridAdmin
@@ -185,7 +185,7 @@ const HardDeviceManager: React.FC = () => {
                 {
                   key: 'history',
                   label: (
-                    <span className="flex items-center gap-2">
+                    <span className="flex items-center gap-2 text-lg font-semibold">
                       <HistoryOutlined />
                       Lending History
                     </span>

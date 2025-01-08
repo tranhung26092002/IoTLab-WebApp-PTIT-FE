@@ -1,37 +1,41 @@
-import React from 'react'
-import AppLayoutAdmin from '../components/AppLayoutAdmin'
-import { Content } from 'antd/es/layout/layout'
-import { motion } from 'framer-motion'
-import Title from 'antd/es/typography/Title'
-import { Card, Space } from 'antd'
+import React from 'react';
+import SideContent from '../components/home/SideContent';
+import MainContent from '../components/home/MainContent';
+import { Flex, Col, Row } from 'antd';
+import VideoSection from '../components/home/VideoSection';
+import ImageCarousel from '../components/home/ImageCarousel';
+import LabInfo from '../components/home/LabInfo';
+import AppLayoutAdmin from '../components/AppLayoutAdmin';
 
 const Admin: React.FC = () => {
-    return (
-        <AppLayoutAdmin>
-            <Content className="p-6 bg-gray-100">
-                <Space direction="vertical" size="large" className="w-full">
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                    >
-                        <Card className="hover:shadow-lg transition-shadow">
-                            <Title level={5}>Total Users</Title>
-                            <p className="text-2xl font-bold">1,234</p>
-                        </Card>
-                        <Card className="hover:shadow-lg transition-shadow">
-                            <Title level={5}>Active Tasks</Title>
-                            <p className="text-2xl font-bold">56</p>
-                        </Card>
-                        <Card className="hover:shadow-lg transition-shadow">
-                            <Title level={5}>Total Courses</Title>
-                            <p className="text-2xl font-bold">89</p>
-                        </Card>
-                    </motion.div>
-                </Space>
-            </Content>
-        </AppLayoutAdmin>
-    )
-}
+  return (
+    <AppLayoutAdmin>
+      <div className="p-6 min-h-screen bg-gradient-to-br from-[#d2e3c8] via-[#86a789] to-[#4f6f52]">
+        <Row gutter={[24, 24]}>
+          {/* Video and Image Carousel Section */}
+          <Col span={24}>
+            <Flex gap={24}>
+              <VideoSection />
+              <ImageCarousel />
+            </Flex>
+          </Col>
 
-export default Admin
+          {/* Lab Info and Side Content */}
+          <Col span={24}>
+            <Flex gap={24}>
+              <LabInfo />
+              <SideContent />
+            </Flex>
+          </Col>
+
+          {/* Lab Info Section */}
+          <Col span={24}>
+            <MainContent />
+          </Col>
+        </Row>
+      </div>
+    </AppLayoutAdmin>
+  );
+};
+
+export default Admin;

@@ -5,22 +5,23 @@ import { DashboardOutlined } from '@ant-design/icons';
 import AppLayoutAdmin from '../components/AppLayoutAdmin';
 import { useDashboard } from '../hooks/useDashboard';
 import { DeviceCardDashboard } from '../components/dashboard/DeviceCardDashboard';
+import AppLayout from '../components/AppLayout';
 
 const Dashboard: React.FC = () => {
     const { devices, isLoading } = useDashboard();
 
     if (isLoading) {
         return (
-            <AppLayoutAdmin>
+            <AppLayout>
                 <div className="flex justify-center items-center h-[80vh]">
                     <Spin size="large" />
                 </div>
-            </AppLayoutAdmin>
+            </AppLayout>
         );
     }
 
     return (
-        <AppLayoutAdmin>
+        <AppLayout>
             <div className="p-6 space-y-8 bg-gradient-to-br from-[#d2e3c8] via-[#86a789] to-[#4f6f52] min-h-screen">
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
@@ -50,7 +51,7 @@ const Dashboard: React.FC = () => {
                     ))}
                 </motion.div>
             </div>
-        </AppLayoutAdmin>
+        </AppLayout>
     );
 };
 

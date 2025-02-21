@@ -1,15 +1,11 @@
 import React from "react";
 import { Menu, Image } from "antd";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from '../hooks/useAuth';
 import logo from '../assets/login/logo-ptit.png'
 import {
-  UserOutlined,
-  LoginOutlined,
-  LogoutOutlined,
-  OrderedListOutlined,
   CarryOutOutlined,
   SettingOutlined,
+  DashboardOutlined,
   HomeOutlined,
   ContactsOutlined,
   DatabaseOutlined,
@@ -22,13 +18,12 @@ type MenuItem = {
   icon: React.ReactNode;
   label: string;
   path?: string;
-  onClick?: () => void;  // onClick là tùy chọn
+  onClick?: () => void;
 };
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, signOut } = useAuth();
 
   const handleMenuClick = (path: string) => {
     NProgress.start();
@@ -38,94 +33,62 @@ const Sidebar: React.FC = () => {
     }, 300);
   };
 
-  const handleLogout = async () => {
-    NProgress.start(); // Bắt đầu thanh tiến trình
-
-    try {
-      await signOut(); // Thực hiện đăng xuất
-      NProgress.done(); // Dừng thanh tiến trình khi đăng xuất thành công
-      // window.location.href = '/login';
-    } catch (error) {
-      NProgress.done(); // Dừng thanh tiến trình khi có lỗi
-      console.error('Logout failed:', error);
-    }
-  };
-
   const getBaseMenuItems = (): MenuItem[] => [
     {
       key: "/",
       icon: <HomeOutlined />,
-      label: "Home",
+      label: "Trang chủ",
       path: "/",
     },
-    {
-      key: "/about",
-      icon: <UserOutlined />,
-      label: "About",
-      path: "/about",
-    },
-    {
-      key: "/contact",
-      icon: <ContactsOutlined />,
-      label: "Contact",
-      path: "/contact",
-    },
-  ];
-
-  const getAuthenticatedMenuItems = (): MenuItem[] => [
+    // {
+    //   key: "/about",
+    //   icon: <UserOutlined />,
+    //   label: "Thông tin",
+    //   path: "/about",
+    // },
     {
       key: "/practice",
       icon: <CarryOutOutlined />,
-      label: "Practices",
+      label: "Thực hành",
       path: "/practice",
     },
     {
       key: "/device",
       icon: <DatabaseOutlined />,
-      label: "Device",
+      label: "Quản lí thiết bị",
       path: "/device",
     },
     {
-      key: "/task",
-      icon: <OrderedListOutlined />,
-      label: "Tasks",
-      path: "/task",
+      key: "/dashboard",
+      icon: <DashboardOutlined />,
+      label: "Dashboard",
+      path: "/dashboard",
+    },
+    {
+      key: "/report",
+      icon: <ContactsOutlined />,
+      label: "Báo cáo",
+      path: "/report",
+    },
+    {
+      key: "/contact",
+      icon: <ContactsOutlined />,
+      label: "Liên lạc",
+      path: "/contact",
     },
     {
       key: "/setting",
       icon: <SettingOutlined />,
-      label: "Setting",
+      label: "Cài đặt",
       path: "/setting",
     },
-    {
-      key: "/admin",
-      icon: <UserOutlined />,
-      label: "Admin",
-      path: "/admin",
-    },
-    {
-      key: "logout",
-      icon: <LogoutOutlined />,
-      label: "Logout",
-      onClick: handleLogout,
-    },
   ];
 
-  const getLoginMenuItem = () => ({
-    key: "/login",
-    icon: <LoginOutlined />,
-    label: "Login",
-    path: "/login",
-  });
-
-  const menuItems: MenuItem[] = [
-    ...getBaseMenuItems(),
-    ...(isAuthenticated ? getAuthenticatedMenuItems() : [getLoginMenuItem()]),
-  ];
+  const menuItems = getBaseMenuItems();
 
   return (
-    <>
-      <div className="flex items-center justify-center">
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-center py-4">
         <div className="logo w-16 h-16">
           <Image src={logo} alt="Logo" />
         </div>
@@ -134,7 +97,7 @@ const Sidebar: React.FC = () => {
       <Menu
         mode="inline"
         selectedKeys={[location.pathname]}
-        className="menu-bar"
+        className="menu-bar flex-1 overflow-y-auto"
         items={menuItems.map(item => ({
           key: item.key,
           icon: item.icon,
@@ -146,11 +109,11 @@ const Sidebar: React.FC = () => {
           if (item?.path) {
             handleMenuClick(item.path);
           } else if (item?.onClick) {
-            item.onClick();  // Gọi onClick nếu tồn tại
+            item.onClick();
           }
         }}
       />
-    </>
+    </div>
   );
 };
 

@@ -19,7 +19,7 @@ export const DeviceCardDashboard: React.FC<DeviceCardProps> = ({ device }) => {
                 <Button 
                     type="primary" 
                     icon={<ArrowRightOutlined />}
-                    onClick={() => navigate(`/admin/dashboard/${device.id}`)}
+                    onClick={() => navigate(`/dashboard/${device.id}`)}
                     className="bg-[#4f6f52] hover:bg-[#2c4a2d] mr-2"
                 >
                     View Details

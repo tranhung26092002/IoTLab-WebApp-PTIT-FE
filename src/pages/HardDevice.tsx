@@ -127,8 +127,7 @@ const HardDevicePage: React.FC = () => {
                         transition={{ duration: 0.5 }}
                     >
                         <Title level={2} className={`text-[${COLORS.primary}] flex items-center gap-3 mb-6`}>
-                            <DatabaseOutlined className="text-2xl" />
-                            Hardware Devices
+                            <DatabaseOutlined className="text-2xl" /> Thiết bị 
                         </Title>
 
                         {/* Filters Section */}

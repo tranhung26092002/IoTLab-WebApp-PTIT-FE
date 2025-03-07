@@ -48,16 +48,6 @@ export interface CreateBorrowRequest {
     notes?: string;
 }
 
-export interface PageResponse<T> {
-    data: T[];
-    metadata: {
-        page: number;
-        size: number;
-        total: number;
-        totalPage: number;
-    };
-}
-
 export interface BorrowDeviceRequest {
     deviceId: number;
     note: string;

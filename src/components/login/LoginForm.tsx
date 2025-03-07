@@ -16,7 +16,7 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
   const [email, setEmail] = useState('');
-
+  // const [userName, setUserName] = useState('');
   const [rememberMe, setRememberMe] = useState(() =>
     localStorage.getItem('rememberMe') === 'true'
   );
@@ -24,10 +24,10 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const { email, password } = values;
+      const { userName, password } = values;
 
       await signIn(
-        { email, password },
+        { userName, password },
         {
           onSuccess: () => {
             navigate('/');
@@ -38,10 +38,10 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
       // Handle remember me
       if (rememberMe) {
         localStorage.setItem('rememberMe', 'true');
-        localStorage.setItem('email', email);
+        localStorage.setItem('userName', userName);
       } else {
         localStorage.removeItem('rememberMe');
-        localStorage.removeItem('email');
+        localStorage.removeItem('userName');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -92,22 +92,22 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
 
         <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
           <Form.Item
-            label="Email"
-            name="email"
+            label="User Name"
+            name="userName"
             rules={[
-              { required: true, message: 'Vui lòng nhập email!' },
-              { type: 'email', message: 'Email không hợp lệ!' },
+              { required: true, message: 'Vui lòng nhập User Name!' },
+              { type: 'string', message: 'User Name không hợp lệ!' },
               {
-                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-                message: 'Email không đúng định dạng!'
+                pattern: /^[A-Z0-9]+$/,
+                message: 'User Name không đúng định dạng!'
               }
             ]}
           >
             <Input
               prefix={<UserOutlined className="text-[#86a789]" />}
               className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
-              autoComplete="email"
-              placeholder="Nhập email của bạn"
+              autoComplete="userName"
+              placeholder="Nhập userName của bạn"
             />
           </Form.Item>
         </motion.div>

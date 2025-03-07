@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Card, Spin, Tag, Typography, Divider, List, Tooltip, Button, Modal, Form, Upload, Input, Select, message, Popconfirm, Empty } from 'antd';
+import { Card, Spin, Tag, Typography, List, Tooltip, Button, Modal, Form, Upload, Input, Select, message, Popconfirm, Empty } from 'antd';
 import { useAvatar } from '../hooks/useAvatar';
 import { usePractice } from '../hooks/usePractice';
 import { Practice, PracticeGuide, PracticeVideo } from '../types/practice';
@@ -246,56 +246,62 @@ export const PracticeDetailManager: React.FC = () => {
                     <div className="col-span-6">
                         <Card className="mb-6">
                             {/* Header Image */}
-                            <div className="relative h-64 mb-4 overflow-hidden rounded-lg">
-                                {imageLoading ? (
-                                    <Spin className="absolute inset-0 flex items-center justify-center" />
-                                ) : (
-                                    <>
+                            <div className="flex gap-6">
+                                {/* Left side - Image */}
+                                <div className="w-3/4 relative h-64 overflow-hidden rounded-lg">
+                                    {imageLoading ? (
+                                        <Spin className="absolute inset-0 flex items-center justify-center" />
+                                    ) : (
                                         <img
                                             src={imageUrl}
                                             alt={practice?.title}
                                             className="w-full h-full object-contain"
                                         />
-                                        <Tag
-                                            color={practice?.status === 'PUBLISHED' ? 'green' : 'gold'}
-                                            className="absolute top-4 left-4"
-                                        >
-                                            {practice?.status}
-                                        </Tag>
-                                        <Button
-                                            type="primary"
-                                            icon={<EditOutlined />}
-                                            onClick={() => setIsEditModalVisible(true)}
-                                            className="absolute top-4 right-4 bg-[#4f6f52] hover:bg-[#2c4a2d]"
-                                        >
-                                            Update practice
-                                        </Button>
-                                    </>
-                                )}
+                                    )}
+                                </div>
+
+                                {/* Right side - Status and Update button */}
+                                <div className="w-1/5 flex flex-col gap-3">
+                                    <Tag
+                                        color={practice?.status === 'PUBLISHED' ? 'green' : 'gold'}
+                                        className="text-sm px-2 py-1 w-fit"
+                                    >
+                                        {practice?.status}
+                                    </Tag>
+                                    <Button
+                                        type="primary"
+                                        icon={<EditOutlined />}
+                                        onClick={() => setIsEditModalVisible(true)}
+                                        className="bg-[#4f6f52] hover:bg-[#2c4a2d]"
+                                        size="middle"
+                                    >
+                                        Update
+                                    </Button>
+                                </div>
                             </div>
 
                             {/* Title and Description */}
                             <Title level={2} className="text-[#2c4a2d] mb-4">
                                 {practice?.title}
                             </Title>
-                            <Paragraph className="text-gray-600 text-lg">{practice?.description}</Paragraph>
+                            <Paragraph className="text-gray-600 text-lg">
+                                {practice?.description}
+                            </Paragraph>
 
                             {/* Files Section */}
                             <div className="mt-6">
-                                <Divider orientation="left">
-                                    <div className="flex items-center gap-2">
-                                        <Title level={4}>Documents</Title>
-                                        <Tag color="blue">{practice?.practiceFiles?.length || 0} Files</Tag>
-                                        <Button
-                                            type="primary"
-                                            icon={<PlusOutlined />}
-                                            onClick={() => setIsAddFileModalVisible(true)}
-                                            className="ml-auto bg-[#4f6f52] hover:bg-[#2c4a2d]"
-                                        >
-                                            Add file
-                                        </Button>
-                                    </div>
-                                </Divider>
+                                <div className="flex items-center gap-2">
+                                    <Title level={4}>Documents</Title>
+                                    <Tag color="blue">{practice?.practiceFiles?.length || 0} Files</Tag>
+                                    <Button
+                                        type="primary"
+                                        icon={<PlusOutlined />}
+                                        onClick={() => setIsAddFileModalVisible(true)}
+                                        className="ml-auto bg-[#4f6f52] hover:bg-[#2c4a2d]"
+                                    >
+                                        Add file
+                                    </Button>
+                                </div>
 
                                 {practice?.practiceFiles && practice.practiceFiles.length > 0 ? (
                                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -513,6 +519,7 @@ export const PracticeDetailManager: React.FC = () => {
                     </div>
                 </div>
             </div>
+            
             <Modal
                 title="Cập nhật bài thực hành"
                 open={isEditModalVisible}
@@ -576,6 +583,7 @@ export const PracticeDetailManager: React.FC = () => {
                     </Form.Item>
                 </Form>
             </Modal>
+
             <Modal
                 title="Thêm file"
                 open={isAddFileModalVisible}

@@ -1,6 +1,7 @@
 // services/deviceService.ts
 import api from '../axios';
-import { Device, BorrowRecord, DeviceFilterParams, PageResponse, BorrowDeviceRequest } from '../../types/hardDevice';
+import { PageResponse } from '../../types/PageResponse';
+import { Device, BorrowRecord, DeviceFilterParams, BorrowDeviceRequest } from '../../types/hardDevice';
 
 export const deviceService = {
   // Device CRUD operations

@@ -1,0 +1,58 @@
+import React from 'react';
+import { Row, Col } from 'antd';
+import StatisticCard from './StatisticCard';
+import { CheckCircleOutlined, CloseCircleOutlined, TeamOutlined, ClockCircleOutlined } from '@ant-design/icons';
+import { Attendance } from '../../types/user';
+
+interface AttendanceStatsProps {
+  attendances: Attendance[];
+}
+
+const AttendanceStats: React.FC<AttendanceStatsProps> = ({ attendances }) => {
+  const totalStudents = attendances.length;
+  
+  // Since the Attendance interface doesn't have a status field, 
+  // we'll consider all records as present for now
+  const presentStudents = totalStudents;
+  const absentStudents = 0;
+  const attendanceRate = totalStudents > 0 ? 100 : 0;
+
+  return (
+    <Row gutter={[16, 16]} className="mb-6">
+      <Col xs={24} sm={12} md={6}>
+        <StatisticCard 
+          title="Total Students"
+          value={totalStudents}
+          icon={<TeamOutlined />}
+          color="blue"
+        />
+      </Col>
+      <Col xs={24} sm={12} md={6}>
+        <StatisticCard 
+          title="Present"
+          value={presentStudents}
+          icon={<CheckCircleOutlined />}
+          color="green"
+        />
+      </Col>
+      <Col xs={24} sm={12} md={6}>
+        <StatisticCard 
+          title="Absent"
+          value={absentStudents}
+          icon={<CloseCircleOutlined />}
+          color="red"
+        />
+      </Col>
+      <Col xs={24} sm={12} md={6}>
+        <StatisticCard 
+          title="Attendance Rate"
+          value={`${attendanceRate}%`}
+          icon={<ClockCircleOutlined />}
+          color="purple"
+        />
+      </Col>
+    </Row>
+  );
+};
+
+export default AttendanceStats;

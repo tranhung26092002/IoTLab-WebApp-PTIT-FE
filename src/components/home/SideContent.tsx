@@ -68,7 +68,7 @@ const SideContent: React.FC = () => {
         </div>
       </Card>
 
-      <Card className="bg-white/90 backdrop-blur">
+      {/* <Card className="bg-white/90 backdrop-blur">
         <Title level={4} className="text-[#4f6f52]">
           Quick Links
         </Title>
@@ -88,7 +88,7 @@ const SideContent: React.FC = () => {
             </motion.div>
           ))}
         </div>
-      </Card>
+      </Card> */}
     </motion.div>
   );
 };

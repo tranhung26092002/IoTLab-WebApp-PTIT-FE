@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Pagination, Spin, Typography } from 'antd';
+import { Button, Pagination, Spin, Typography } from 'antd';
 import { motion } from 'framer-motion';
-import { ExperimentOutlined } from '@ant-design/icons';
+import { ExperimentOutlined, PlusOutlined } from '@ant-design/icons';
 import { usePractice } from '../hooks/usePractice';
-import { PracticeStatus } from '../types/practice';
+import { Practice, PracticeStatus } from '../types/practice';
 import AppLayoutAdmin from '../components/AppLayoutAdmin';
 import PracticeFiltersAdmin from '../components/practice/PracticeFiltersAdmin';
 import PracticeCardAdmin from '../components/practice/PracticeCardAdmin';
+import CreatePracticeModal from '../components/practice/CreatePracticeModal';
 
 const PracticeManager: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,9 +15,18 @@ const PracticeManager: React.FC = () => {
   const [searchTitle, setSearchTitle] = useState('');
   const [status, setStatus] = useState<PracticeStatus | 'ALL'>('ALL');
   const [sort, setSort] = useState<'newest' | 'oldest'>('newest');
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { practices, isLoading, createPractice, isCreating } = usePractice(currentPage - 1, pageSize);
 
-  const { practices, isLoading } = usePractice(currentPage - 1, pageSize);
-
+  const handleCreatePractice = async (practice: Partial<Practice>, file?: File) => {
+    try {
+      await createPractice({ practice, file });
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error('Failed to create practice:', error);
+    }
+  };
+  
   const handlePageChange = (page: number, size: number) => {
     setCurrentPage(page);
     setPageSize(size);
@@ -67,6 +77,15 @@ const PracticeManager: React.FC = () => {
           <Typography.Title level={2} className="forest--dark--color flex items-center gap-2">
             <ExperimentOutlined /> Practice Manager
           </Typography.Title>
+          
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => setIsCreateModalOpen(true)}
+            className="bg-[var(--text-primary)] hover:bg-[var(--text-secondary)]"
+          >
+            Create Practice
+          </Button>
         </motion.div>
 
         <PracticeFiltersAdmin
@@ -112,6 +131,13 @@ const PracticeManager: React.FC = () => {
           </div>
         )}
       </div>
+
+      <CreatePracticeModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSubmit={handleCreatePractice}
+          isLoading={isCreating}
+      />
     </AppLayoutAdmin>
   );
 };

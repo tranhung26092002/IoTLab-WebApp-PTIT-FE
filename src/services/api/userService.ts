@@ -1,12 +1,20 @@
-import { PageResponse, User, ApiResponse, ChangePasswordDto } from '../../types/user';
+import { Attendance, ChangePasswordDto, User } from '../../types/user';
 import api from '../axios';
 import { tokenStorage } from '../tokenStorage';
+import { PageResponse } from '../../types/PageResponse';
+import { ApiResponse } from '../../types/ApiResponse';
+import { Instructor, Student } from '../../types/report';
 
 export const userService = {
     getUsers: (page = 0, size = 10) =>
         api.get<PageResponse<User>>('user/users', {
             params: { page, size }
         }),
+
+    // get all attendances
+    getAttendances: () => api.get<PageResponse<Attendance>>('user/users/attendances'),
+
+    getInstructors: () => api.get<PageResponse<Instructor>>('user/users/instructors'),
 
     getMe: () => {
         const accessToken = tokenStorage.getAccessToken();
@@ -22,8 +30,13 @@ export const userService = {
     },
 
     getUser: (id: number) => api.get<User>(`user/users/${id}`),
+
+    getUserByUserName: (userName: string) => api.get<Student>(`user/users/username/${userName}`),
+
     createUser: (data: Partial<User>) => api.post<User>('user/users', data),
+
     updateUser: (id: number, data: Partial<User>) => api.put<User>(`user/users/update/${id}`, data),
+    
     updateMe: (formData: FormData) => {
         // Validate if formData has at least one required field
         if (!formData.has('user') && !formData.has('file')) {

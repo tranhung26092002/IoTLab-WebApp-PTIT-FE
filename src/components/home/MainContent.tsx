@@ -42,27 +42,6 @@ const MainContent: React.FC = () => {
           </Col>
         ))}
       </Row>
-
-      <Card className="bg-white/90 backdrop-blur">
-        <Title level={3} className="text-[#4f6f52]">Latest Projects</Title>
-        <div className="space-y-4">
-          {[
-            "Smart Agriculture Monitoring",
-            "Industrial IoT Solutions",
-            "Smart Campus Initiative"
-          ].map((project, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="p-4 bg-[#d2e3c8] rounded-lg"
-            >
-              {project}
-            </motion.div>
-          ))}
-        </div>
-      </Card>
     </motion.div>
   );
 };

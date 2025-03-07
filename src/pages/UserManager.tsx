@@ -26,8 +26,12 @@ const UserManager: React.FC = () => {
         isUpdatingUser,
         isDeletingUser,
         error
-    } = useUsers(currentPage - 1, pageSize);
-
+    } = useUsers({
+        page: currentPage - 1,
+        size: pageSize,
+        enableUsers: true
+    });
+    
     const roleOptions = ['ADMIN', 'STUDENT', 'TEACHER'];
     const statusOptions = ['ACTIVE', 'INACTIVE'];
 

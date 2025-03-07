@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Modal, Avatar, Typography, Descriptions, Tag, Space, Spin, Button, Input, DatePicker, Form, Select, Upload } from 'antd';
-import { IdcardOutlined, TeamOutlined, MailOutlined, PhoneOutlined, UserOutlined, CalendarOutlined, CameraOutlined } from '@ant-design/icons';
+import { IdcardOutlined, TeamOutlined, MailOutlined, PhoneOutlined, UserOutlined, CalendarOutlined, CameraOutlined, BookOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { useUsers } from '../hooks/useUsers';
 import { useNavigate } from 'react-router-dom';
@@ -206,11 +206,15 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
             }}
           >
             <Descriptions.Item label={<Space><IdcardOutlined />Mã sinh viên</Space>}>
-              {me?.userName || 'N/A'}
+              {renderContent('userName')}
             </Descriptions.Item>
 
             <Descriptions.Item label={<Space><UserOutlined />Họ và tên</Space>}>
               {renderContent('fullName')}
+            </Descriptions.Item>
+
+            <Descriptions.Item label={<Space><BookOutlined />Mã Lớp</Space>}>
+              {renderContent('classCode')}
             </Descriptions.Item>
 
             <Descriptions.Item label={<Space><TeamOutlined />Giới tính</Space>}>

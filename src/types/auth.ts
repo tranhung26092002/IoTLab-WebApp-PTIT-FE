@@ -1,7 +1,7 @@
 import { User } from "./user";
 
 export interface SignInDto {
-    email: string;
+    userName: string;
     password: string;
 }
 
@@ -11,8 +11,10 @@ export interface OtpCodeDto {
 }
 
 export interface SignUpDto {
-    otpCodeDto: OtpCodeDto;
-    username: string;
+    // otpCodeDto: OtpCodeDto;
+    userName: string;
+    fullName: string;
+    classCode: string;
     password: string;
     confirmPassword: string;
 }

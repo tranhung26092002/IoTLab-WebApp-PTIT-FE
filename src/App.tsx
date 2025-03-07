@@ -13,12 +13,10 @@ const About = React.lazy(() => import('./pages/About'));
 const Login = React.lazy(() => import('./pages/Login'));
 const Contact = React.lazy(() => import('./pages/Contact'));
 const Practice = React.lazy(() => import('./pages/Practice'));
-const Task = React.lazy(() => import('./pages/Task'));
 const Setting = React.lazy(() => import('./pages/Setting'));
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const Admin = React.lazy(() => import('./pages/Admin'));
 const UserManager = React.lazy(() => import('./pages/UserManager'));
-const TaskManager = React.lazy(() => import('./pages/TaskManager'));
 const Device = React.lazy(() => import('./pages/HardDevice'));
 const HardDeviceManager = React.lazy(() => import('./pages/HardDeviceManager'));
 const PracticeDetail = React.lazy(() => import('./pages/PracticeDetail'));
@@ -26,6 +24,8 @@ const PracticeManager = React.lazy(() => import('./pages/PracticeManager'));
 const PracticeDetailManager = React.lazy(() => import('./pages/PracticeDetailManager'));
 const DashboardDetail = React.lazy(() => import('./pages/DashboardDetail'));
 const RepoertPage = React.lazy(() => import('./pages/Report'));
+const ReportManager = React.lazy(() => import('./pages/ReportManager'));
+const ReportHistory = React.lazy(() => import('./pages/ReportHistory'));
 
 // Tạo QueryClient
 const queryClient = new QueryClient();
@@ -42,29 +42,29 @@ const App: React.FC = () => {
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/about" element={<About />} />
-              <Route path="/report" element={<RepoertPage />} />
               <Route path="/contact" element={<Contact />} />
 
               {/* Protected Routes */}
-              {/* <Route element={<PrivateRoute />}> */}
+              <Route element={<PrivateRoute />}>
                 <Route path="/device" element={<Device />} />
                 <Route path="/practice" element={<Practice />} />
                 <Route path="/practice/:id" element={<PracticeDetail />} />
-                {/* <Route path="/task" element={<Task />} /> */}
+                <Route path="/report" element={<RepoertPage />} />
+                <Route path="/report-history" element={<ReportHistory />} />
                 <Route path="/setting" element={<Setting />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/dashboard/:id" element={<DashboardDetail />} />
-              {/* </Route> */}
+              </Route>
 
               {/* Admin Route */}
-              {/* <Route element={<AdminRoute />}> */}
+              <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/report-manager" element={<ReportManager />} />
                 <Route path="/admin/user-manager" element={<UserManager />} />
                 <Route path="/admin/practice-manager" element={<PracticeManager />} />
                 <Route path="/admin/practice-manager/:id" element={<PracticeDetailManager />} />
-                {/* <Route path="/admin/task-manager" element={<TaskManager />} /> */}
                 <Route path="/admin/device-manager" element={<HardDeviceManager />} />
-              {/* </Route> */}
+              </Route>
 
               {/* Special Routes */}
               <Route path="/404" element={<NotFound />} />

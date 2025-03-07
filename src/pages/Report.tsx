@@ -1,187 +1,369 @@
 import React, { useState } from 'react';
-import { Card, Button, Form, message, Row, Col, Steps, Space } from 'antd';
-import { ArrowLeftOutlined, SaveOutlined, CheckOutlined } from '@ant-design/icons';
+import { Card, Button, Select, Input, message, Spin } from 'antd';
+import { PlusOutlined, SaveOutlined, SendOutlined } from '@ant-design/icons';
 import AppLayout from "../components/AppLayout";
-import StudentList from '../components/report/StudentList';
-import ReportDetails from '../components/report/ReportDetails';
-import LabReportCard from '../components/report/LabReportCard';
-import TaskList from '../components/report/TaskList';
-import { SubTask, LabReport } from '../types/report';
+import { ReportContentTable } from '../components/report/ReportContentTable';
+import { useReportValidation } from '../hooks/useReportValidation';
+import { ReportData, ReportContent } from '../types/report';
+import { useReport } from '../hooks/useReport';
+import dayjs from 'dayjs';
+import { useUsers } from '../hooks/useUsers';
+import { StudentList } from '../components/report/StudentList';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-const labReports: LabReport[] = [
-    {
-      id: 1,
-      title: 'Lab 1: Introduction to IoT',
-      image: '/images/lab1.jpg',
-      description: 'Basic concepts and architecture of IoT systems',
-      dueDate: '2025-03-01',
-      status: 'draft'
-    },
-    {
-      id: 2,
-      title: 'Lab 2: Sensors and Actuators',
-      image: '/images/lab2.jpg',
-      description: 'Working with various IoT sensors and actuators',
-      dueDate: '2025-03-15',
-      status: 'submitted'
-    },
-    {
-      id: 3,
-      title: 'Lab 3: Network Protocols',
-      image: '/images/lab3.jpg',
-      description: 'Understanding IoT communication protocols',
-      dueDate: '2025-03-30',
-      status: 'draft'
-    },
-    // Add more labs...
-  ];
+const { TextArea } = Input;
 
 const Report: React.FC = () => {
-    const [form] = Form.useForm();
-    const [selectedReport, setSelectedReport] = useState<LabReport | null>(null);
-    const [students, setStudents] = useState<string[]>(['']);
-    const [currentStep, setCurrentStep] = useState(0);  
+  const navigate = useNavigate();  
+  const [searchParams] = useSearchParams();
+  const practiceId = Number(searchParams.get('practiceId')) || 0;
+  const practiceTitle = searchParams.get('title') || '';
 
-    const handleAddStudent = () => {
-        setStudents([...students, '']);
-    };
+  const {
+    submitReport,
+    saveAsDraft,
+    isSubmitting,
+    isSaving,
+  } = useReport();
 
-    const handleRemoveStudent = (index: number) => {
-        const newStudents = students.filter((_, i) => i !== index);
-        setStudents(newStudents);
-    };
+  const {
+    me, 
+    instructors,
+    isLoadingInstructors,
+  } = useUsers({
+      enableMe: true,
+      enableInstructors: true
+  });
 
-    const handleUpdateStudent = (index: number, value: string) => {
-        const newStudents = [...students];
-        newStudents[index] = value;
-        setStudents(newStudents);
-    };
-
-    const handleSubmit = () => {
-        message.success('Report submitted successfully!');
-    };
-
-    const [subTasks, setSubTasks] = useState<SubTask[]>([]);
-
-  const handleNextStep = () => {
-    setCurrentStep(prev => Math.min(prev + 1, 2));
+  const initialReportData: ReportData = {
+    title: practiceTitle,
+    practiceId: practiceId,
+    students: [{ name: '', userId: 0, studentCode: '' }],
+    classGroup: '',
+    className: '',
+    instructor: { userId: 0, name: '' },
+    shift: '',
+    reportContents: [ { id: 0, content: '', performer: '', imageUrl: '', evaluation: 0, userId: 0 } ],
+    discussion: '',
   };
 
-  const handlePrevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 0));
+  const [reportData, setReportData] = useState<ReportData>(initialReportData);
+
+  React.useEffect(() => {
+    if (practiceId) {
+      setReportData(prev => ({
+        ...prev,
+        practiceId
+      }));
+    }
+  }, [practiceId]);
+
+  React.useEffect(() => {
+    if (me) {
+      setReportData(prev => ({
+        ...prev,
+        students: [{
+          name: me.fullName || '',
+          userId: me.id || 0,
+          studentCode: me.userName || ''
+        }]
+      }));
+    }
+  }, [me]);
+
+  const handleInputChange = (field: keyof ReportData, value: string) => {
+    setReportData(prev => ({ ...prev, [field]: value }));
   };
 
-  const renderStepContent = () => {
-    switch (currentStep) {
-      case 0:
-        return (
-          <StudentList 
-            students={students}
-            onAddStudent={handleAddStudent}
-            onRemoveStudent={handleRemoveStudent}
-            onUpdateStudent={handleUpdateStudent}
-          />
-        );
-      case 1:
-        return <ReportDetails form={form} />;
-      case 2:
-        return (
-          <TaskList 
-            tasks={subTasks}
-            students={students}
-            onTasksChange={setSubTasks}
-          />
-        );
-      default:
-        return null;
+  const handleDeleteStudent = (indexToDelete: number) => {
+    if (reportData.students.length <= 1) {
+      message.warning('Phải có ít nhất một sinh viên');
+      return;
+    }
+    setReportData(prev => ({
+      ...prev,
+      students: prev.students.filter((_, index) => index !== indexToDelete)
+    }));
+  };
+
+  const handleContentChange = (index: number, value: string) => {
+    const newContents = [...reportData.reportContents];
+    newContents[index] = { ...newContents[index], content: value };
+    setReportData(prev => ({ ...prev, reportContents: newContents }));
+  };
+  
+  const handlePerformerChange = (index: number, userId: number, name: string) => {
+    const newContents = [...reportData.reportContents];
+    newContents[index] = { 
+      ...newContents[index], 
+      performer: name,
+      userId: userId 
+    };
+    setReportData(prev => ({ ...prev, reportContents: newContents }));
+  };
+  
+  const handleImageUpload = (index: number, url: string) => {
+    const newContents = [...reportData.reportContents];
+    newContents[index] = { ...newContents[index], imageUrl: url };
+    setReportData(prev => ({ ...prev, reportContents: newContents }));
+  };
+  
+  const handleDeleteContent = (index: number) => {
+    setReportData(prev => ({
+      ...prev,
+      reportContents: prev.reportContents.filter((_, i) => i !== index)
+    }));
+  };
+  
+  const addReportContent = () => {
+    const newContent: ReportContent = {
+      id: 0,
+      content: '',
+      performer: '',
+      imageUrl: '',
+      evaluation: 0,
+      userId: 0
+    };
+    setReportData(prev => ({
+      ...prev,
+      reportContents: [...prev.reportContents, newContent]
+    }));
+  };
+
+  const { validate } = useReportValidation(reportData);
+
+  const handleSaveDraft = async () => {
+    try {
+      await saveAsDraft(reportData);
+      message.success('Đã lưu bản nháp');
+    } catch (error) {
+      // Error handling is done by the hook
+      const errorMessage = error instanceof Error ? error.message : 'Đã xảy ra lỗi';
+      message.error('Lỗi: ' + errorMessage);
     }
   };
 
-    return (
-        <AppLayout>
-          <div className="max-w-7xl mx-auto py-8 px-4">
-            {!selectedReport ? (
-              <div className="space-y-8">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-3xl font-bold text-[var(--text-primary)]">
-                    Lab Reports
-                  </h1>
-                  <div className="flex gap-4">
-                    {/* Add filters or additional controls here */}
+  const handleSubmit = async () => {
+    const errors = validate();
+    if (errors.length) {
+      errors.forEach(error => message.error(error));
+      return;
+    }
+
+    try {
+      await submitReport(reportData);
+      // Reset form after successful submission
+      setReportData(initialReportData);
+      message.success('Nộp báo cáo thành công!');
+      navigate(`/report-history`);
+    } catch (error) {
+      // Error handling is done by the hook
+      const errorMessage = error instanceof Error ? error.message : 'Đã xảy ra lỗi';
+      message.error('Lỗi: ' + errorMessage);
+    }
+  };
+
+  return (
+    <AppLayout>
+      <Spin spinning={isSubmitting || isSaving}>
+        <Card className="mx-auto max-w-5xl shadow-lg p-6">
+          <h1 className="text-2xl font-bold text-center primary--color mb-8">
+            Phiếu báo cáo kết quả thực hành (Sinh viên)
+          </h1>
+
+          <div className="space-y-6">
+            {/* Tên bài thực hành */}
+            <div className="flex flex-col gap-2">
+              <label className="text-xl font-semibold primary--color">
+                Tên bài thực hành
+              </label>
+              <Input 
+                placeholder="Nhập tên bài thực hành" 
+                value={reportData.title}
+                className="w-full" 
+                readOnly
+              />
+            </div>
+
+            {/* Thông tin sinh viên */}
+            <StudentList
+              students={reportData.students}
+              onAddStudent={(student) => {
+                setReportData(prev => ({
+                  ...prev,
+                  students: [...prev.students, {
+                    userId: student.userId,
+                    name: student.name,
+                    studentCode: student.studentCode
+                  }]
+                }));
+              }}
+              onDeleteStudent={handleDeleteStudent}
+            />
+
+            {/* Thông tin lớp và thời gian */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold primary--color">Thông tin lớp và thời gian</h2>
+              <div className="space-y-4">
+                {/* Row 1: Group, Class, Date */}
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm text-gray-600 font-medium">Nhóm</label>
+                    <Input 
+                      placeholder="Nhóm" 
+                      value={reportData.classGroup}
+                      onChange={(e) => handleInputChange('classGroup', e.target.value)}
+                      maxLength={10}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm text-gray-600 font-medium">Lớp</label>
+                    <Input 
+                      placeholder="Lớp" 
+                      value={reportData.className}
+                      onChange={(e) => handleInputChange('className', e.target.value)}
+                      maxLength={20}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm text-gray-600 font-medium">Ngày thực hành</label>
+                    <Input 
+                      value={dayjs().format('DD/MM/YYYY')}
+                      disabled
+                      className="bg-gray-50"
+                    />
                   </div>
                 </div>
-                
-                <Row gutter={[24, 24]}>
-                  {labReports.map(report => (
-                    <Col key={report.id} xs={24} sm={12} lg={8}>
-                      <LabReportCard 
-                        report={report}
-                        onClick={() => setSelectedReport(report)}
-                      />
-                    </Col>
-                  ))}
-                </Row>
+
+                {/* Row 2: Instructor and Practice Session */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm text-gray-600 font-medium">
+                      Giảng viên hướng dẫn
+                    </label>
+                    <Select 
+                      placeholder="Chọn giảng viên" 
+                      value={reportData.instructor?.userId || undefined}
+                      onChange={(value) => {
+                        const selectedInstructor = instructors?.find(i => i.userId === value);
+                        if (selectedInstructor) {
+                          setReportData(prev => ({
+                            ...prev,
+                            instructor: {
+                              userId: selectedInstructor.userId,
+                              name: selectedInstructor.name
+                            }
+                          }));
+                        }
+                      }}
+                      className="w-full"
+                      loading={isLoadingInstructors}
+                      showSearch
+                      optionFilterProp="children"
+                      notFoundContent={
+                        isLoadingInstructors ? 'Đang tải...' : 
+                        (!instructors || instructors.length === 0) ? 'Không có giảng viên' : undefined
+                      }
+                    >
+                      {(instructors && instructors.length > 0) && 
+                        instructors.map(instructor => (
+                          <Select.Option 
+                            key={instructor.userId}
+                            value={instructor.userId}
+                          >
+                            {instructor.name}
+                          </Select.Option>
+                        ))
+                      }
+                    </Select>
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <label className="text-sm text-gray-600 font-medium">
+                      Ca thực hành
+                    </label>
+                    <Select 
+                      placeholder="Chọn ca thực hành" 
+                      value={reportData.shift}
+                      onChange={(value) => handleInputChange('shift', value)}
+                      className="w-full"
+                    >
+                      <Select.Option value="0">Ca 1 (08:00 - 12:00)</Select.Option>
+                      <Select.Option value="1">Ca 2 (12:00 - 16:00)</Select.Option>
+                      <Select.Option value="2">Ca 3 (16:00 - 20:00)</Select.Option>
+                    </Select>
+                  </div>
+                </div>
               </div>
-) : (
-    <div className="space-y-8">
-      <Card className="shadow-lg bg-[var(--card-bg)]">
-        <div className="flex items-center justify-between mb-6">
-          <Button 
-            icon={<ArrowLeftOutlined />} 
-            onClick={() => setSelectedReport(null)}
-          >
-            Back to Reports
-          </Button>
-          <Steps
-            current={currentStep}
-            items={[
-              { title: 'Team', description: 'Add members' },
-              { title: 'Details', description: 'Report info' },
-              { title: 'Tasks', description: 'Add tasks' },
-            ]}
-            className="max-w-2xl mx-auto"
-          />
-        </div>
+            </div>
 
-        <div className="space-y-8">
-          {renderStepContent()}
-
-          <div className="flex justify-between mt-8">
-            <Button
-              onClick={handlePrevStep}
-              disabled={currentStep === 0}
-            >
-              Previous
-            </Button>
-            <Space>
-              <Button
-                onClick={() => message.success('Draft saved!')}
-                icon={<SaveOutlined />}
-              >
-                Save Draft
-              </Button>
-              {currentStep < 2 ? (
-                <Button type="primary" onClick={handleNextStep}>
-                  Next
-                </Button>
-              ) : (
-                <Button
-                  type="primary"
-                  icon={<CheckOutlined />}
-                  onClick={handleSubmit}
+            {/* Bảng nội dung thực hành */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold primary--color">Nội dung thực hành</h2>
+              <div className="bg-gray-50 p-4 rounded-lg">
+              <ReportContentTable 
+                practiceContents={reportData.reportContents}
+                students={reportData.students}  // Add this
+                onContentChange={handleContentChange}
+                onPerformerChange={handlePerformerChange}
+                onImageUpload={handleImageUpload}
+                onDelete={handleDeleteContent}
+              />
+                <Button 
+                  type="dashed" 
+                  onClick={addReportContent} 
+                  icon={<PlusOutlined />}
+                  className="w-full mt-4"
                 >
-                  Submit Report
+                  Thêm nội dung
                 </Button>
-              )}
-            </Space>
+              </div>
+            </div>
+
+            {/* Thảo luận */}
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold primary--color">Thảo luận sinh viên</h2>
+              <div className="flex flex-col gap-2">
+                <TextArea 
+                  rows={6} 
+                  value={reportData.discussion}
+                  onChange={(e) => handleInputChange('discussion', e.target.value)}
+                  placeholder="Nhập nội dung thảo luận..."
+                  className="w-full"
+                />
+              </div>
+            </div>
+
+            {/* Submit buttons */}
+            <div className="flex justify-end gap-4 pt-6 border-t">
+              <Button 
+                type="default"
+                size="large"
+                icon={<SaveOutlined />}
+                onClick={handleSaveDraft}
+                loading={isSaving}
+                className="min-w-[140px]"
+              >
+                Lưu bản nháp
+              </Button>
+              <Button 
+                type="primary" 
+                size="large"
+                icon={<SendOutlined />}
+                onClick={handleSubmit}
+                loading={isSubmitting}
+                className="min-w-[140px]"
+              >
+                Nộp báo cáo
+              </Button>
+            </div>
           </div>
-        </div>
-      </Card>
-    </div>
-  )}
-</div>
-</AppLayout>
-);
+        </Card>
+      </Spin>
+    </AppLayout>
+  );
 };
-    
-    export default Report;
+
+export default Report;

@@ -18,6 +18,9 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
+    "@react-pdf/renderer": "^4.3.0",
     "@stomp/stompjs": "^7.0.0",
     "@tanstack/react-query": "^5.62.3",
     "@types/nprogress": "^0.2.3",
@@ -30,6 +33,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.37.2",
     "framer-motion": "^11.13.1",
+    "mammoth": "^1.9.0",
     "my-app": "file:",
     "nprogress": "^0.2.0",
     "postcss": "^8.4.49",
@@ -42,6 +46,7 @@
     "recharts": "^2.15.0",
     "sockjs-client": "^1.6.1",
     "uuid": "^11.0.3",
+    "xlsx": "^0.18.5",
     "zustand": "^5.0.1"
   },
   "devDependencies": {
@@ -55,6 +60,7 @@
     "@storybook/react-vite": "^8.4.6",
     "@storybook/test": "^8.4.6",
     "@types/antd": "^1.0.4",
+    "@types/pdfjs-dist": "^2.10.377",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "@types/react-query": "^1.2.9",

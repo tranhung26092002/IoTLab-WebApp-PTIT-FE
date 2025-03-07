@@ -40,6 +40,17 @@ export const SUCCESS_MESSAGES = {
     UPDATE_GUIDE: 'Cập nhật hướng dẫn thành công!',
     DELETE_GUIDE: 'Xóa hướng dẫn thành công!',
     CHANGE_PASSWORD: 'Đổi mật khẩu thành công!',
+
+    // Report management
+    CREATE_REPORT: 'Tạo bài báo cáo thành công!',
+    UPDATE_REPORT: 'Cập nhật bài báo cáo thành công!',
+    DELETE_REPORT: 'Xóa bài báo cáo thành công!',
+    SUBMIT_REPORT: 'Nộp báo cáo thành công!',
+    SAVE_DRAFT: 'Đã lưu bản nháp!',
+    UPLOAD_IMAGE: 'Tải ảnh lên thành công!',
+    CHANGE_STATUS: 'Thay đổi trạng thái thành công!',
+    CHANGE_EVALUATION: 'Thay đổi điểm thành công!',
+    GET_REPORTS_BY_STUDENT: 'Lấy danh sách báo cáo thành công!',
 } as const;
 
 export const ERROR_MESSAGES = {

@@ -1,4 +1,3 @@
-// components/home/LabInfo.tsx
 import React from 'react';
 import { Card, Typography, Timeline, Row, Col } from 'antd';
 import { 
@@ -23,8 +22,8 @@ const LabInfo: React.FC = () => {
     ];
 
     const locations = [
-        { building: 'Main Building', room: 'Room 305', floor: '3rd Floor' },
-        { building: 'Research Center', room: 'Lab B2', floor: 'Ground Floor' }
+        { building: 'Main Building', room: 'IoT LAB', floor: 'IoT LAB' },
+        { building: 'Research Center', room: 'IoT LAB', floor: 'IoT LAB' }
     ];
 
     const facilities = [
@@ -74,7 +73,8 @@ const LabInfo: React.FC = () => {
                             <div className="mt-6">
                                 <div className="flex items-center gap-4 mb-2">
                                     <MailOutlined className="text-[#4f6f52]" />
-                                    <span className="font-medium">iotlab@ptit.edu.vn</span>
+                                    <span className="font-medium">openlab.user@gmail.com
+                                    </span>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <PhoneOutlined className="text-[#4f6f52]" />
@@ -132,6 +132,7 @@ const LabInfo: React.FC = () => {
                         </Card>
                     </Col>
                 </Row>
+                
             </Card>
         </motion.div>
     );

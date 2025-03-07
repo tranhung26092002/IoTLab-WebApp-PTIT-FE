@@ -1,39 +1,54 @@
 import React from 'react';
-import SideContent from '../components/home/SideContent';
-import MainContent from '../components/home/MainContent';
-import { Flex, Col, Row } from 'antd';
-import VideoSection from '../components/home/VideoSection';
-import ImageCarousel from '../components/home/ImageCarousel';
-import LabInfo from '../components/home/LabInfo';
+import { Layout, Typography, Button, Spin, message } from 'antd';
+import { DownloadOutlined } from '@ant-design/icons';
 import AppLayoutAdmin from '../components/AppLayoutAdmin';
+import AttendanceManagement from '../components/overview/AttendanceManagement';
+import { exportToExcel } from '../utils/excelExport';
+import { useUsers } from '../hooks/useUsers';
+
+const { Title } = Typography;
+const { Content } = Layout;
 
 const Admin: React.FC = () => {
+  const { attendances, isLoadingAttendances } = useUsers({ enableAttendance: true });
+
+  const handleExportData = () => {
+    const formattedData = attendances.map(attendance => ({
+      userId: attendance.userId,
+      userName: attendance.userName,
+      fullName: attendance.fullName,
+      classCode: attendance.classCode,
+      checkInTime: attendance.checkInTime, 
+      shift: attendance.shift
+    }));
+
+    exportToExcel(formattedData, 'attendance_report');
+    message.success('Attendance data exported successfully');
+  };
+
   return (
     <AppLayoutAdmin>
-      <div className="p-6 min-h-screen bg-gradient-to-br from-[#d2e3c8] via-[#86a789] to-[#4f6f52]">
-        <Row gutter={[24, 24]}>
-          {/* Video and Image Carousel Section */}
-          <Col span={24}>
-            <Flex gap={24}>
-              <VideoSection />
-              <ImageCarousel />
-            </Flex>
-          </Col>
+      <Content className="p-6">
+        <div className="mb-6 flex justify-between items-center">
+          <Title level={2} className="text-blue-800 m-0">Attendance Management</Title>
+          <Button 
+            type="primary" 
+            icon={<DownloadOutlined />} 
+            onClick={handleExportData}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            Export Data
+          </Button>
+        </div>
 
-          {/* Lab Info and Side Content */}
-          <Col span={24}>
-            <Flex gap={24}>
-              <LabInfo />
-              <SideContent />
-            </Flex>
-          </Col>
-
-          {/* Lab Info Section */}
-          <Col span={24}>
-            <MainContent />
-          </Col>
-        </Row>
-      </div>
+        {isLoadingAttendances ? (
+          <div className="flex justify-center items-center h-64">
+            <Spin size="large" />
+          </div>
+        ) : (
+          <AttendanceManagement attendances={attendances} />
+        )}
+      </Content>
     </AppLayoutAdmin>
   );
 };

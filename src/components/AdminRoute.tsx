@@ -13,7 +13,7 @@ const AdminRoute = () => {
 
         try {
             const decoded = JSON.parse(atob(token.split('.')[1]));
-            return decoded.authorities?.includes('ROLE_ADMIN');
+            return decoded.authorities?.includes('ROLE_ADMIN') || decoded.authorities?.includes('ROLE_TEACHER');
         } catch {
             return false;
         }

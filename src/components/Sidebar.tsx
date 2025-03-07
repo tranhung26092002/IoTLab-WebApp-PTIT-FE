@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import logo from '../assets/login/logo-ptit.png'
 import {
   CarryOutOutlined,
-  SettingOutlined,
   DashboardOutlined,
   HomeOutlined,
   ContactsOutlined,
@@ -40,12 +39,6 @@ const Sidebar: React.FC = () => {
       label: "Trang chủ",
       path: "/",
     },
-    // {
-    //   key: "/about",
-    //   icon: <UserOutlined />,
-    //   label: "Thông tin",
-    //   path: "/about",
-    // },
     {
       key: "/practice",
       icon: <CarryOutOutlined />,
@@ -65,10 +58,10 @@ const Sidebar: React.FC = () => {
       path: "/dashboard",
     },
     {
-      key: "/report",
+      key: "/report-history",
       icon: <ContactsOutlined />,
       label: "Báo cáo",
-      path: "/report",
+      path: "/report-history",
     },
     {
       key: "/contact",
@@ -76,12 +69,12 @@ const Sidebar: React.FC = () => {
       label: "Liên lạc",
       path: "/contact",
     },
-    {
-      key: "/setting",
-      icon: <SettingOutlined />,
-      label: "Cài đặt",
-      path: "/setting",
-    },
+    // {
+    //   key: "/setting",
+    //   icon: <SettingOutlined />,
+    //   label: "Cài đặt",
+    //   path: "/setting",
+    // },
   ];
 
   const menuItems = getBaseMenuItems();

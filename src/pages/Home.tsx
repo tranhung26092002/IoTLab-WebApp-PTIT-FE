@@ -12,6 +12,11 @@ const Home: React.FC = () => {
     <AppLayout>
       <div className="p-6 min-h-screen bg-gradient-to-br from-[#d2e3c8] via-[#86a789] to-[#4f6f52]">
         <Row gutter={[24, 24]}>
+          {/* Lab Info Section */}
+          <Col span={24}>
+            <MainContent />
+          </Col>
+
           {/* Video and Image Carousel Section */}
           <Col span={24}>
             <Flex gap={24}>
@@ -26,11 +31,6 @@ const Home: React.FC = () => {
               <LabInfo />
               <SideContent />
             </Flex>
-          </Col>
-
-          {/* Lab Info Section */}
-          <Col span={24}>
-            <MainContent />
           </Col>
         </Row>
       </div>

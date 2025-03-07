@@ -1,13 +1,9 @@
+import { BaseEntity } from './baseEntity';
+
 export enum PracticeStatus {
     DRAFT = 'DRAFT',
     PUBLISHED = 'PUBLISHED',
     ARCHIVED = 'ARCHIVED'
-}
-
-export interface BaseEntity {
-    id: number;
-    createdAt: string;
-    updatedAt?: string;
 }
 
 export interface PracticeVideo extends BaseEntity {
@@ -45,13 +41,4 @@ export interface Practice extends BaseEntity {
     practiceVideos?: PracticeVideo[];
     practiceFiles?: PracticeFile[];
     practiceGuides?: PracticeGuide[];
-}
-
-export interface PageResponse<T> {
-    data: T[];
-    metadata: {
-        page: number;
-        size: number;
-        total: number;
-    };
 }

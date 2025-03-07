@@ -1,9 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deviceService } from '../services/api/deviceService';
-import { Device, BorrowRecord, DeviceFilterParams, PageResponse, BorrowDeviceRequest } from '../types/hardDevice';
+import { Device, BorrowRecord, DeviceFilterParams, BorrowDeviceRequest } from '../types/hardDevice';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
+import { PageResponse } from '../types/PageResponse';
 
 export const useHardDevices = () => {
     const queryClient = useQueryClient();

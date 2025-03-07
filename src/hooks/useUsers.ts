@@ -1,12 +1,28 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { userService } from '../services/api/userService';
-import { ChangePasswordDto, PageResponse, User } from '../types/user';
+import { Attendance, ChangePasswordDto, User } from '../types/user';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
+import { PageResponse } from '../types/PageResponse';
+import { Instructor, Student } from '../types/report';
 
-export const useUsers = (page = 0, size = 10) => {
-    const queryClient = useQueryClient();
+export const useUsers = (options?: {
+    page?: number;
+    size?: number;
+    enableUsers?: boolean;
+    enableAttendance?: boolean;
+    enableMe?: boolean;
+    enableInstructors?: boolean;
+}) => {
+    const {
+        page = 0,
+        size = 10,
+        enableUsers = false,
+        enableAttendance = false,
+        enableMe = false,
+        enableInstructors = false
+    } = options || {};    const queryClient = useQueryClient();
 
     // Fetch all users with pagination
     const { data: users, isLoading } = useQuery<PageResponse<User>>({
@@ -14,7 +30,28 @@ export const useUsers = (page = 0, size = 10) => {
         queryFn: async () => {
             const response = await userService.getUsers(page, size);
             return response.data;
-        }
+        },
+        enabled: enableUsers,
+    });
+
+    // get all Attendance
+    const { data: attendanceResponse, isLoading: isLoadingAttendances } = useQuery<PageResponse<Attendance>>({
+        queryKey: ['attendances'],
+        queryFn: async () => {
+            const response = await userService.getAttendances();
+            return response.data;
+        },
+        enabled: enableAttendance,
+    });
+
+    // get all instructors
+    const { data: instructorResponse, isLoading: isLoadingInstructors } = useQuery<PageResponse<Instructor>>({
+        queryKey: ['instructors'],
+        queryFn: async () => {
+            const response = await userService.getInstructors();
+            return response.data;
+        },
+        enabled: enableInstructors,
     });
 
     // Get current user
@@ -23,13 +60,23 @@ export const useUsers = (page = 0, size = 10) => {
         queryFn: async () => {
             const response = await userService.getMe();
             return response.data;
-        }
+        },
+        enabled: enableMe,
     });
 
     // Get single user
     const getUserMutation = useMutation<User, AxiosError<ApiError>, number>({
         mutationFn: async (id: number) => {
             const response = await userService.getUser(id);
+            return response.data;
+        },
+        onError: handleApiError,
+    });
+
+    // Get user by username
+    const getStudentMutation = useMutation<Student, AxiosError<ApiError>, string>({
+        mutationFn: async (userName: string) => {
+            const response = await userService.getUserByUserName(userName);
             return response.data;
         },
         onError: handleApiError,
@@ -108,10 +155,13 @@ export const useUsers = (page = 0, size = 10) => {
         // Data
         users,
         me,
+        instructors: instructorResponse?.data || [],
+        attendances: attendanceResponse?.data || [],
 
         // Methods
         getMe,
         getUser: getUserMutation.mutateAsync,
+        getStudent: getStudentMutation.mutateAsync,
         addUser: addUserMutation.mutate,
         updateUser: updateUserMutation.mutate,
         updateMe: updateMeMutation.mutate,
@@ -121,6 +171,8 @@ export const useUsers = (page = 0, size = 10) => {
         // Loading states
         isLoading,
         isLoadingMe,
+        isLoadingInstructors,
+        isLoadingAttendances,
         isAddingUser: addUserMutation.isPending,
         isUpdatingUser: updateUserMutation.isPending,
         isUpdatingMe: updateMeMutation.isPending,
@@ -129,6 +181,7 @@ export const useUsers = (page = 0, size = 10) => {
 
         // Errors
         getUserError: getUserMutation.error,
+        getStudentError: getStudentMutation.error,
         addUserError: addUserMutation.error,
         updateUserError: updateUserMutation.error,
         updateMeError: updateMeMutation.error,

@@ -14,6 +14,7 @@ export interface User {
     id: number;
     userName: string;
     fullName: string;
+    classCode: string;
     avatarUrl: string;
     phoneNumber: string;
     email: string;
@@ -24,23 +25,18 @@ export interface User {
     roleType: string;
 }
 
-export interface PageResponse<T> {
-    data: T[];
-    metadata: {
-        page: number;
-        size: number;
-        total: number;
-    };
-}
-
-export interface ApiResponse<T> {
-    data: T;
-    message?: string;
-    status: number;
-}
-
 export interface ChangePasswordDto {
     currentPassword: string;
     newPassword: string;
     confirmNewPassword: string;
+}
+
+export interface Attendance {
+    id: number;
+    userId: number;
+    userName: string;
+    fullName: string;
+    classCode: string;
+    checkInTime: string | Date; 
+    shift: string;
 }

@@ -354,3 +354,50 @@
 .card {
     background-image: linear-gradient(to bottom, #4c7f79, #87e8de);
 }
+
+/* Report page styles */
+.ant-rate {
+    color: var(--text-primary);
+}
+
+.ant-table-wrapper .ant-table-thead > tr > th {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.ant-table-wrapper .ant-table-tbody > tr > td {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dark .ant-table-wrapper .ant-table-thead > tr > th {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.report-container {
+    @apply mx-auto max-w-5xl p-6;
+  }
+  
+  .report-title {
+    @apply text-2xl font-bold text-center primary--color mb-8;
+  }
+  
+  .report-section {
+    @apply space-y-6;
+  }
+  
+  .report-form-row {
+    @apply flex gap-4;
+  }
+  
+  .report-grid {
+    @apply grid grid-cols-2 gap-4;
+  }
+  
+  .report-button {
+    @apply w-full;
+  }
+  
+  .report-table {
+    @apply mb-4;
+  }

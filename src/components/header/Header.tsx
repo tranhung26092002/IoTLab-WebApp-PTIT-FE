@@ -18,7 +18,7 @@ import 'nprogress/nprogress.css';
 const CustomHeader: React.FC = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { me } = useUsers();
+  const { me } = useUsers({ enableMe: true });
   const { imageUrl, isLoading: isAvatarLoading } = useAvatar(me?.avatarUrl);
   const { notifications, isLoading: isNotificationLoading } = useNotification(me?.id || 0);
   const unreadNotifications = notifications.filter(n => !n.read);
@@ -28,6 +28,7 @@ const CustomHeader: React.FC = () => {
     NProgress.start();
     try {
       await signOut();
+      navigate('/login'); 
       NProgress.done();
     } catch (error) {
       NProgress.done();
@@ -84,7 +85,7 @@ const CustomHeader: React.FC = () => {
           textShadow: '0 2px 4px rgba(0,0,0,0.15)',
         }}
       >
-        Welcome to IoT Lab - PTIT
+        NỀN TẢNG THỰC HÀNH SỐ IoT
       </Typography.Title>
 
       {/* Right section - Search & Controls */}

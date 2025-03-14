@@ -33,8 +33,6 @@ const ReportHistory: React.FC = () => {
     isUpdating,
     changeReportStatus,
   } = useReport({
-    page: page - 1,
-    size: pageSize,
     enableStudentReports: true
   });
 
@@ -50,12 +48,11 @@ const ReportHistory: React.FC = () => {
     return dayjs(`${year}-${month}-${day} ${hour}:${minute}`);
   };;
 
-  const columns = [
+const columns = [
     {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
-      width: 120,
       render: (status: string) => {
           const statusInfo = STATUS_OPTIONS.find(s => s.value === status);
           return (
@@ -69,33 +66,33 @@ const ReportHistory: React.FC = () => {
       title: 'Tên bài thực hành',
       dataIndex: 'title',
       key: 'title',
-      width: 250,
     },
     {
       title: 'Sinh viên thực hiện',
       dataIndex: 'students',
       key: 'students',
-      width: 200,
       render: (students: StudentInfo[]) => students.map(s => s.name).join(', '),
     },
     {
       title: 'Lớp',
       dataIndex: 'className',
       key: 'className',
-      width: 120,
     },
+    // {
+    //   title: 'Nhóm',
+    //   dataIndex: 'classGroup',
+    //   key: 'classGroup',
+    // },
     {
       title: 'Ca thực hành',
       dataIndex: 'shift',
       key: 'shift',
-      width: 130,
       render: (shift: string) => `Ca ${shift}`,
     },
     {
       title: 'Ngày nộp',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      width: 150,
       render: (createdAt: number[]) => {
         const date = formatCreatedAt(createdAt);
         return date ? date.format('DD/MM/YYYY HH:mm') : 'Chưa có';
@@ -104,8 +101,6 @@ const ReportHistory: React.FC = () => {
     {
       title: 'Thao tác',
       key: 'action',
-      width: 120,
-      fixed: 'right',
       render: (_: unknown, record: ReportData) => (
         <Button 
           type="primary" 
@@ -243,15 +238,21 @@ const ReportHistory: React.FC = () => {
             dataSource={filteredData}
             loading={isLoadingStudentReports}
             rowKey="id"
+            onChange={(pagination) => {
+              setPage(pagination.current || 1);
+              setPageSize(pagination.pageSize || 10);
+            }}
             pagination={{
               current: page,
               pageSize: pageSize,
-              total: filteredData.length,
-              onChange: (page, pageSize) => {
-                setPage(page);
-                setPageSize(pageSize);
-              },
+              total: studentReports?.metadata?.total || 0,
+              showSizeChanger: true,
+              showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]} của ${total} báo cáo`,
+              pageSizeOptions: ['10', '20', '30', '50', '100'],
             }}
+            scroll={{ x: 800 }}
+            bordered
+            size="middle"
           />
         </Card>
 

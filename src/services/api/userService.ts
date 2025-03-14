@@ -6,10 +6,7 @@ import { ApiResponse } from '../../types/ApiResponse';
 import { Instructor, Student } from '../../types/report';
 
 export const userService = {
-    getUsers: (page = 0, size = 10) =>
-        api.get<PageResponse<User>>('user/users', {
-            params: { page, size }
-        }),
+    getUsers: () => api.get<PageResponse<User>>('user/users'),
 
     // get all attendances
     getAttendances: () => api.get<PageResponse<Attendance>>('user/users/attendances'),

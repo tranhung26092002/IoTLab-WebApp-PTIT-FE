@@ -36,8 +36,6 @@ const ReportManager: React.FC = () => {
     changeEvaluation,
     isUpdatingEvaluation,
   } = useReport({
-    page: page - 1, 
-    size: pageSize, 
     enableReports: true,
   });
 
@@ -274,15 +272,21 @@ const ReportManager: React.FC = () => {
             dataSource={filteredData}
             loading={isLoading}
             rowKey="id"
+            onChange={(pagination) => {
+              setPage(pagination.current || 1);
+              setPageSize(pagination.pageSize || 10);
+            }}
             pagination={{
               current: page,
               pageSize: pageSize,
-              total: filteredData.length,
-              onChange: (page, pageSize) => {
-                setPage(page);
-                setPageSize(pageSize);
-              },
+              total: reports?.metadata?.total || 0,
+              showSizeChanger: true,
+              showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]} của ${total} báo cáo`,
+              pageSizeOptions: ['10', '20', '30', '50', '100'],
             }}
+            scroll={{ x: 800 }}
+            bordered
+            size="middle"
           />
         </Card>
 

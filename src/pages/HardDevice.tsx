@@ -26,7 +26,7 @@ const HardDevicePage: React.FC = () => {
     const [borrowModalVisible, setBorrowModalVisible] = useState(false);
     const [selectedDevice, setSelectedDevice] = useState<Device | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(8);
+    const [pageSize, setPageSize] = useState(10);
     const [borrowedCurrentPage, setBorrowedCurrentPage] = useState(1);
     const [borrowedPageSize, setBorrowedPageSize] = useState(8);
 

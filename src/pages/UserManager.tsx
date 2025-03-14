@@ -27,8 +27,6 @@ const UserManager: React.FC = () => {
         isDeletingUser,
         error
     } = useUsers({
-        page: currentPage - 1,
-        size: pageSize,
         enableUsers: true
     });
     

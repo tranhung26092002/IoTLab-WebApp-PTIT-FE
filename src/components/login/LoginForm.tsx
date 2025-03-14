@@ -92,14 +92,14 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
 
         <motion.div initial={{ x: -20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.3, delay: 0.1 }}>
           <Form.Item
-            label="User Name"
+            label="Mã sinh viên:"
             name="userName"
             rules={[
-              { required: true, message: 'Vui lòng nhập User Name!' },
-              { type: 'string', message: 'User Name không hợp lệ!' },
+              { required: true, message: 'Vui lòng nhập Mã sinh viên!' },
+              { type: 'string', message: 'Mã sinh viên không hợp lệ!' },
               {
                 pattern: /^[A-Z0-9]+$/,
-                message: 'User Name không đúng định dạng!'
+                message: 'Mã sinh viên không đúng định dạng!'
               }
             ]}
           >
@@ -107,7 +107,7 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
               prefix={<UserOutlined className="text-[#86a789]" />}
               className="h-12 hover:border-[#86a789] focus:border-[#4f6f52]"
               autoComplete="userName"
-              placeholder="Nhập userName của bạn"
+              placeholder="Nhập mã sinh viên của bạn"
             />
           </Form.Item>
         </motion.div>

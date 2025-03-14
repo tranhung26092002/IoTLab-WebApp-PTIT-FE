@@ -8,14 +8,10 @@ import { ReportService } from '../services/api/reportService';
 import { useUsers } from './useUsers';
 
 export const useReport = (options?: {
-    page?: number;
-    size?: number;
     enableReports?: boolean;
     enableStudentReports?: boolean;
 }) => {
     const {
-        page = 0,
-        size = 10,
         enableReports = false,
         enableStudentReports = false
     } = options || {};
@@ -25,15 +21,21 @@ export const useReport = (options?: {
 
     // Query for fetching all reports
     const { data: reports, isLoading } = useQuery<PageResponse<ReportData>, AxiosError<ApiError>>({
-        queryKey: ['reports', page, size],
-        queryFn: () => ReportService.getReports(page, size),
+        queryKey: ['reports'],
+        queryFn: async () => {
+            const response = await ReportService.getReports();
+            return response.data;
+        },
         enabled: enableReports,
     });
 
     // Query for fetching reports by student ID
     const { data: studentReports, isLoading: isLoadingStudentReports } = useQuery<PageResponse<ReportData>, AxiosError<ApiError>>({
-        queryKey: ['reports', 'student', me?.id, page, size],
-        queryFn: () => ReportService.getReportsByStudentId(me?.id || 0, page, size),
+        queryKey: ['reports', 'student', me?.id],
+        queryFn: async () => {
+            const response = await ReportService.getReportsByStudentId(me?.id || 0);
+            return response.data;
+        },
         enabled: enableStudentReports && Boolean(me?.id),
     });
 

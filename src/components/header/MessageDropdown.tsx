@@ -92,8 +92,7 @@ const MessageContent: React.FC<MessageContentProps> = ({ onMessageClick }) => (
             className="max-h-96 overflow-y-auto"
             itemLayout="horizontal"
             dataSource={[
-                { sender: 'Admin', message: 'System maintenance', time: '5m ago' },
-                { sender: 'Support', message: 'New feature available', time: '1h ago' },
+                { sender: 'ChatBot AI', message: 'Hỗ trợ thực hành 24/7', time: '' },
             ]}
             renderItem={(item) => (
                 <List.Item
@@ -129,7 +128,7 @@ export const MessageDropdown: React.FC = () => {
         <>
             <Dropdown
                 overlay={<MessageContent onMessageClick={handleMessageClick} />}
-                trigger={['click']}
+                trigger={['hover']}
                 placement="bottomRight"
             >
                 <div>

@@ -4,20 +4,11 @@ import { ReportData } from '../../types/report';
 
 export const ReportService = {
   // Get list of reports with pagination
-  getReports: async (page = 0, size = 10) => {
-    const response = await api.get<PageResponse<ReportData>>('/practice/reports', {
-      params: { page, size }
-    });
-    return response.data;
-  },
+  getReports: async () => api.get<PageResponse<ReportData>>('/practice/reports'),
 
   // Get all reports by user ID
-  getReportsByStudentId: async (studentId: number, page = 0, size = 10) => {
-    const response = await api.get<PageResponse<ReportData>>(`/practice/reports/student/${studentId}`, {
-      params: { page, size }
-    });
-    return response.data;
-  },
+  getReportsByStudentId: async (studentId: number) => 
+    api.get<PageResponse<ReportData>>(`/practice/reports/student/${studentId}`),
 
   // Get single report by ID
   getReport: async (id: number) => {

@@ -8,16 +8,12 @@ import { PageResponse } from '../types/PageResponse';
 import { Instructor, Student } from '../types/report';
 
 export const useUsers = (options?: {
-    page?: number;
-    size?: number;
     enableUsers?: boolean;
     enableAttendance?: boolean;
     enableMe?: boolean;
     enableInstructors?: boolean;
 }) => {
     const {
-        page = 0,
-        size = 10,
         enableUsers = false,
         enableAttendance = false,
         enableMe = false,
@@ -26,9 +22,9 @@ export const useUsers = (options?: {
 
     // Fetch all users with pagination
     const { data: users, isLoading } = useQuery<PageResponse<User>>({
-        queryKey: ['users', page, size],
+        queryKey: ['users'],
         queryFn: async () => {
-            const response = await userService.getUsers(page, size);
+            const response = await userService.getUsers();
             return response.data;
         },
         enabled: enableUsers,

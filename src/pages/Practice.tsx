@@ -9,7 +9,7 @@ import { usePractice } from '../hooks/usePractice';
 
 const PracticePage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(6);
+  const [pageSize, setPageSize] = useState(10);
   const [searchTitle, setSearchTitle] = useState('');
   const { allPractices, isLoadingAll } = usePractice(currentPage - 1, pageSize);
 

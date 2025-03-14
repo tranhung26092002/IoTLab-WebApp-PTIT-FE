@@ -11,7 +11,7 @@ import CreatePracticeModal from '../components/practice/CreatePracticeModal';
 
 const PracticeManager: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(6);
+  const [pageSize, setPageSize] = useState(10);
   const [searchTitle, setSearchTitle] = useState('');
   const [status, setStatus] = useState<PracticeStatus | 'ALL'>('ALL');
   const [sort, setSort] = useState<'newest' | 'oldest'>('newest');

@@ -5,10 +5,8 @@ import { Device, BorrowRecord, DeviceFilterParams, BorrowDeviceRequest } from '.
 
 export const deviceService = {
   // Device CRUD operations
-  getAllDevices: async (page = 0, size = 10) => {
-    const response = await api.get<PageResponse<Device>>('device/devices', {
-      params: { page, size }
-    });
+  getAllDevices: async () => {
+    const response = await api.get<PageResponse<Device>>('device/devices');
     return response.data;
   },
 

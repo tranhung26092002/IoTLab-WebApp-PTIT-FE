@@ -41,7 +41,7 @@ export const HardDeviceFilters: React.FC<Props> = ({ filters, onFilterChange }) 
     return (
         <div className="flex items-center gap-6 p-4">
             <Input
-                placeholder="Search by name or code"
+                placeholder="Tìm kiếm thiết bị theo tên hoặc mã"
                 value={filters.search}
                 onChange={e => onFilterChange({ ...filters, search: e.target.value })}
                 prefix={<SearchOutlined className="text-lg" />}
@@ -50,7 +50,7 @@ export const HardDeviceFilters: React.FC<Props> = ({ filters, onFilterChange }) 
                 style={{ borderRadius: '8px' }}
             />
             <Select
-                placeholder="Device Type"
+                placeholder="Loại thiết bị"
                 value={filters.type}
                 onChange={value => onFilterChange({ ...filters, type: value })}
                 allowClear
@@ -65,7 +65,7 @@ export const HardDeviceFilters: React.FC<Props> = ({ filters, onFilterChange }) 
                 ))}
             </Select>
             <Select
-                placeholder="Status"
+                placeholder="Trạng thái"
                 value={filters.status}
                 onChange={value => onFilterChange({ ...filters, status: value })}
                 allowClear
@@ -85,7 +85,7 @@ export const HardDeviceFilters: React.FC<Props> = ({ filters, onFilterChange }) 
                 className="h-12 px-6 text-base font-medium flex items-center"
                 style={{ borderRadius: '8px' }}
             >
-                Clear
+                Xóa
             </Button>
         </div>
     );

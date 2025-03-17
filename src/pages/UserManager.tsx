@@ -178,7 +178,9 @@ const UserManager: React.FC = () => {
                 className="p-6"
             >
                 <div className="flex justify-between mb-4">
-                    <Title level={2}>User Management</Title>
+                    <Title level={2}> 
+                        Quản lý người dùng
+                    </Title>
                     <Button
                         type="primary"
                         icon={<UserAddOutlined />}
@@ -188,7 +190,7 @@ const UserManager: React.FC = () => {
                             setIsModalOpen(true);
                         }}
                     >
-                        Add User
+                        Add User 
                     </Button>
                 </div>
 

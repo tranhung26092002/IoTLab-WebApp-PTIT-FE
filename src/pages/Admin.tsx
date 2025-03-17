@@ -30,14 +30,16 @@ const Admin: React.FC = () => {
     <AppLayoutAdmin>
       <Content className="p-6">
         <div className="mb-6 flex justify-between items-center">
-          <Title level={2} className="text-blue-800 m-0">Attendance Management</Title>
+          <Title level={2} className="text-blue-800 m-0"> 
+            Quản lý điểm danh
+          </Title>
           <Button 
             type="primary" 
             icon={<DownloadOutlined />} 
             onClick={handleExportData}
             className="bg-blue-600 hover:bg-blue-700"
           >
-            Export Data
+            Xuất dữ liệu
           </Button>
         </div>
 

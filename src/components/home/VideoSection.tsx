@@ -25,11 +25,11 @@ const VideoSection: React.FC = () => {
                         onError={() => setHasError(true)}
                     >
                         <source src={video} type="video/mp4" />
-                        Your browser does not support the video tag.
+                        Trình duyệt của bạn không hỗ trợ video!
                     </video>
                 ) : (
                     <div className="flex items-center justify-center h-full text-gray-500">
-                        Video could not be loaded
+                        Video không thể tải!
                     </div>
                 )}
             </Card>

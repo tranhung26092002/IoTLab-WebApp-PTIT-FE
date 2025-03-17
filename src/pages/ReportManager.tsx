@@ -252,7 +252,7 @@ const ReportManager: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <Typography.Title level={2} className="forest--dark--color flex items-center gap-2">
-            <ContactsOutlined /> Report Manager
+            <ContactsOutlined /> Quản lý báo cáo thực hành
           </Typography.Title>
         </motion.div>
         

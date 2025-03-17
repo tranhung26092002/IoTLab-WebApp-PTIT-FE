@@ -124,14 +124,14 @@ const HardDeviceManager: React.FC = () => {
             <div className="flex justify-between items-center mb-6">
               <Title level={2} className={`text-[${COLORS.primary}] flex items-center gap-3 mb-6`}>
                 <DatabaseOutlined className="text-2xl" />
-                Hardware Devices Manager
+                 Quản lý Thiết Bị IoT
               </Title>
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
                 onClick={() => setCreateModalVisible(true)}
               >
-                Create Device
+                Thêm Thiết Bị
               </Button>
             </div>
 
@@ -162,7 +162,7 @@ const HardDeviceManager: React.FC = () => {
               items={[
                 {
                   key: 'all',
-                  label: <span className="text-lg font-semibold">All Devices</span>,
+                  label: <span className="text-lg font-semibold"> Tất cả thiết bị</span>,
                   children: (
                     <div className="py-6">
                       <HardDeviceGridAdmin
@@ -187,7 +187,7 @@ const HardDeviceManager: React.FC = () => {
                   label: (
                     <span className="flex items-center gap-2 text-lg font-semibold">
                       <HistoryOutlined />
-                      Lending History
+                      Lịch sử mượn
                     </span>
                   ),
                   children: (

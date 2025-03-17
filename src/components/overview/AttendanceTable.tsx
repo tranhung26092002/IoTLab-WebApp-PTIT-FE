@@ -18,7 +18,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
 
   const columns: ColumnsType<Attendance> = [
     {
-      title: 'Student ID',
+      title: 'Mã sinh viên',
       dataIndex: 'userName',
       key: 'studentId',
       width: 200,
@@ -28,7 +28,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
       sorter: (a, b) => (a.userName || '').localeCompare(b.userName || ''),
     },
     {
-      title: 'Name',
+      title: 'Họ và tên',
       dataIndex: 'fullName',
       key: 'name',
       render: (fullName: string) => (
@@ -37,7 +37,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
       sorter: (a, b) => (a.fullName || '').localeCompare(b.fullName || ''),
     },
     {
-      title: 'Class',
+      title: 'Lớp',
       dataIndex: 'classCode',
       key: 'class',
       width: 120,
@@ -52,7 +52,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
       onFilter: (value, record) => record.classCode === value,
     },
     {
-      title: 'Date',
+      title: 'Ngày',
       key: 'date',
       width: 120,
       render: (record: Attendance) => {
@@ -71,7 +71,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
       },
     },
     {
-      title: 'Time',
+      title: 'Thời gian',
       key: 'time',
       width: 100,
       render: (record: Attendance) => {
@@ -86,15 +86,15 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
       },
     },
     {
-      title: 'Shift',
+      title: 'Ca',
       dataIndex: 'shift',
       key: 'shift',
       width: 120,
       render: (shift: string) => {
         const shiftConfig: Record<string, { color: string; text: string }> = {
-          'MORNING': { color: 'blue', text: 'Morning' },
-          'AFTERNOON': { color: 'orange', text: 'Afternoon' },
-          'EVENING': { color: 'purple', text: 'Evening' },
+          'Sáng': { color: 'blue', text: 'Morning' },
+          'Chiều': { color: 'orange', text: 'Afternoon' },
+          'Tối': { color: 'purple', text: 'Evening' },
         };
         
         return (
@@ -107,9 +107,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
         );
       },
       filters: [
-        { text: 'Morning', value: 'MORNING' },
-        { text: 'Afternoon', value: 'AFTERNOON' },
-        { text: 'Evening', value: 'EVENING' },
+        { text: 'Sáng', value: 'MORNING' },
+        { text: 'Chiều', value: 'AFTERNOON' },
+        { text: 'Tối', value: 'EVENING' },
       ],
       onFilter: (value, record) => record.shift === value,
     }

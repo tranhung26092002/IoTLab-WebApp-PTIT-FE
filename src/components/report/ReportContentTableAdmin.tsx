@@ -76,7 +76,7 @@ export const ReportContentTableAdmin: React.FC<Props> = ({
       )
     },
     {
-      title: 'Ảnh minh họa',
+      title: 'Hình ảnh',
       dataIndex: 'imageUrl',
       width: '20%',
       render: (imageUrl) => <ReportImage imageUrl={imageUrl} />

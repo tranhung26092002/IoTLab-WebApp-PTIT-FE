@@ -16,14 +16,13 @@ const { Title, Paragraph } = Typography;
 
 const LabInfo: React.FC = () => {
     const labHours = [
-        { day: 'Monday - Friday', hours: '8:00 AM - 8:00 PM' },
-        { day: 'Saturday', hours: '9:00 AM - 5:00 PM' },
-        { day: 'Sunday', hours: 'Closed' }
+        { day: 'Thứ 2 - Thứ 6', hours: '8:00 - 20:00' },
+        { day: 'Thứ 7', hours: '9:00 - 17:00' },
+        { day: 'Chủ nhật', hours: 'Đóng cửa' }
     ];
 
     const locations = [
-        { building: 'Main Building', room: 'IoT LAB', floor: 'IoT LAB' },
-        { building: 'Research Center', room: 'IoT LAB', floor: 'IoT LAB' }
+        { building: 'Trung tâm nghiên cứu', room: 'IoT LAB', floor: 'Tầng 8 - A2' }
     ];
 
     const facilities = [
@@ -43,10 +42,11 @@ const LabInfo: React.FC = () => {
                 <Row gutter={[24, 24]}>
                     <Col span={24}>
                         <Title level={2} className="text-[#4f6f52] !mb-2 font-bold">
-                            IoT Lab Information
+                            Thông tin phòng nghiên cứu
                         </Title>
                         <Paragraph className="text-[#3a5a40] text-lg font-medium">
-                            A state-of-the-art facility for IoT research and development
+                            Cung cấp thông tin chi tiết về vị trí, giờ mở cửa và các tiện nghi của phòng
+                            nghiên cứu IoT LAB.
                         </Paragraph>
                     </Col>
 
@@ -54,7 +54,7 @@ const LabInfo: React.FC = () => {
                         <Card className="bg-[#f0f5f1] border-none h-full">
                             <Title level={4} className="text-[#4f6f52] !mb-6 flex items-center font-bold">
                                 <EnvironmentOutlined className="mr-2 text-xl" />
-                                Lab Locations
+                                Địa chỉ và Liên hệ
                             </Title>
                             {locations.map((location, index) => (
                                 <motion.div
@@ -70,17 +70,23 @@ const LabInfo: React.FC = () => {
                                     </div>
                                 </motion.div>
                             ))}
-                            <div className="mt-6">
-                                <div className="flex items-center gap-4 mb-2">
-                                    <MailOutlined className="text-[#4f6f52]" />
-                                    <span className="font-medium">openlab.user@gmail.com
-                                    </span>
+
+                            <motion.div
+                                whileHover={{ x: 5 }}
+                                className="mb-4 p-4 bg-white rounded-lg shadow-sm"
+                            >
+                                <div className="mt-6">
+                                    <div className="flex items-center gap-4 mb-2">
+                                        <MailOutlined className="text-[#4f6f52]" />
+                                        <span className="font-medium">openlab.user@gmail.com
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <PhoneOutlined className="text-[#4f6f52]" />
+                                        <span className="font-medium">(+84) 123-456-789</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <PhoneOutlined className="text-[#4f6f52]" />
-                                    <span className="font-medium">(+84) 123-456-789</span>
-                                </div>
-                            </div>
+                            </motion.div>
                         </Card>
                     </Col>
 
@@ -88,7 +94,7 @@ const LabInfo: React.FC = () => {
                         <Card className="bg-[#f0f5f1] border-none h-full">
                             <Title level={4} className="text-[#4f6f52] !mb-6 flex items-center font-bold">
                                 <ClockCircleOutlined className="mr-2 text-xl" />
-                                Operating Hours
+                                Giờ mở cửa
                             </Title>
                             <Timeline
                                 items={labHours.map((schedule) => ({
@@ -107,7 +113,7 @@ const LabInfo: React.FC = () => {
                     <Col span={24}>
                         <Card className="bg-[#f0f5f1] border-none">
                             <Title level={4} className="text-[#4f6f52] !mb-6 font-bold">
-                                Lab Facilities
+                                Các tiện nghi khác
                             </Title>
                             <Row gutter={[16, 16]}>
                                 {facilities.map((facility, index) => (
@@ -123,7 +129,7 @@ const LabInfo: React.FC = () => {
                                                 {facility.name}
                                             </div>
                                             <div className="text-[#4f6f52] font-medium">
-                                                Quantity: {facility.count}
+                                                Số lượng {facility.count}
                                             </div>
                                         </motion.div>
                                     </Col>

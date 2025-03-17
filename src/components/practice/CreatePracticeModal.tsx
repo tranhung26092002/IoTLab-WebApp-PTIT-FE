@@ -35,12 +35,12 @@ const CreatePracticeModal: React.FC<CreatePracticeModalProps> = ({
 
   return (
     <Modal
-      title="Create New Practice"
+      title="Thêm bài thực hành"
       open={isOpen}
       onCancel={onClose}
       footer={[
         <Button key="cancel" onClick={onClose}>
-          Cancel
+          Hủy
         </Button>,
         <Button
           key="submit"
@@ -48,7 +48,7 @@ const CreatePracticeModal: React.FC<CreatePracticeModalProps> = ({
           loading={isLoading}
           onClick={handleSubmit}
         >
-          Create
+          Thêm
         </Button>
       ]}
     >
@@ -59,25 +59,25 @@ const CreatePracticeModal: React.FC<CreatePracticeModalProps> = ({
       >
         <Form.Item
           name="title"
-          label="Title"
-          rules={[{ required: true, message: 'Please enter title' }]}
+          label="Tiêu đề"
+          rules={[{ required: true, message: 'Hãy nhập tiêu đề' }]}
         >
-          <Input placeholder="Enter practice title" />
+          <Input placeholder="Nhập tiêu đề bài thực hành" />
         </Form.Item>
 
         <Form.Item
           name="description"
-          label="Description"
-          rules={[{ required: true, message: 'Please enter description' }]}
+          label="Mô tả"
+          rules={[{ required: true, message: 'Hãy nhập mô tả' }]}
         >
           <TextArea
             rows={4}
-            placeholder="Enter practice description"
+            placeholder="Nhập mô tả bài thực hành"
           />
         </Form.Item>
 
         <Form.Item
-          label="Cover Image"
+          label="Hình ảnh"
           className="mb-0"
         >
           <Upload
@@ -88,7 +88,7 @@ const CreatePracticeModal: React.FC<CreatePracticeModalProps> = ({
             }}
             onRemove={() => setImageFile(null)}
           >
-            <Button icon={<UploadOutlined />}>Select Image</Button>
+            <Button icon={<UploadOutlined />}>Chọn ảnh</Button>
           </Upload>
         </Form.Item>
       </Form>

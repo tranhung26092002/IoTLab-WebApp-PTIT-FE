@@ -156,7 +156,7 @@ const HardDevicePage: React.FC = () => {
                             items={[
                                 {
                                     key: 'all',
-                                    label: <span className="text-lg font-semibold">All Devices</span>,
+                                    label: <span className="text-lg font-semibold">Tất cả thiết bị</span>,
                                     children: (
                                         <div className="py-6">
                                             <HardDeviceGrid
@@ -180,7 +180,7 @@ const HardDevicePage: React.FC = () => {
                                     key: 'borrowed',
                                     label: (
                                         <span className="flex items-center gap-2 text-lg font-semibold">
-                                            Borrowed Devices
+                                            Thiết bị đã mượn
                                             <span className={`px-2 py-0.5 text-sm bg-[${COLORS.primary}]/10 text-[${COLORS.primary}] rounded-full`}>
                                                 {borrowedDevicesData?.metadata?.total || 0}
                                             </span>
@@ -210,7 +210,7 @@ const HardDevicePage: React.FC = () => {
                                     label: (
                                         <span className="flex items-center gap-2 text-lg font-semibold">
                                             <HistoryOutlined />
-                                            Lending History
+                                            Lịch sử mượn
                                         </span>
                                     ),
                                     children: (

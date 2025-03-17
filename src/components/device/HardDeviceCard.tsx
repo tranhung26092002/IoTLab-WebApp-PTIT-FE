@@ -74,7 +74,7 @@ export const HardDeviceCard: React.FC<Props> = ({ device, onBorrow }) => {
                             <div className="flex items-center gap-2 text-sm">
                                 <CalendarOutlined />
                                 <Text type="secondary">
-                                    Total borrowed: {device.totalBorrowed}
+                                    Số lượt mượn: {device.totalBorrowed}
                                 </Text>
                             </div>
 

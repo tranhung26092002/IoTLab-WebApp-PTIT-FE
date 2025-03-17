@@ -66,7 +66,7 @@ const Sidebar: React.FC = () => {
     {
       key: "/contact",
       icon: <ContactsOutlined />,
-      label: "Liên lạc",
+      label: "Liên hệ",
       path: "/contact",
     },
     // {

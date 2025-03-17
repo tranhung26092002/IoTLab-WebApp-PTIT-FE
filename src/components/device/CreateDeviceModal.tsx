@@ -37,7 +37,7 @@ export const CreateDeviceModal: React.FC<Props> = ({
 
     return (
         <Modal
-            title="Create New Device"
+            title="Thêm thiết bị"
             open={visible}
             onCancel={onCancel}
             footer={null}
@@ -61,7 +61,7 @@ export const CreateDeviceModal: React.FC<Props> = ({
                                 style={{ objectFit: 'contain' }}
                             />
                             <Button icon={<CameraOutlined />} className="mt-2">
-                                Upload Image
+                                Tải ảnh lên
                             </Button>
                         </div>
                     </Upload>
@@ -69,39 +69,39 @@ export const CreateDeviceModal: React.FC<Props> = ({
 
                 <Form.Item
                     name="name"
-                    label="Name"
-                    rules={[{ required: true, message: 'Please input device name!' }]}
+                    label="Tên thiết bị"
+                    rules={[{ required: true, message: 'Hãy nhập tên thiết bị!' }]}
                 >
                     <Input />
                 </Form.Item>
 
-                {/* <Form.Item
+                <Form.Item
                     name="code"
-                    label="Code"
-                    rules={[{ required: true, message: 'Please input device code!' }]}
+                    label="Mã"
+                    rules={[{ required: true, message: 'Hãy nhập mã thiết bị!' }]}
                 >
                     <Input />
-                </Form.Item> */}
+                </Form.Item>
 
                 <Form.Item
                     name="type"
-                    label="Type"
-                    rules={[{ required: true, message: 'Please input device type!' }]}
+                    label="Loại"
+                    rules={[{ required: true, message: 'Hãy nhập loại thiết bị!' }]}
                 >
                     <Input />
                 </Form.Item>
 
-                <Form.Item name="description" label="Description">
+                <Form.Item name="description" label="Mô tả">
                     <Input.TextArea />
                 </Form.Item>
 
                 <Form.Item className="flex justify-end mb-0">
                     <Space>
                         <Button onClick={onCancel}>
-                            Cancel
+                            Hủy
                         </Button>
                         <Button type="primary" htmlType="submit" loading={isLoading}>
-                            Create
+                            Thêm thiết bị
                         </Button>
                     </Space>
                 </Form.Item>

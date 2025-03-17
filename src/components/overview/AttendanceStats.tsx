@@ -21,7 +21,7 @@ const AttendanceStats: React.FC<AttendanceStatsProps> = ({ attendances }) => {
     <Row gutter={[16, 16]} className="mb-6">
       <Col xs={24} sm={12} md={6}>
         <StatisticCard 
-          title="Total Students"
+          title="Tổng số sinh viên"
           value={totalStudents}
           icon={<TeamOutlined />}
           color="blue"
@@ -29,7 +29,7 @@ const AttendanceStats: React.FC<AttendanceStatsProps> = ({ attendances }) => {
       </Col>
       <Col xs={24} sm={12} md={6}>
         <StatisticCard 
-          title="Present"
+          title="Đã điểm danh"
           value={presentStudents}
           icon={<CheckCircleOutlined />}
           color="green"
@@ -37,7 +37,7 @@ const AttendanceStats: React.FC<AttendanceStatsProps> = ({ attendances }) => {
       </Col>
       <Col xs={24} sm={12} md={6}>
         <StatisticCard 
-          title="Absent"
+          title="Vắng mặt"
           value={absentStudents}
           icon={<CloseCircleOutlined />}
           color="red"
@@ -45,7 +45,7 @@ const AttendanceStats: React.FC<AttendanceStatsProps> = ({ attendances }) => {
       </Col>
       <Col xs={24} sm={12} md={6}>
         <StatisticCard 
-          title="Attendance Rate"
+          title="Tỷ lệ điểm danh"
           value={`${attendanceRate}%`}
           icon={<ClockCircleOutlined />}
           color="purple"

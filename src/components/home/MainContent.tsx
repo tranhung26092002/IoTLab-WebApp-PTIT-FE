@@ -16,18 +16,19 @@ const MainContent: React.FC = () => {
     >
       <Card className="bg-white/90 backdrop-blur">
         <Title level={2} className="text-[#4f6f52]">
-          Welcome to IoT Lab PTIT
+          Chào mừng đến với IoT LAB
         </Title>
         <Paragraph className="text-lg text-[#3a5a40]">
-          Pioneering the future through innovative IoT solutions and research
+          Tiên phong tương lai thông qua các giải pháp IoT sáng tạo và nghiên cứu trong lĩnh vực
+          Internet of Things. 
         </Paragraph>
       </Card>
 
       <Row gutter={[16, 16]}>
         {[
-          { icon: <RocketOutlined />, title: "Projects", value: 50 },
-          { icon: <ExperimentOutlined />, title: "Research Papers", value: 25 },
-          { icon: <TeamOutlined />, title: "Team Members", value: 30 },
+          { icon: <RocketOutlined />, title: "Dự án", value: 50 },
+          { icon: <ExperimentOutlined />, title: "Ngiên cứu", value: 25 },
+          { icon: <TeamOutlined />, title: "Thành viên", value: 30 },
         ].map((stat, index) => (
           <Col span={8} key={index}>
             <motion.div

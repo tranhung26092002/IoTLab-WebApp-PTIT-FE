@@ -90,7 +90,7 @@ export const BorrowModal: React.FC<Props> = ({
                         loading={loading}
                         disabled={!device || device.status === 'BORROWED'}
                     >
-                        Confirm Borrow
+                        Xác nhận
                     </Button>
                 </div>
             </Form>

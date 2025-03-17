@@ -10,10 +10,10 @@ export const useHardDevices = () => {
     const queryClient = useQueryClient();
 
     // Queries
-    const useDevices = (page = 0, size = 10) =>
+    const useDevices = () =>
         useQuery<PageResponse<Device>>({
-            queryKey: ['devices', page, size],
-            queryFn: () => deviceService.getAllDevices(page, size)
+            queryKey: ['devices'],
+            queryFn: () => deviceService.getAllDevices()
         });
 
     const useDevice = (id: number) =>

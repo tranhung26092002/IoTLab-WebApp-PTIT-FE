@@ -75,7 +75,7 @@ const PracticeManager: React.FC = () => {
           transition={{ duration: 0.5 }}
         >
           <Typography.Title level={2} className="forest--dark--color flex items-center gap-2">
-            <ExperimentOutlined /> Practice Manager
+            <ExperimentOutlined /> Quản lý bài thực hành
           </Typography.Title>
           
           <Button
@@ -84,7 +84,7 @@ const PracticeManager: React.FC = () => {
             onClick={() => setIsCreateModalOpen(true)}
             className="bg-[var(--text-primary)] hover:bg-[var(--text-secondary)]"
           >
-            Create Practice
+            Thêm bài thực hành
           </Button>
         </motion.div>
 

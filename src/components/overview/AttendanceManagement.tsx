@@ -60,13 +60,13 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ attendances
         <Space size="large" wrap className="w-full justify-between">
           <Space size="large" wrap>
             <DatePicker
-              placeholder="Select date"
+              placeholder="Chọn ngày"
               onChange={setSelectedDate}
               className="w-48"
               value={selectedDate}
             />
             <Select
-              placeholder="Select shift"
+              placeholder="Chọn ca"
               className="w-48"
               onChange={setSelectedShift}
               allowClear
@@ -77,7 +77,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ attendances
               ))}
             </Select>
             <Select
-              placeholder="Select class"
+              placeholder="Chọn lớp"
               className="w-48"
               onChange={setSelectedClass}
               allowClear
@@ -92,7 +92,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ attendances
             onClick={handleReset}
             className="bg-gray-100 hover:bg-gray-200"
           >
-            Reset Filters
+            Đặt lại
           </Button>
         </Space>
       </div>

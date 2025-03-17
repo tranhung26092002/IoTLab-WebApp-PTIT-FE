@@ -14,7 +14,7 @@ const Contact: React.FC = () => {
   return (
     <AppLayout>
       <Typography.Title level={2} className="forest--dark--color m-0 flex items-center gap-2">
-        <ContactsOutlined /> Contact
+        <ContactsOutlined /> Liên Hệ
       </Typography.Title>
       <motion.div
         className="mb-24 xs:mb-14 shadow-xl rounded-lg overflow-hidden border-2"

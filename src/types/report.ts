@@ -40,11 +40,31 @@ export interface Student {
   studentCode: string;
 }
 
+export enum ShiftType {
+  Sáng= 'Sáng',
+  Chiều= 'Chiều',
+  Tối= 'Tối'
+}
+
+export enum ReportStatus {
+  DRAFT = 'DRAFT',
+  SUBMITTED = 'SUBMITTED',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED'
+}
+
 export interface ReportFilters {
-  search?: string;
+  id?: number;
+  title?: string;
+  classGroup?: string;
+  className?: string;
+  shift?: ShiftType;
+  status?: ReportStatus;
   startDate?: string;
   endDate?: string;
-  shift?: string;
-  className?: string;
-  classGroup?: string;
+  page?: number;
+  size?: number;
+  sortField?: string;
+  sortOrder?: 'asc' | 'desc';
 }

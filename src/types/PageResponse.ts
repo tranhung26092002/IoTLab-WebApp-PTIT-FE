@@ -1,8 +1,9 @@
 export interface PageResponse<T> {
     data: T[];
-    metadata: {
+    metaData: {
         page: number;
         size: number;
         total: number;
+        totalPage: number;
     };
 }

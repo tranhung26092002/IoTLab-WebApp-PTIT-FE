@@ -1,41 +1,58 @@
 import React, { useState } from 'react';
-import { Table, Button, Modal, Form, Input, Space, message, Popconfirm, Select, Typography } from 'antd';
+import { Table, Button, Modal, Form, Input, Space, message, Popconfirm, Select, Typography, Pagination, Card } from 'antd';
 import { EditOutlined, DeleteOutlined, UserAddOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { useUsers } from '../hooks/useUsers';
-import { User } from '../types/user';
+import { User, UserFilter } from '../types/user';
 import AppLayoutAdmin from '../components/AppLayoutAdmin';
+import UserFilters from '../components/UserFilters';
 
 const { Option } = Select;
 const { Title } = Typography;
 
 const UserManager: React.FC = () => {
+    const [filters, setFilters] = useState<UserFilter>({});
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(10);
+    const [pageSize, setPageSize] = useState(10); 
 
     const {
-        users,
-        isLoading,
         addUser,
         updateUser,
         deleteUser,
         isAddingUser,
         isUpdatingUser,
         isDeletingUser,
-        error
+        error,
+        useFilteredUsers,
     } = useUsers({
-        enableUsers: true
+        enableUsers: false
+    });
+
+    const {
+        users,
+        isLoading,
+        metadata,
+        handlePageChange,
+        handleSizeChange
+    } = useFilteredUsers({
+        ...filters,
+        page: currentPage - 1, 
+        size: pageSize,
+        sortField: filters.sortField,
+        sortOrder: filters.sortOrder
     });
     
     const roleOptions = ['ADMIN', 'STUDENT', 'TEACHER'];
     const statusOptions = ['ACTIVE', 'INACTIVE'];
 
-    const handleTableChange = (pagination: any) => {
-        setCurrentPage(pagination.current);
-        setPageSize(pagination.pageSize);
+    const onPaginationChange = (page: number, size: number) => {
+        setCurrentPage(page);
+        setPageSize(size);
+        handlePageChange(page - 1);
+        handleSizeChange(size);
     };
 
     const handleEdit = (user: User) => {
@@ -81,6 +98,11 @@ const UserManager: React.FC = () => {
         setIsModalOpen(false);
         form.resetFields();
         setEditingUser(null);
+    };
+
+    const handleFilterChange = (newFilters: UserFilter) => {
+        setFilters(newFilters);
+        setCurrentPage(1); // Reset to first page when filters change
     };
 
     const columns = [
@@ -178,9 +200,7 @@ const UserManager: React.FC = () => {
                 className="p-6"
             >
                 <div className="flex justify-between mb-4">
-                    <Title level={2}> 
-                        Quản lý người dùng
-                    </Title>
+                    <Title level={2}>Quản lý người dùng</Title>
                     <Button
                         type="primary"
                         icon={<UserAddOutlined />}
@@ -190,24 +210,36 @@ const UserManager: React.FC = () => {
                             setIsModalOpen(true);
                         }}
                     >
-                        Add User 
+                        Thêm người dùng
                     </Button>
                 </div>
 
+                <UserFilters 
+                    filters={filters}
+                    onFilterChange={handleFilterChange}
+                />
+
+            <Card className="shadow-md">
                 <Table
                     columns={columns}
-                    dataSource={users?.data || []}
+                    dataSource={users}
                     loading={isLoading}
                     rowKey="id"
-                    onChange={handleTableChange}
-                    pagination={{
-                        current: currentPage,
-                        pageSize: pageSize,
-                        total: users?.metadata?.total || 0,
-                        showSizeChanger: true,
-                        showTotal: (total) => `Total ${total} users`,
-                    }}
+                    pagination={false}
                 />
+                <div className="border-t border-gray-200 pt-4 px-4">
+                    <Pagination
+                        current={currentPage}
+                        pageSize={pageSize}
+                        total={metadata?.total || 0}
+                        showTotal={(total) => `Tổng ${total} người dùng`}
+                        showSizeChanger
+                        onChange={onPaginationChange}
+                        className="flex justify-end items-center"
+                        pageSizeOptions={[10, 20, 50, 100]}
+                    />
+                </div>
+            </Card>
 
                 <Modal
                     title={editingUser ? 'Edit User' : 'Add User'}

@@ -1,27 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { userService } from '../services/api/userService';
-import { Attendance, ChangePasswordDto, User } from '../types/user';
+import { Attendance, ChangePasswordDto, User, UserFilter } from '../types/user';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
+import dayjs from 'dayjs';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
 import { PageResponse } from '../types/PageResponse';
 import { Instructor, Student } from '../types/report';
 
 export const useUsers = (options?: {
     enableUsers?: boolean;
-    enableAttendance?: boolean;
     enableMe?: boolean;
     enableInstructors?: boolean;
 }) => {
     const {
         enableUsers = false,
-        enableAttendance = false,
         enableMe = false,
         enableInstructors = false
     } = options || {};    const queryClient = useQueryClient();
 
     // Fetch all users with pagination
-    const { data: users, isLoading } = useQuery<PageResponse<User>>({
+    const getUsers = useQuery<PageResponse<User>>({
         queryKey: ['users'],
         queryFn: async () => {
             const response = await userService.getUsers();
@@ -30,15 +29,63 @@ export const useUsers = (options?: {
         enabled: enableUsers,
     });
 
+    const useFilteredUsers = (filters: UserFilter = {}) => {
+        const { data, isLoading, refetch } = useQuery<PageResponse<User>>({
+            queryKey: ['users', 'filter', filters],
+            queryFn: () => userService.filterUsers(
+                filters,
+                filters.page || 0,
+                filters.size || 10
+            ),
+        });
+
+        return {
+            users: data?.data || [],
+            isLoading,
+            metadata: data?.metaData,
+            handlePageChange: (newPage: number) => {
+                filters.page = newPage;
+                refetch();
+            },
+            handleSizeChange: (newSize: number) => {
+                filters.size = newSize;
+                filters.page = 0;
+                refetch();
+            }
+        };
+    };
+
     // get all Attendance
-    const { data: attendanceResponse, isLoading: isLoadingAttendances } = useQuery<PageResponse<Attendance>>({
-        queryKey: ['attendances'],
-        queryFn: async () => {
-            const response = await userService.getAttendances();
-            return response.data;
-        },
-        enabled: enableAttendance,
-    });
+    const useAttendances = (page: number = 0, size: number = 10, date: string = dayjs().format('YYYY-MM-DD')) => {
+        const { data, isLoading, refetch } = useQuery<PageResponse<Attendance>>({
+            queryKey: ['attendances', page, size, date],
+            queryFn: () => userService.getAttendances(
+                page,
+                size,
+                date
+            ),
+        });
+    
+        return {
+            attendances: data?.data || [],
+            isLoading,
+            metadata: data?.metaData,
+            handlePageChange: (newPage: number) => {
+                page = newPage;
+                refetch();
+            },
+            handleSizeChange: (newSize: number) => {
+                size = newSize;
+                page = 0;
+                refetch();
+            },
+            handleDateChange: (newDate: string) => {
+                date = newDate;
+                page = 0; // Reset to first page when date changes
+                refetch();
+            }
+        };
+    };
 
     // get all instructors
     const { data: instructorResponse, isLoading: isLoadingInstructors } = useQuery<PageResponse<Instructor>>({
@@ -149,13 +196,14 @@ export const useUsers = (options?: {
 
     return {
         // Data
-        users,
+        getUsers,
         me,
         instructors: instructorResponse?.data || [],
-        attendances: attendanceResponse?.data || [],
 
         // Methods
         getMe,
+        useFilteredUsers,
+        useAttendances,
         getUser: getUserMutation.mutateAsync,
         getStudent: getStudentMutation.mutateAsync,
         addUser: addUserMutation.mutate,
@@ -165,10 +213,8 @@ export const useUsers = (options?: {
         deleteUser: deleteUserMutation.mutate,
 
         // Loading states
-        isLoading,
         isLoadingMe,
         isLoadingInstructors,
-        isLoadingAttendances,
         isAddingUser: addUserMutation.isPending,
         isUpdatingUser: updateUserMutation.isPending,
         isUpdatingMe: updateMeMutation.isPending,

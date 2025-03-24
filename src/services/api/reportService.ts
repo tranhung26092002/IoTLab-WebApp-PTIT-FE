@@ -1,14 +1,40 @@
 import api from '../axios';
 import { PageResponse } from '../../types/PageResponse';
-import { ReportData } from '../../types/report';
+import { ReportData, ReportFilters } from '../../types/report';
 
 export const ReportService = {
   // Get list of reports with pagination
   getReports: async () => api.get<PageResponse<ReportData>>('/practice/reports'),
 
-  // Get all reports by user ID
-  getReportsByStudentId: async (studentId: number) => 
-    api.get<PageResponse<ReportData>>(`/practice/reports/student/${studentId}`),
+  filterReports: async (
+    filterParams: ReportFilters,
+    page = 0,
+    size = 10
+    ) => {
+    const response = await api.get<PageResponse<Report>>('/practice/reports/filter', {
+        params: {
+        ...filterParams,
+        page,
+        size
+        }
+    });
+    return response.data;
+  },
+
+  filterReportsOfMe: async (
+    filterParams: ReportFilters,
+    page = 0,
+    size = 10
+    ) => {
+    const response = await api.get<PageResponse<Report>>('/practice/reports/me', {
+        params: {
+        ...filterParams,
+        page,
+        size
+        }
+    });
+    return response.data;
+  },
 
   // Get single report by ID
   getReport: async (id: number) => {

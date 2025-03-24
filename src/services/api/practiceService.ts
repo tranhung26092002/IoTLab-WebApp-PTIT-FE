@@ -1,18 +1,29 @@
 import api from '../axios';
-import { Practice, PracticeFile, PracticeVideo, PracticeGuide } from '../../types/practice';
+import { Practice, PracticeFile, PracticeVideo, PracticeGuide, PracticeFilter } from '../../types/practice';
 import { PageResponse } from '../../types/PageResponse';
 
 export const practiceService = {
     // Basic CRUD operations
-    getPractices: (page = 0, size = 10) =>
-        api.get<PageResponse<Practice>>('/practice/practices', {
-            params: { page, size }
-        }),
+    getPractices: () =>
+        api.get<PageResponse<Practice>>('/practice/practices'),
 
-    getAllPractices: (page = 0, size = 10) =>
-        api.get<PageResponse<Practice>>('/practice/practices/all', {
-            params: { page, size }
-        }),
+    getAllPractices: () =>
+        api.get<PageResponse<Practice>>('/practice/practices/all'),
+
+    filterPractices: async (
+        filterParams: PracticeFilter,
+        page = 0,
+        size = 10
+        ) => {
+        const response = await api.get<PageResponse<Practice>>('/practice/practices/filter', {
+            params: {
+            ...filterParams,
+            page,
+            size
+            }
+        });
+        return response.data;
+        },
 
     getPractice: (id: number) =>
         api.get<Practice>(`/practice/practices/${id}`),

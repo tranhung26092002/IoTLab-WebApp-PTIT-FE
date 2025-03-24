@@ -1,15 +1,40 @@
-import { Attendance, ChangePasswordDto, User } from '../../types/user';
+import { Attendance, ChangePasswordDto, User, UserFilter } from '../../types/user';
 import api from '../axios';
 import { tokenStorage } from '../tokenStorage';
 import { PageResponse } from '../../types/PageResponse';
 import { ApiResponse } from '../../types/ApiResponse';
 import { Instructor, Student } from '../../types/report';
+import dayjs from 'dayjs';
 
 export const userService = {
     getUsers: () => api.get<PageResponse<User>>('user/users'),
 
+    filterUsers: async (
+        filterParams: UserFilter,
+        page = 0,
+        size = 10
+    ) => {
+        const response = await api.get<PageResponse<User>>('user/users/filter', {
+        params: {
+            ...filterParams,
+            page,
+            size
+        }
+        });
+        return response.data;
+    },
+
     // get all attendances
-    getAttendances: () => api.get<PageResponse<Attendance>>('user/users/attendances'),
+    getAttendances: async (page = 0, size = 10, date: string = dayjs().format('YYYY-MM-DD')) => {
+        const response = await api.get<PageResponse<Attendance>>('user/users/attendances', {
+        params: {
+            page,
+            size,
+            date
+        }
+        });
+        return response.data;
+    },
 
     getInstructors: () => api.get<PageResponse<Instructor>>('user/users/instructors'),
 

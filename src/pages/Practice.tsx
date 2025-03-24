@@ -6,32 +6,38 @@ import { PracticeCard } from '../components/practice/PracticeCard';
 import { PracticeFilters } from '../components/practice/PracticeFilters';
 import AppLayout from '../components/AppLayout';
 import { usePractice } from '../hooks/usePractice';
+import { PracticeFilter } from '../types/practice';
 
 const PracticePage: React.FC = () => {
+  const [filters, setFilters] = useState<PracticeFilter>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [searchTitle, setSearchTitle] = useState('');
-  const { allPractices, isLoadingAll } = usePractice(currentPage - 1, pageSize);
+  
+  const { useFilteredPractices } = usePractice();
 
-  const handlePageChange = (page: number, size: number) => {
+  const {
+    practices,
+    isLoading,
+    metadata,
+    handlePageChange,
+    handleSizeChange
+  } = useFilteredPractices({
+    ...filters,
+    page: currentPage - 1,
+    size: pageSize
+  });
+
+  const handleFilterChange = (newFilters: PracticeFilter) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // Reset to first page when filters change
+  }; 
+
+  const onPaginationChange = (page: number, size: number) => {
     setCurrentPage(page);
     setPageSize(size);
+    handlePageChange(page - 1);
+    handleSizeChange(size);
   };
-
-  // Filter practices based on search only
-  const filteredPractices = React.useMemo(() => {
-    const currentData = allPractices?.data ?? [];
-    if (!currentData.length) return [];
-
-    return currentData.filter(practice =>
-      practice.title.toLowerCase().includes(searchTitle.toLowerCase())
-    );
-  }, [allPractices?.data, searchTitle]);
-
-  // Reset pagination when search changes
-  React.useEffect(() => {
-    setCurrentPage(1);
-  }, [searchTitle]);
 
   return (
     <AppLayout>
@@ -47,7 +53,10 @@ const PracticePage: React.FC = () => {
           </Typography.Title>
         </motion.div>
 
-        <PracticeFilters onTitleSearch={setSearchTitle} />
+        <PracticeFilters 
+          filters={filters}
+          onFilterChange={handleFilterChange}
+        />
 
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -55,24 +64,24 @@ const PracticePage: React.FC = () => {
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          {isLoadingAll ? (
+          {isLoading ? (
             <div className="col-span-full flex justify-center py-12">
               <Spin size="large" />
             </div>
           ) : (
-            filteredPractices.map((practice) => (
+            practices.map((practice) => (
               <PracticeCard key={practice.id} practice={practice} />
             ))
           )}
 
-          {!isLoadingAll && filteredPractices.length === 0 && (
+          {!isLoading && practices.length === 0 && (
             <div className="col-span-full text-center py-12 text-gray-500">
               Không tìm thấy bài thực hành nào
             </div>
           )}
         </motion.div>
 
-        {filteredPractices.length > 0 && (
+        {practices.length > 0 && (
           <motion.div
             className="mt-8 flex justify-center"
             initial={{ opacity: 0 }}
@@ -82,11 +91,11 @@ const PracticePage: React.FC = () => {
             <Pagination
               current={currentPage}
               pageSize={pageSize}
-              total={filteredPractices.length}
+              total={metadata?.total || 0}
               showTotal={(total) => `Tổng ${total} bài thực hành`}
               showSizeChanger
-              onChange={handlePageChange}
-              className="mt-4"
+              onChange={onPaginationChange}
+              className="mt-4 text-right"
             />
           </motion.div>
         )}

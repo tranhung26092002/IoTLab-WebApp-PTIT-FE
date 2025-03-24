@@ -3,9 +3,8 @@ import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
 import { PageResponse } from '../types/PageResponse';
-import { ReportData } from '../types/report';
+import { ReportData, ReportFilters } from '../types/report';
 import { ReportService } from '../services/api/reportService';
-import { useUsers } from './useUsers';
 
 export const useReport = (options?: {
     enableReports?: boolean;
@@ -13,14 +12,12 @@ export const useReport = (options?: {
 }) => {
     const {
         enableReports = false,
-        enableStudentReports = false
     } = options || {};
     
     const queryClient = useQueryClient();
-    const { me } = useUsers({ enableMe: true });
 
     // Query for fetching all reports
-    const { data: reports, isLoading } = useQuery<PageResponse<ReportData>, AxiosError<ApiError>>({
+    const getReports = useQuery<PageResponse<ReportData>, AxiosError<ApiError>>({
         queryKey: ['reports'],
         queryFn: async () => {
             const response = await ReportService.getReports();
@@ -29,15 +26,57 @@ export const useReport = (options?: {
         enabled: enableReports,
     });
 
-    // Query for fetching reports by student ID
-    const { data: studentReports, isLoading: isLoadingStudentReports } = useQuery<PageResponse<ReportData>, AxiosError<ApiError>>({
-        queryKey: ['reports', 'student', me?.id],
-        queryFn: async () => {
-            const response = await ReportService.getReportsByStudentId(me?.id || 0);
-            return response.data;
-        },
-        enabled: enableStudentReports && Boolean(me?.id),
-    });
+    const useFilteredReports = (filters: ReportFilters = {}) => {
+        const { data, isLoading, refetch } = useQuery<PageResponse<Report>>({
+            queryKey: ['reports', 'filter', filters],
+            queryFn: () => ReportService.filterReports(
+                filters,
+                filters.page || 0,
+                filters.size || 10
+            ),
+        });
+
+        return {
+            reports: data?.data || [],
+            isLoading,
+            metadata: data?.metaData,
+            handlePageChange: (newPage: number) => {
+                filters.page = newPage;
+                refetch();
+            },
+            handleSizeChange: (newSize: number) => {
+                filters.size = newSize;
+                filters.page = 0;
+                refetch();
+            }
+        };
+    };
+
+    const useFilteredReportsOfMe = (filters: ReportFilters = {}) => {
+        const { data, isLoading, refetch } = useQuery<PageResponse<Report>>({
+            queryKey: ['reportsOfMe', 'filter', filters],
+            queryFn: () => ReportService.filterReportsOfMe(
+                filters,
+                filters.page || 0,
+                filters.size || 10
+            ),
+        });
+
+        return {
+            reportsOfMe: data?.data || [],
+            isLoading,
+            metadata: data?.metaData,
+            handlePageChange: (newPage: number) => {
+                filters.page = newPage;
+                refetch();
+            },
+            handleSizeChange: (newSize: number) => {
+                filters.size = newSize;
+                filters.page = 0;
+                refetch();
+            }
+        };
+    };
 
     // Mutation for getting a single report
     const getReportMutation = useMutation<ReportData, AxiosError<ApiError>, number>({
@@ -118,8 +157,9 @@ export const useReport = (options?: {
 
     return {
         // Data
-        reports,
-        studentReports,
+        getReports,
+        useFilteredReportsOfMe,
+        useFilteredReports,
 
         // Methods
         getReport: getReportMutation.mutateAsync,
@@ -132,8 +172,6 @@ export const useReport = (options?: {
         changeEvaluation: changeEvaluation.mutateAsync,
 
         // Loading states
-        isLoading,
-        isLoadingStudentReports,
         isSubmitting: submitReportMutation.isPending,
         isSaving: saveAsDraftMutation.isPending,
         isUpdating: updateReportMutation.isPending,

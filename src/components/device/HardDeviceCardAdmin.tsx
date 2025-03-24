@@ -143,7 +143,7 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
                                 onClick={handleEdit}
                                 className="flex-1"
                             >
-                                Edit
+                                Sửa 
                             </Button>
                             <Popconfirm
                                 title="Delete Device"
@@ -158,7 +158,7 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
                                     loading={isDeleting}
                                     className="flex-1"
                                 >
-                                    Delete
+                                    Xóa
                                 </Button>
                             </Popconfirm>
                         </div>
@@ -169,7 +169,7 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
                                 loading={isLoadingUser}
                                 className="w-full"
                             >
-                                Current Borrower
+                                Người mượn hiện tại
                             </Button>
                         )}
                     </div>
@@ -196,7 +196,7 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
                             <div className="flex items-center gap-2 text-sm">
                                 <CalendarOutlined />
                                 <Text type="secondary">
-                                    Total borrowed: {device.totalBorrowed}
+                                    Số lượt mượn: {device.totalBorrowed}
                                 </Text>
                             </div>
 
@@ -211,14 +211,14 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
             </Card>
 
             <Modal
-                title="Current Borrower Details"
+                title="Thông tin người mượn hiện tại"
                 open={isUserModalOpen}
                 onCancel={() => setIsUserModalOpen(false)}
                 footer={
                     <div className="flex justify-end">
                         <Popconfirm
-                            title="Return Device"
-                            description="Are you sure you want to return this device?"
+                            title="Xác nhận trả thiết bị"
+                            description="Đảm bảo Thiết bị còn hoạt động ổn định?"
                             onConfirm={handleReturn}
                             okText="Yes"
                             cancelText="No"
@@ -229,7 +229,7 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
                                 loading={isReturning}
                                 className="bg-[#4f6f52] hover:bg-[#2c4a2d]"
                             >
-                                Return Device
+                                Xác nhận
                             </Button>
                         </Popconfirm>
                     </div>
@@ -250,9 +250,9 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
                         </div>
                         <Descriptions column={1}>
                             <Descriptions.Item label="Email">{currentUser.email}</Descriptions.Item>
-                            <Descriptions.Item label="Phone">{currentUser.phoneNumber}</Descriptions.Item>
-                            <Descriptions.Item label="Role">{currentUser.roleType}</Descriptions.Item>
-                            <Descriptions.Item label="Status">
+                            <Descriptions.Item label="Số điện thoại">{currentUser.phoneNumber}</Descriptions.Item>
+                            <Descriptions.Item label="Quyền">{currentUser.roleType}</Descriptions.Item>
+                            <Descriptions.Item label="Trạng thái">
                                 <Tag color={currentUser.status === 'ACTIVE' ? 'green' : 'red'}>
                                     {currentUser.status}
                                 </Tag>
@@ -263,7 +263,7 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
             </Modal>
 
             <Modal
-                title="Edit Device"
+                title="Chỉnh sửa thiết bị"
                 open={isEditModalOpen}
                 onCancel={() => setIsEditModalOpen(false)}
                 footer={null}
@@ -290,7 +290,7 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
                                     style={{ objectFit: 'contain' }}
                                 />
                                 <Button icon={<CameraOutlined />} className="mt-2">
-                                    Change Image
+                                    Thay đổi ảnh
                                 </Button>
                             </div>
                         </Upload>
@@ -298,39 +298,39 @@ export const HardDeviceCardAdmin: React.FC<Props> = ({ device }) => {
 
                     <Form.Item
                         name="name"
-                        label="Name"
-                        rules={[{ required: true, message: 'Please input device name!' }]}
+                        label="Tên thiết bị"
+                        rules={[{ required: true, message: 'Hãy điền tên thiết bị!' }]}
                     >
                         <Input />
                     </Form.Item>
 
                     <Form.Item
                         name="code"
-                        label="Code"
-                        rules={[{ required: true, message: 'Please input device code!' }]}
+                        label="Mã thiết bị"
+                        rules={[{ required: true, message: 'Hãy điền mã thiết bị!' }]}
                     >
                         <Input />
                     </Form.Item>
 
                     <Form.Item
                         name="type"
-                        label="Type"
-                        rules={[{ required: true, message: 'Please input device type!' }]}
+                        label="Loại thiết bị"
+                        rules={[{ required: true, message: 'Hãy chọn loại thiết bị!' }]}
                     >
                         <Input />
                     </Form.Item>
 
-                    <Form.Item name="description" label="Description">
+                    <Form.Item name="description" label="Mô tả thiết bị">
                         <Input.TextArea />
                     </Form.Item>
 
                     <Form.Item className="flex justify-end mb-0">
                         <Space>
                             <Button onClick={() => setIsEditModalOpen(false)}>
-                                Cancel
+                                Hủy 
                             </Button>
                             <Button type="primary" htmlType="submit" loading={isUpdating}>
-                                Save
+                                Lưu
                             </Button>
                         </Space>
                     </Form.Item>

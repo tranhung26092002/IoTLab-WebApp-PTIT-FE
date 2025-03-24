@@ -46,7 +46,7 @@ export const BorrowModal: React.FC<Props> = ({
 
     return (
         <Modal
-            title={`Borrow Device: ${device?.name} (${device?.code})`}
+            title={`Thiết bị đã mượn: ${device?.name} (${device?.code})`}
             open={visible}
             onCancel={handleCancel}
             footer={null}
@@ -60,8 +60,8 @@ export const BorrowModal: React.FC<Props> = ({
             >
                 <Form.Item
                     name="expiredAt"
-                    label="Expected Return Date"
-                    rules={[{ required: true, message: 'Please select expected return date' }]}
+                    label="Ngày trả thiết bị"
+                    rules={[{ required: true, message: 'Hãy chọn ngày trả thiết bị!' }]}
                 >
                     <DatePicker
                         className="w-full"
@@ -73,17 +73,17 @@ export const BorrowModal: React.FC<Props> = ({
 
                 <Form.Item
                     name="notes"
-                    label="Notes"
-                    rules={[{ max: 500, message: 'Notes cannot exceed 500 characters' }]}
+                    label="Ghi chú"
+                    rules={[{ max: 500, message: 'Ghi chú không được vượt quá 500 ký tự!' }]}
                 >
                     <Input.TextArea
                         rows={4}
-                        placeholder="Enter any additional notes"
+                        placeholder="Nhập ghi chú (nếu có)..."
                     />
                 </Form.Item>
 
                 <div className="flex justify-end space-x-2">
-                    <Button onClick={handleCancel}>Cancel</Button>
+                    <Button onClick={handleCancel}>Hủy</Button>
                     <Button
                         type="primary"
                         htmlType="submit"

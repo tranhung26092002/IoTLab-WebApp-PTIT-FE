@@ -1,14 +1,7 @@
 import React from 'react';
-import { Form, Input, DatePicker, Select, Button, Space, Col, Row } from 'antd';
-import { 
-  SearchOutlined, 
-  FilterOutlined, 
-  ClearOutlined,
-  CalendarOutlined,
-  TeamOutlined,
-  TagOutlined
-} from '@ant-design/icons';
-import { ReportFilters } from '../../types/report';
+import { Form, Input, DatePicker, Select, Button, Space, Card } from 'antd';
+import { FilterOutlined, ReloadOutlined } from '@ant-design/icons';
+import { ReportFilters, ReportStatus, ShiftType } from '../../types/report';
 
 const { RangePicker } = DatePicker;
 
@@ -27,10 +20,13 @@ export const FilterForm: React.FC<FilterFormProps> = ({
 
   const handleFinish = (values: any) => {
     const filters: ReportFilters = {
-      search: values.search?.trim(),
+      title: values.title?.trim(),
+      status: values.status,
       shift: values.shift,
       className: values.className?.trim(),
-      classGroup: values.classGroup?.trim()
+      classGroup: values.classGroup?.trim(),
+      sortField: values.sortField,
+      sortOrder: values.sortOrder
     };
 
     if (values.dateRange?.length === 2) {
@@ -47,119 +43,90 @@ export const FilterForm: React.FC<FilterFormProps> = ({
   };
 
   return (
-    <Form
-      form={form}
-      layout="horizontal"
-      onFinish={handleFinish}
-      initialValues={initialValues}
-      className="bg-white px-4 py-3 rounded-lg shadow-sm"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-    >
-      <Row gutter={[16, 8]} className="items-center">
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Form.Item 
-            name="search" 
-            className="mb-2"
-          >
-            <Input
-              prefix={<SearchOutlined className="text-gray-400" />}
-              placeholder="Tên bài/sinh viên..."
+    <Card className="mb-6 shadow-sm">
+      <Form
+        form={form}
+        onFinish={handleFinish}
+        initialValues={initialValues}
+        layout="vertical"
+        className="gap-4"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Form.Item name="title" className="mb-2">
+            <Input.Search
+              placeholder="Tìm kiếm theo tên..."
               allowClear
-              className="rounded-md"
+              onSearch={() => form.submit()}
+              className="w-full"
             />
           </Form.Item>
-        </Col>
 
-        <Col xs={24} sm={12} md={8} lg={6}>
-          <Form.Item 
-            name="dateRange"
-            className="mb-2"
-          >
-            <RangePicker
-              className="w-full rounded-md"
+          <Form.Item name="status" className="mb-2">
+            <Select
+              placeholder="Trạng thái"
+              allowClear
+              className="w-full"
+              options={Object.values(ReportStatus).map(status => ({
+                value: status,
+                label: status === 'DRAFT' ? 'Bản nháp' :
+                       status === 'SUBMITTED' ? 'Đã nộp' :
+                       status === 'PENDING' ? 'Chờ duyệt' :
+                       status === 'APPROVED' ? 'Đã duyệt' :
+                       'Từ chối'
+              }))}
+            />
+          </Form.Item>
+
+          <Form.Item name="shift" className="mb-2">
+            <Select
+              placeholder="Ca thực hành"
+              allowClear
+              className="w-full"
+              options={Object.values(ShiftType).map(shift => ({
+                value: shift,
+                label: `Ca ${shift}`
+              }))}
+            />
+          </Form.Item>
+
+          <Form.Item name="dateRange" className="mb-2">
+            <RangePicker 
               format="DD/MM/YYYY"
               placeholder={['Từ ngày', 'Đến ngày']}
-              allowEmpty={[true, true]}
-              size="middle"
+              className="w-full"
             />
           </Form.Item>
-        </Col>
 
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Form.Item 
-            name="shift"
-            className="mb-2"
-          >
-            <Select 
-                prefix={<CalendarOutlined className="text-gray-400" />}
-              placeholder="Ca thực hành"
-              className="w-full rounded-md"
-              allowClear
-              size="middle"
-              options={[
-                { value: 'Sáng', label: 'Ca 1' },
-                { value: 'Chiều', label: 'Ca 2' },
-                { value: 'Tối', label: 'Ca 3' }
-              ]}
-            />
+          <Form.Item name="className" className="mb-2">
+            <Input placeholder="Nhập mã lớp..." allowClear className="w-full" />
           </Form.Item>
-        </Col>
 
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Form.Item 
-            name="className"
-            className="mb-2"
-          >
-            <Input 
-              prefix={<TeamOutlined className="text-gray-400" />}
-              placeholder="Lớp" 
-              allowClear
-              className="rounded-md"
-            />
+          <Form.Item name="classGroup" className="mb-2">
+            <Input placeholder="Nhập nhóm..." allowClear className="w-full" />
           </Form.Item>
-        </Col>
+        </div>
 
-        <Col xs={24} sm={12} md={8} lg={4}>
-          <Form.Item 
-            name="classGroup"
-            className="mb-2"
-          >
-            <Input 
-              prefix={<TagOutlined className="text-gray-400" />}
-              placeholder="Nhóm" 
-              allowClear
-              className="rounded-md"
-            />
-          </Form.Item>
-        </Col>
-
-        <Col xs={24} sm={12} md={8} lg={4} className="flex justify-end">
-          <Form.Item className="mb-2">
-            <Space>
-              <Button
-                icon={<ClearOutlined />}
-                onClick={handleReset}
-                disabled={loading}
-                size="middle"
-                className="min-w-[80px]"
-              >
-                Xóa
-              </Button>
-              <Button
-                type="primary"
-                htmlType="submit"
-                icon={<FilterOutlined />}
-                loading={loading}
-                size="middle"
-                className="min-w-[80px]"
-              >
-                Lọc
-              </Button>
-            </Space>
-          </Form.Item>
-        </Col>
-      </Row>
-    </Form>
+        <Form.Item className="flex justify-end mb-0">
+          <Space>
+            <Button 
+              onClick={handleReset}
+              icon={<ReloadOutlined />}
+              className="bg-gray-100 hover:bg-gray-200"
+            >
+              Đặt lại
+            </Button>
+            <Button 
+              type="primary"
+              htmlType="submit"
+              icon={<FilterOutlined />}
+              loading={loading}
+              className="bg-blue-500 hover:bg-blue-600"
+            >
+              Áp dụng bộ lọc
+            </Button>
+          </Space>
+        </Form.Item>
+      </Form>
+    </Card>
   );
 };

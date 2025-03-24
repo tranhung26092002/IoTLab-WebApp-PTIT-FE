@@ -1,26 +1,52 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { practiceService } from '../services/api/practiceService';
-import { Practice, PracticeGuide, PracticeVideo, PracticeFile } from '../types/practice';
+import { Practice, PracticeGuide, PracticeVideo, PracticeFile, PracticeFilter } from '../types/practice';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
 import { PageResponse } from '../types/PageResponse';
 
-export const usePractice = (page = 0, size = 10) => {
+export const usePractice = () => {
     const queryClient = useQueryClient();
 
     const { data: practices, isLoading } = useQuery<PageResponse<Practice>, AxiosError<ApiError>>({
-        queryKey: ['practices', page, size],
+        queryKey: ['practices'],
         queryFn: async () => {
-            const response = await practiceService.getPractices(page, size);
+            const response = await practiceService.getPractices();
             return response.data;
         }
     });
 
+    const useFilteredPractices = (filters: PracticeFilter = {}) => {
+        const { data, isLoading, refetch } = useQuery<PageResponse<Practice>>({
+            queryKey: ['pratices', 'filter', filters],
+            queryFn: () => practiceService.filterPractices(
+                filters,
+                filters.page || 0,
+                filters.size || 10
+            ),
+        });
+
+        return {
+            practices: data?.data || [],
+            isLoading,
+            metadata: data?.metaData,
+            handlePageChange: (newPage: number) => {
+                filters.page = newPage;
+                refetch();
+            },
+            handleSizeChange: (newSize: number) => {
+                filters.size = newSize;
+                filters.page = 0;
+                refetch();
+            }
+        };
+    };
+
     const { data: allPractices, isLoading: isLoadingAll } = useQuery<PageResponse<Practice>, AxiosError<ApiError>>({
-        queryKey: ['allPractices', page, size],
+        queryKey: ['allPractices'],
         queryFn: async () => {
-            const response = await practiceService.getAllPractices(page, size);
+            const response = await practiceService.getAllPractices();
             return response.data;
         }
     });
@@ -153,6 +179,7 @@ export const usePractice = (page = 0, size = 10) => {
         // Data
         practices,
         allPractices,
+        useFilteredPractices,
 
         // Methods
         getPractice: getPracticeMutation.mutateAsync,

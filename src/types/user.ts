@@ -40,3 +40,15 @@ export interface Attendance {
     checkInTime: string | Date; 
     shift: string;
 }
+
+export interface UserFilter {
+    id?: string;
+    userName?: string;
+    fullName?: string;
+    classCode?: string;
+    roleType?: string;
+    page?: number;
+    size?: number;
+    sortField?: string;
+    sortOrder?: 'asc' | 'desc';
+}

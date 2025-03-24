@@ -49,7 +49,7 @@ export const HardDeviceCard: React.FC<Props> = ({ device, onBorrow }) => {
                         onClick={() => onBorrow(device)}
                         className={device.status === 'BORROWED' ? 'text-gray-500 bg-gray-100' : ''}
                     >
-                        {device.status === 'BORROWED' ? 'Borrowed' : 'Borrow'}
+                        {device.status === 'BORROWED' ? 'Đã được mượn' : 'Mượn'}
                     </Button>
                 ]}
             >
@@ -74,7 +74,7 @@ export const HardDeviceCard: React.FC<Props> = ({ device, onBorrow }) => {
                             <div className="flex items-center gap-2 text-sm">
                                 <CalendarOutlined />
                                 <Text type="secondary">
-                                    Số lượt mượn: {device.totalBorrowed}
+                                    Số lượt đã mượn: {device.totalBorrowed}
                                 </Text>
                             </div>
 

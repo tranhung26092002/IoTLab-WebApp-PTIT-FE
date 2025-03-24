@@ -174,7 +174,7 @@ const HardDeviceManager: React.FC = () => {
                         current={currentPage}
                         pageSize={pageSize}
                         total={metadata?.total || 0}
-                        showTotal={(total) => `Total ${total} records`}
+                        showTotal={(total) => `Tổng ${total} thiết bị`}
                         showSizeChanger
                         onChange={onPaginationChange}
                         className="mt-4 text-right"

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Card, Table, Button, Modal, Typography, message, Tag } from "antd";
+import React, { useState } from "react";
+import { Card, Table, Button, Modal, Typography, message, Tag, Pagination } from "antd";
 import { ContactsOutlined, EditOutlined } from "@ant-design/icons";
 import { useReport } from "../hooks/useReport";
 import type { ReportData, StudentInfo } from "../types/report";
@@ -10,6 +10,12 @@ import { FilterForm } from '../components/report/FilterForm';
 import type { ReportFilters } from '../types/report';
 import { ReportHistoryDetail } from "../components/report/ReportHistoryDetail";
 
+const formatCreatedAt = (createdAt: number[] | null) => {
+  if (!createdAt) return null;
+  const [year, month, day, hour, minute] = createdAt;
+  return dayjs(`${year}-${month}-${day} ${hour}:${minute}`);
+};;
+
 const STATUS_OPTIONS = [
   { value: 'DRAFT', label: 'Bản nháp', color: 'default' },
   { value: 'SUBMITTED', label: 'Đã nộp', color: 'blue' },
@@ -19,36 +25,48 @@ const STATUS_OPTIONS = [
 ];
 
 const ReportHistory: React.FC = () => {
-  const [page, setPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [selectedReport, setSelectedReport] = useState<ReportData | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [filteredData, setFilteredData] = useState<ReportData[]>([]);
   const [filters, setFilters] = useState<ReportFilters>({});
 
   // Get reports data and methods from hook
   const {
-    studentReports,
-    isLoadingStudentReports,
     isUpdating,
     changeReportStatus,
+    useFilteredReportsOfMe,
   } = useReport({
     enableStudentReports: true
   });
 
-  useEffect(() => {
-    if (studentReports?.data) {
-      setFilteredData(studentReports.data);
-    }
-  }, [studentReports?.data]);
+  const {
+    reportsOfMe: reports,
+    isLoading,
+    metadata,
+    handlePageChange,
+    handleSizeChange
+  } = useFilteredReportsOfMe({
+      ...filters,
+      page: currentPage - 1, // Convert to 0-based for API
+      size: pageSize,
+      sortField: filters.sortField,
+      sortOrder: filters.sortOrder
+  });
 
-  const formatCreatedAt = (createdAt: number[] | null) => {
-    if (!createdAt) return null;
-    const [year, month, day, hour, minute] = createdAt;
-    return dayjs(`${year}-${month}-${day} ${hour}:${minute}`);
-  };;
+  const handleFilter = (newFilters: ReportFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1); // Reset to first page when filters change
+  };
 
-const columns = [
+  const onPaginationChange = (page: number, size: number) => {
+    setCurrentPage(page);
+    setPageSize(size);
+    handlePageChange(page - 1); // Convert to 0-based for API
+    handleSizeChange(size);
+  };
+
+  const columns = [
     {
       title: 'Trạng thái',
       dataIndex: 'status',
@@ -78,11 +96,6 @@ const columns = [
       dataIndex: 'className',
       key: 'className',
     },
-    // {
-    //   title: 'Nhóm',
-    //   dataIndex: 'classGroup',
-    //   key: 'classGroup',
-    // },
     {
       title: 'Ca thực hành',
       dataIndex: 'shift',
@@ -127,15 +140,6 @@ const columns = [
         status: 'SUBMITTED' 
       });
       
-      // Update the filtered data
-      setFilteredData(prev => 
-        prev.map(item => 
-          item.id === selectedReport.id 
-            ? { ...item, status: 'SUBMITTED' }
-            : item
-        )
-      );
-      
       // Update selected report
       setSelectedReport(prev => prev ? {
         ...prev,
@@ -148,64 +152,6 @@ const columns = [
       const errorMessage = error instanceof Error ? error.message : 'Đã xảy ra lỗi';
       message.error('Lỗi: ' + errorMessage);
     }
-  };
-
-  const handleFilter = (newFilters: ReportFilters) => {
-    if (!studentReports?.data) return;
-
-    let filtered = [...studentReports.data];
-
-    if (newFilters.search) {
-      const searchTerm = newFilters.search.toLowerCase();
-      filtered = filtered.filter(report => 
-        report.title.toLowerCase().includes(searchTerm) ||
-        report.students.some((student: { name: string; studentCode: string; }) => 
-          student.name.toLowerCase().includes(searchTerm) ||
-          student.studentCode.toLowerCase().includes(searchTerm)
-        )
-      );
-    }
-
-    if (newFilters.className) {
-      filtered = filtered.filter(report => 
-        report.className.toLowerCase().includes(newFilters.className!.toLowerCase())
-      );
-    }
-
-    if (newFilters.classGroup) {
-      filtered = filtered.filter(report => 
-        report.classGroup.toLowerCase().includes(newFilters.classGroup!.toLowerCase())
-      );
-    }
-
-    if (newFilters.shift) {
-      filtered = filtered.filter(report => 
-        report.shift === newFilters.shift
-      );
-    }
-
-    if (newFilters.startDate && newFilters.endDate) {
-      // Start date should be at start of selected date (00:00:00)
-      // End date should be at end of selected date (23:59:59)
-      const startDate = dayjs(newFilters.startDate).startOf('day');
-      const endDate = dayjs(newFilters.endDate).endOf('day');
-      
-      filtered = filtered.filter(report => {
-        if (!report.createdAt) return false;
-        
-        const reportDate = Array.isArray(report.createdAt) 
-          ? dayjs(`${report.createdAt[0]}-${report.createdAt[1]}-${report.createdAt[2]} ${report.createdAt[3]}:${report.createdAt[4]}`)
-          : dayjs(report.createdAt);
-        
-        // Compare with full datetime
-        return reportDate.isAfter(startDate) && reportDate.isBefore(endDate) || 
-               reportDate.isSame(startDate) || 
-               reportDate.isSame(endDate);
-      });
-    }
-
-    setFilteredData(filtered);
-    setPage(1);
   };
 
   return (
@@ -226,35 +172,33 @@ const columns = [
         <Card className="mb-6">
           <FilterForm
             onFilter={handleFilter}
-            loading={isLoadingStudentReports}
+            loading={isLoading}
             initialValues={filters}
           />
         </Card>
 
         {/* Reports Table */}
-        <Card>
+        <Card className="shadow-md">
           <Table
-            columns={columns}
-            dataSource={filteredData}
-            loading={isLoadingStudentReports}
-            rowKey="id"
-            onChange={(pagination) => {
-              setPage(pagination.current || 1);
-              setPageSize(pagination.pageSize || 10);
-            }}
-            pagination={{
-              current: page,
-              pageSize: pageSize,
-              total: studentReports?.metadata?.total || 0,
-              showSizeChanger: true,
-              showTotal: (total, range) => `Hiển thị ${range[0]}-${range[1]} của ${total} báo cáo`,
-              pageSizeOptions: ['10', '20', '30', '50', '100'],
-            }}
-            scroll={{ x: 800 }}
-            bordered
-            size="middle"
+              columns={columns}
+              dataSource={reports as unknown as readonly ReportData[]}
+              loading={isLoading}
+              rowKey="id"
+              pagination={false}
           />
-        </Card>
+          <div className="border-t border-gray-200 pt-4 px-4">
+              <Pagination
+                  current={currentPage}
+                  pageSize={pageSize}
+                  total={metadata?.total || 0}
+                  showTotal={(total) => `Tổng ${total} báo cáo`}
+                  showSizeChanger
+                  onChange={onPaginationChange}
+                  className="flex justify-end items-center"
+                  pageSizeOptions={[10, 20, 50, 100]}
+              />
+          </div>
+      </Card>
 
         {/* Report Detail Modal */}
         <Modal

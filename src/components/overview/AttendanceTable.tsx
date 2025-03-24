@@ -1,20 +1,32 @@
 import React from 'react';
-import { Table, Tag, Tooltip } from 'antd';
+import { Card, Pagination, Table, Tag, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { Attendance } from '../../types/user';
 import dayjs from 'dayjs';
 
 interface AttendanceTableProps {
   attendances: Attendance[];
+  loading?: boolean;
+  currentPage: number;
+  pageSize: number;
+  total: number;
+  onPageChange: (page: number, size: number) => void;
 }
 
+const formatCreatedAt = (createdAt: number[] | null) => {
+  if (!createdAt) return null;
+  const [year, month, day, hour, minute] = createdAt;
+  return dayjs(`${year}-${month}-${day} ${hour}:${minute}`);
+};
 
-const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
-  const formatCreatedAt = (createdAt: number[] | null) => {
-    if (!createdAt) return null;
-    const [year, month, day, hour, minute] = createdAt;
-    return dayjs(`${year}-${month}-${day} ${hour}:${minute}`);
-  };
+const AttendanceTable: React.FC<AttendanceTableProps> = ({ 
+  attendances,
+  loading,
+  currentPage,
+  pageSize,
+  total,
+  onPageChange
+}) => {
 
   const columns: ColumnsType<Attendance> = [
     {
@@ -116,24 +128,27 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({ attendances }) => {
   ];
 
   return (
-    <Table 
-      columns={columns} 
-      dataSource={attendances}
-      rowKey="id"
-      pagination={{ 
-        pageSize: 10,
-        showTotal: (total) => `Total ${total} attendance records`,
-        showSizeChanger: true,
-        pageSizeOptions: ['10', '20', '50', '100'],
-      }}
-      scroll={{ x: 800 }}
-      bordered
-      size="middle"
-      className="attendance-table"
-      rowClassName={(record, index) => 
-        index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-      }
-    />
+    <Card className="shadow-md">
+      <Table
+        columns={columns}
+        dataSource={attendances}
+        loading={loading}
+        rowKey="id"
+        pagination={false}
+      />
+      <div className="border-t border-gray-200 pt-4 px-4">
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={total}
+          showTotal={(total) => `Tổng ${total} lượt điểm danh`}
+          showSizeChanger
+          onChange={onPageChange}
+          className="flex justify-end items-center"
+          pageSizeOptions={[5, 10, 20, 50]}
+        />
+      </div>
+    </Card>
   );
 };
 

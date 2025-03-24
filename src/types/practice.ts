@@ -42,3 +42,14 @@ export interface Practice extends BaseEntity {
     practiceFiles?: PracticeFile[];
     practiceGuides?: PracticeGuide[];
 }
+
+export interface PracticeFilter {
+    id?: number;
+    title?: string;
+    status?: PracticeStatus;
+
+    page?: number;
+    size?: number;
+    sortField?: string;
+    sortOrder?: 'asc' | 'desc';
+}

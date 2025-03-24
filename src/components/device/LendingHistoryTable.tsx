@@ -26,7 +26,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
 
     const columns: TableProps<BorrowRecord>['columns'] = [
         {
-            title: 'Device Info',
+            title: 'Thông tin thiết bị',
             dataIndex: 'device',
             key: 'device',
             render: (device: DeviceFormValues) => (
@@ -43,7 +43,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
             ),
         },
         {
-            title: 'Note',
+            title: 'Ghi chú',
             dataIndex: 'note',
             key: 'note',
             render: (note?: string) => (
@@ -55,7 +55,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
             ),
         },
         {
-            title: 'Borrow Date',
+            title: 'Ngày mượn',
             dataIndex: 'borrowedAt',
             key: 'borrowedAt',
             render: (date: string) => (
@@ -64,7 +64,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
             sorter: (a, b) => dayjs(a.borrowedAt).unix() - dayjs(b.borrowedAt).unix(),
         },
         {
-            title: 'Expiry Date',
+            title: 'Hạn mượn',
             dataIndex: 'expiredAt',
             key: 'expiredAt',
             render: (date: string) => {
@@ -82,7 +82,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
             },
         },
         {
-            title: 'Return Date',
+            title: 'Ngày trả',
             dataIndex: 'returnedAt',
             key: 'returnedAt',
             render: (date?: string) => date ? (
@@ -90,7 +90,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
             ) : '-',
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
             render: (status: 'BORROWED' | 'RETURNED') => {
@@ -144,7 +144,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
         <div className="space-y-4">
             <div className="flex flex-wrap gap-4">
                 <Input
-                    placeholder="Search by device name/code"
+                    placeholder="Tìm kiếm thiết bị theo tên hoặc mã"
                     prefix={<SearchOutlined />}
                     value={searchText}
                     onChange={e => setSearchText(e.target.value)}
@@ -152,7 +152,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
                 />
                 <div className="flex items-center gap-2">
                     <DatePicker
-                        placeholder="Start Date"
+                        placeholder="Ngày bắt đầu"
                         onChange={setStartDate}
                         value={startDate}
                         className="w-40"
@@ -160,7 +160,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
                     />
                     <span className="text-gray-500">to</span>
                     <DatePicker
-                        placeholder="End Date"
+                        placeholder="Ngày kết thúc"
                         onChange={setEndDate}
                         value={endDate}
                         className="w-40"
@@ -178,7 +178,7 @@ export const LendingHistoryTable: React.FC<Props> = ({ borrowRecords, loading })
                 pagination={{
                     pageSize: 10,
                     showSizeChanger: true,
-                    showTotal: (total) => `Total ${total} records`,
+                    showTotal: (total) => `Tổng ${total} mục`,
                 }}
             />
         </div>

@@ -7,21 +7,35 @@ import dayjs from 'dayjs';
 
 const { Option } = Select;
 
-interface AttendanceManagementProps {
-  attendances: Attendance[];
-}
-
 const formatDateTime = (dateTimeArray: number[] | null) => {
   if (!dateTimeArray || !Array.isArray(dateTimeArray) || dateTimeArray.length < 5) return null;
   const [year, month, day, hour, minute] = dateTimeArray;
   return dayjs(`${year}-${month}-${day} ${hour}:${minute}`);
 };
 
+interface AttendanceManagementProps {
+  attendances: Attendance[];
+  currentPage: number;
+  pageSize: number;
+  total: number;
+  onPageChange: (page: number, size: number) => void;
+  onDateChange: (date: dayjs.Dayjs | null) => void;
+  selectedDate: string;
+}
 
-const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ attendances }) => {
-  const [selectedDate, setSelectedDate] = useState<dayjs.Dayjs | null>(null);
+const AttendanceManagement: React.FC<AttendanceManagementProps> = ({
+  attendances,
+  currentPage,
+  pageSize,
+  total,
+  onPageChange,
+  onDateChange,
+  selectedDate
+}) => {
   const [selectedShift, setSelectedShift] = useState<string | null>(null);
   const [selectedClass, setSelectedClass] = useState<string | null>(null);
+
+  const dateValue = selectedDate ? dayjs(selectedDate) : dayjs();
 
   // Get unique classes from attendances
   const classes = [...new Set(attendances.map(a => a.classCode).filter(Boolean))];
@@ -34,8 +48,8 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ attendances
     const checkInTime = formatDateTime(attendance.checkInTime as unknown as number[]);
     
     const matchDate = selectedDate && checkInTime
-      ? checkInTime.format('YYYY-MM-DD') === selectedDate.format('YYYY-MM-DD')
-      : true;
+        ? checkInTime.format('YYYY-MM-DD') === dayjs(selectedDate).format('YYYY-MM-DD')
+        : true;
       
     const matchShift = selectedShift 
       ? attendance.shift === selectedShift
@@ -49,7 +63,7 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ attendances
   });
 
   const handleReset = () => {
-    setSelectedDate(null);
+    onDateChange(dayjs()); // Reset to today
     setSelectedShift(null);
     setSelectedClass(null);
   };
@@ -61,9 +75,10 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ attendances
           <Space size="large" wrap>
             <DatePicker
               placeholder="Chọn ngày"
-              onChange={setSelectedDate}
+              onChange={onDateChange}
               className="w-48"
-              value={selectedDate}
+              value={dateValue}
+              allowClear={false} // Prevent clearing the date
             />
             <Select
               placeholder="Chọn ca"
@@ -98,7 +113,13 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({ attendances
       </div>
 
       <AttendanceStats attendances={filteredAttendances} />
-      <AttendanceTable attendances={filteredAttendances} />
+      <AttendanceTable 
+        attendances={filteredAttendances}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        total={total}
+        onPageChange={onPageChange}
+      />
     </Card>
   );
 };

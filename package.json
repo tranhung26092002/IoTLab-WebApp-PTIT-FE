@@ -14,8 +14,11 @@
   "dependencies": {
     "@ant-design/charts": "^2.2.3",
     "@ant-design/icons": "^5.5.2",
+    "@emoji-mart/data": "^1.2.1",
+    "@emoji-mart/react": "^1.1.1",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@heroicons/react": "^2.2.0",
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
     "@react-pdf-viewer/core": "^3.12.0",

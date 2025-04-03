@@ -41,6 +41,12 @@ const SidebarAdmin: React.FC = () => {
       path: "/admin",
     },
     {
+      key: "/admin/chat-manager",
+      icon: <BookOutlined />,
+      label: "Chat",
+      path: "/admin/chat-manager",
+    },
+    {
       key: "/admin/user-manager",
       icon: <UserOutlined />,
       label: "Người dùng",

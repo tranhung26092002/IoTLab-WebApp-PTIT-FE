@@ -26,6 +26,7 @@ const DashboardDetail = React.lazy(() => import('./pages/DashboardDetail'));
 const RepoertPage = React.lazy(() => import('./pages/Report'));
 const ReportManager = React.lazy(() => import('./pages/ReportManager'));
 const ReportHistory = React.lazy(() => import('./pages/ReportHistory'));
+const ChatManager = React.lazy(() => import('./pages/ChatManager'));
 
 // Tạo QueryClient
 const queryClient = new QueryClient();
@@ -57,14 +58,15 @@ const App: React.FC = () => {
               </Route>
 
               {/* Admin Route */}
-              <Route element={<AdminRoute />}>
+              {/* <Route element={<AdminRoute />}> */}
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/chat-manager" element={<ChatManager />} />
                 <Route path="/admin/report-manager" element={<ReportManager />} />
                 <Route path="/admin/user-manager" element={<UserManager />} />
                 <Route path="/admin/practice-manager" element={<PracticeManager />} />
                 <Route path="/admin/practice-manager/:id" element={<PracticeDetailManager />} />
                 <Route path="/admin/device-manager" element={<HardDeviceManager />} />
-              </Route>
+              {/* </Route> */}
 
               {/* Special Routes */}
               <Route path="/404" element={<NotFound />} />

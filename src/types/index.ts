@@ -31,4 +31,8 @@ export interface UploadResponse {
 
 export interface DeleteResponse {
     message: string;
-} 
+}
+
+// Export các type mới
+export * from './studentProgress';
+export * from './student'; 

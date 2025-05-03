@@ -37,6 +37,7 @@ export interface Practice extends BaseEntity {
     title: string;
     description: string;
     imageUrl?: string;
+    practiceOrder?: number;
     status: PracticeStatus;
     practiceVideos?: PracticeVideo[];
     practiceFiles?: PracticeFile[];
@@ -52,4 +53,15 @@ export interface PracticeFilter {
     size?: number;
     sortField?: string;
     sortOrder?: 'asc' | 'desc';
+}
+
+export interface PracticeProgress {
+    id?: number;
+    practiceId?: number;
+    studentId?: number;
+    status: 'UNLOCKED' | 'LOCKED' | 'IN_PROGRESS' | 'COMPLETED';
+    score: number | null;
+    createdAt?: string | null;
+    updatedAt?: string | null;
+    completedAt?: string | null;
 }

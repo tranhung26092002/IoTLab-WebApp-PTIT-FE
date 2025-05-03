@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Card, Spin, Tag, Typography, List, Tooltip, Button, Space } from 'antd';
+import { Card, Spin, Tag, Typography, Tooltip, Button, Space } from 'antd';
 import { useAvatar } from '../hooks/useAvatar';
 import { usePractice } from '../hooks/usePractice';
-import { Practice, PracticeVideo } from '../types/practice';
+import { Practice } from '../types/practice';
 import AppLayout from '../components/AppLayout';
 import { DownloadOutlined, EditOutlined, FilePdfOutlined, FileTextOutlined, FileWordOutlined } from '@ant-design/icons';
 import { DocumentViewer } from '../components/practice/DocumentViewer';
@@ -279,45 +279,3 @@ export const PracticeDetail: React.FC = () => {
 };
 
 export default PracticeDetail;
-
-// <div className="col-span-4">
-//     {practice?.practiceVideos && practice.practiceVideos.length > 0 && (
-//         <div className="top-4">
-
-//             <div className="bg-gray-900 rounded-lg overflow-hidden shadow-xl mb-4">
-//                 <VideoPlayer
-//                     video={selectedVideo || practice.practiceVideos[0]}
-//                     className="w-full aspect-video"
-//                 />
-//                 <div className="p-3 bg-gray-800 text-white">
-//                     <h3 className="text-lg font-medium">
-//                         {(selectedVideo || practice.practiceVideos[0]).videoName}
-//                     </h3>
-//                 </div>
-//             </div>
-
-//             <Card className="bg-gray-50">
-//                 <Title level={4} className="mb-4">Video Playlist</Title>
-//                 <div className="space-y-3">
-//                     {practice.practiceVideos.map((video) => (
-//                         <div
-//                             key={video.id}
-//                             className={`cursor-pointer p-3 rounded transition-all
-//                                 ${selectedVideo?.id === video.id
-//                                     ? 'bg-blue-50 ring-1 ring-blue-500'
-//                                     : 'hover:bg-gray-100'}`}
-//                             onClick={() => setSelectedVideo(video)}
-//                         >
-//                             <div className="flex flex-col gap-2">
-//                                 <VideoThumbnail video={video} />
-//                                 <span className="text-sm font-medium truncate">
-//                                     {video.videoName}
-//                                 </span>
-//                             </div>
-//                         </div>
-//                     ))}
-//                 </div>
-//             </Card>
-//         </div>
-//     )}
-// </div>

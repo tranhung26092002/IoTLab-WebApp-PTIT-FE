@@ -58,7 +58,7 @@ const App: React.FC = () => {
               </Route>
 
               {/* Admin Route */}
-              {/* <Route element={<AdminRoute />}> */}
+              <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/chat-manager" element={<ChatManager />} />
                 <Route path="/admin/report-manager" element={<ReportManager />} />
@@ -66,7 +66,7 @@ const App: React.FC = () => {
                 <Route path="/admin/practice-manager" element={<PracticeManager />} />
                 <Route path="/admin/practice-manager/:id" element={<PracticeDetailManager />} />
                 <Route path="/admin/device-manager" element={<HardDeviceManager />} />
-              {/* </Route> */}
+              </Route>
 
               {/* Special Routes */}
               <Route path="/404" element={<NotFound />} />

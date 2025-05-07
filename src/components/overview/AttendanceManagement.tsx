@@ -112,7 +112,9 @@ const AttendanceManagement: React.FC<AttendanceManagementProps> = ({
         </Space>
       </div>
 
-      <AttendanceStats attendances={filteredAttendances} />
+      <AttendanceStats 
+        total={total}
+      />
       <AttendanceTable 
         attendances={filteredAttendances}
         currentPage={currentPage}

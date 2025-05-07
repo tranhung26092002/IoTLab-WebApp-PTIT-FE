@@ -2,14 +2,15 @@ import React from 'react';
 import { Row, Col } from 'antd';
 import StatisticCard from './StatisticCard';
 import { CheckCircleOutlined, CloseCircleOutlined, TeamOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import { Attendance } from '../../types/user';
 
 interface AttendanceStatsProps {
-  attendances: Attendance[];
+  total: number;
 }
 
-const AttendanceStats: React.FC<AttendanceStatsProps> = ({ attendances }) => {
-  const totalStudents = attendances.length;
+const AttendanceStats: React.FC<AttendanceStatsProps> = ({   
+  total, 
+  }) => {
+  const totalStudents = total;
   
   // Since the Attendance interface doesn't have a status field, 
   // we'll consider all records as present for now

@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Badge, Dropdown, Avatar, Input, Spin, Tabs, Button } from 'antd';
+import { Badge, Dropdown, Avatar, Input, Spin, Tabs, Button, Typography, Tooltip } from 'antd';
 import { MessageOutlined, UserOutlined, SendOutlined, RobotOutlined, SmileOutlined, 
-    CloseOutlined, FullscreenOutlined, FullscreenExitOutlined, DragOutlined } from '@ant-design/icons';
-import { motion } from 'framer-motion';
+    CloseOutlined, FullscreenOutlined, FullscreenExitOutlined, DragOutlined, InfoCircleOutlined } from '@ant-design/icons';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useChat } from '../../hooks/useChat';
 import { useNotificationSound } from '../../hooks/useNotificationSound';
 import { formatDistanceToNow } from 'date-fns';
@@ -10,6 +10,7 @@ import { vi } from 'date-fns/locale';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { TabType } from '../../types';
+import type { InputRef } from 'antd';
 
 interface ChatPopupProps {
     visible: boolean;
@@ -42,6 +43,10 @@ interface Position {
 interface Size {
     width: number;
     height: number;
+}
+
+interface MessageDropdownProps {
+    children?: React.ReactNode;
 }
 
 const ChatPopup: React.FC<ChatPopupProps> = ({ visible, onClose }) => {
@@ -365,27 +370,40 @@ const ChatPopup: React.FC<ChatPopupProps> = ({ visible, onClose }) => {
     );
 };
 
-const MessageContent: React.FC = () => (
+export const MessageTooltipContent: React.FC = () => (
     <motion.div
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-80 bg-white rounded-lg shadow-lg p-4"
+        className="w-64 p-2"
     >
-        <div className="flex items-center gap-2 mb-4">
-            <Avatar icon={<UserOutlined />} />
+        <div className="flex items-center gap-3 mb-2">
+            <Avatar 
+                icon={<RobotOutlined />} 
+                className="bg-[#4f6f52]"
+                size="small"
+            />
             <div>
-                <h3 className="font-medium">AI Assistant</h3>
-                <p className="text-sm text-gray-500">Hỗ trợ thực hành 24/7</p>
+                <Typography.Text strong className="text-white">
+                    AI Assistant
+                </Typography.Text>
+                <Typography.Text className="block text-xs text-white/80">
+                    Hỗ trợ thực hành 24/7
+                </Typography.Text>
             </div>
         </div>
-        <p className="text-sm text-gray-600">
-            Tôi có thể giúp bạn với các vấn đề liên quan đến thực hành IoT và lập trình.
-            Hãy bắt đầu cuộc trò chuyện!
-        </p>
+        <Typography.Text className="block text-xs text-white/90 mb-2">
+            Tôi có thể giúp bạn với:
+        </Typography.Text>
+        <ul className="list-disc list-inside text-xs text-white/80 space-y-0.5 ml-1">
+            <li>Thực hành IoT</li>
+            <li>Lập trình và debug</li>
+            <li>Hướng dẫn sử dụng thiết bị</li>
+            <li>Giải đáp thắc mắc</li>
+        </ul>
     </motion.div>
 );
 
-export const MessageDropdown: React.FC = () => {
+export const MessageDropdown: React.FC<MessageDropdownProps> = ({ children }) => {
     const [chatVisible, setChatVisible] = useState(false);
     const { messages } = useChat();
 
@@ -393,20 +411,22 @@ export const MessageDropdown: React.FC = () => {
 
     return (
         <>
-            <Dropdown
-                overlay={<MessageContent />}
-                trigger={['hover']}
-                placement="bottomRight"
+            <Tooltip 
+                title={<MessageTooltipContent />}
+                placement="bottom"
+                overlayClassName="!p-0"
+                overlayInnerStyle={{
+                    background: 'linear-gradient(to right, #4f6f52, #3d5740)',
+                    borderRadius: '12px',
+                }}
             >
-                <div>
-                    <Badge count={unreadCount}>
-                        <MessageOutlined 
-                            className="bg-[#d2e3c8] p-2 rounded-md text-sm text-[#4f6f52] cursor-pointer"
-                            onClick={() => setChatVisible(true)}
-                        />
-                    </Badge>
-                </div>
-            </Dropdown>
+                <Badge count={unreadCount} offset={[-5, 5]}>
+                    <MessageOutlined 
+                        className="text-xl p-2 rounded-full bg-[#d2e3c8] text-[#4F6F52] hover:bg-[#86A789] hover:text-white transition-all duration-300" 
+                        onClick={() => setChatVisible(true)}
+                    />
+                </Badge>
+            </Tooltip>
 
             <ChatPopup
                 visible={chatVisible}

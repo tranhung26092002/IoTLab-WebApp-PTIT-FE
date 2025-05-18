@@ -27,6 +27,10 @@ const RepoertPage = React.lazy(() => import('./pages/Report'));
 const ReportManager = React.lazy(() => import('./pages/ReportManager'));
 const ReportHistory = React.lazy(() => import('./pages/ReportHistory'));
 const ChatManager = React.lazy(() => import('./pages/ChatManager'));
+const ExamPage = React.lazy(() => import('./pages/ExamPage'));
+const QuestionBankManager = React.lazy(() => import('./components/exam/QuestionBankManager'));
+const ExamTemplateManager = React.lazy(() => import('./components/exam/ExamTemplateManager'));
+const ExamManager = React.lazy(() => import('./pages/ExamManager'));
 
 // Tạo QueryClient
 const queryClient = new QueryClient();
@@ -50,6 +54,7 @@ const App: React.FC = () => {
                 <Route path="/device" element={<Device />} />
                 <Route path="/practice" element={<Practice />} />
                 <Route path="/practice/:id" element={<PracticeDetail />} />
+                <Route path="/exam" element={<ExamPage />} />
                 <Route path="/report" element={<RepoertPage />} />
                 <Route path="/report-history" element={<ReportHistory />} />
                 <Route path="/setting" element={<Setting />} />
@@ -66,6 +71,7 @@ const App: React.FC = () => {
                 <Route path="/admin/practice-manager" element={<PracticeManager />} />
                 <Route path="/admin/practice-manager/:id" element={<PracticeDetailManager />} />
                 <Route path="/admin/device-manager" element={<HardDeviceManager />} />
+                <Route path="/admin/exam-manager" element={<ExamManager />} />
               </Route>
 
               {/* Special Routes */}

@@ -17,6 +17,9 @@ export const useSensorData = (id: string) => {
         led: 0,
         fan: 0,
         servo: 0,
+        broker: '',
+        topic: '',
+        payload: '',
         createdAt: []
     });
 
@@ -87,6 +90,7 @@ export const useSensorData = (id: string) => {
 
     return {
         sensorData: {
+            data: sensorData ,
             sensors: {
                 temperature: sensorData.temperature,
                 humidity: sensorData.humidity,

@@ -9,6 +9,9 @@ export interface SensorData {
     led: number;
     fan: number;
     servo: number;
+    broker: string;
+    topic: string;
+    payload: string;
     createdAt: number[];
 }
 

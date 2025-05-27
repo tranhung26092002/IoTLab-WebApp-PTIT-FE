@@ -14,10 +14,11 @@ import {
   ApiOutlined
 } from '@ant-design/icons';
 import { useSensorData } from '../hooks/useSensorData';
-import AppLayoutAdmin from '../components/AppLayoutAdmin';
 import { SensorMonitorCard } from '../components/dashboard/SensorMonitorCard';
 import { DeviceControlCard } from '../components/dashboard/DeviceControlCard';
 import { SensorChart } from '../components/dashboard/SensorChart';
+import { BrokerInfoCard } from '../components/dashboard/BrokerInfoCard';
+import AppLayout from '../components/AppLayout';
 
 interface SensorHistory {
   temperature: Array<{ time: string; value: number }>;
@@ -108,7 +109,7 @@ useEffect(() => {
   ];
 
   return (
-    <AppLayoutAdmin>
+    <AppLayout>
       <div className="p-6 space-y-8 bg-gradient-to-br from-[#d2e3c8] via-[#86a789] to-[#4f6f52] min-h-screen">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -119,6 +120,28 @@ useEffect(() => {
             <DashboardOutlined /> Dashboard
           </Typography.Title>
         </motion.div>
+
+        <Row gutter={[16, 16]} className="mb-8">
+          <Col xs={24} lg={12}>
+            <BrokerInfoCard
+              broker={sensorData.data.broker}
+              topic={sensorData.data.topic}
+              payload={JSON.stringify({
+                sensors: sensorData.sensors,
+                status: sensorData.status
+              }, null, 2)}
+              index={0}
+            />
+          </Col>
+          <Col xs={24} lg={12}>
+            <BrokerInfoCard
+              broker={sensorData.data.broker}
+              topic={sensorData.data.topic}
+              payload={JSON.stringify(sensorData.data.payload, null, 2)}
+              index={1}
+            />
+          </Col>
+        </Row>
 
         <Row gutter={[16, 16]} className="mb-8">
           {sensorConfigs.map((sensor, index) => (
@@ -185,7 +208,7 @@ useEffect(() => {
           ))}
         </Row>
       </div>
-    </AppLayoutAdmin>
+    </AppLayout>
   );
 };
 

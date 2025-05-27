@@ -28,8 +28,6 @@ const ReportManager = React.lazy(() => import('./pages/ReportManager'));
 const ReportHistory = React.lazy(() => import('./pages/ReportHistory'));
 const ChatManager = React.lazy(() => import('./pages/ChatManager'));
 const ExamPage = React.lazy(() => import('./pages/ExamPage'));
-const QuestionBankManager = React.lazy(() => import('./components/exam/QuestionBankManager'));
-const ExamTemplateManager = React.lazy(() => import('./components/exam/ExamTemplateManager'));
 const ExamManager = React.lazy(() => import('./pages/ExamManager'));
 
 // Tạo QueryClient

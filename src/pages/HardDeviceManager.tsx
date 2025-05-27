@@ -41,7 +41,7 @@ const HardDeviceManager: React.FC = () => {
   const {
     devices,
     isLoading,
-    metadata,
+    metaData,
     handlePageChange,
     handleSizeChange
   } = useFilteredDevices({
@@ -173,7 +173,7 @@ const HardDeviceManager: React.FC = () => {
                       <Pagination
                         current={currentPage}
                         pageSize={pageSize}
-                        total={metadata?.total || 0}
+                        total={metaData?.total || 0}
                         showTotal={(total) => `Tổng ${total} thiết bị`}
                         showSizeChanger
                         onChange={onPaginationChange}

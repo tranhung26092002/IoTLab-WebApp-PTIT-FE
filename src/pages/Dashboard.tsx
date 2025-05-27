@@ -2,7 +2,6 @@ import React from 'react';
 import { Spin, Typography } from 'antd';
 import { motion } from 'framer-motion';
 import { DashboardOutlined } from '@ant-design/icons';
-import AppLayoutAdmin from '../components/AppLayoutAdmin';
 import { useDashboard } from '../hooks/useDashboard';
 import { DeviceCardDashboard } from '../components/dashboard/DeviceCardDashboard';
 import AppLayout from '../components/AppLayout';

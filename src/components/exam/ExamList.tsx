@@ -25,58 +25,6 @@ interface Exam {
   createdAt: string;
 }
 
-// Dữ liệu mẫu cho đề thi
-const sampleExams: Exam[] = [
-  {
-    id: 1,
-    title: "Đề thi cuối kỳ Web Frontend - Lần 1",
-    description: "Đề thi đánh giá kiến thức về React, TypeScript và CSS",
-    duration: 90,
-    questions: [
-      {
-        id: 1,
-        content: "Trong JavaScript, phương thức nào được sử dụng để thêm một phần tử vào cuối mảng?",
-        type: QuestionType.MULTIPLE_CHOICE,
-        options: ["push()", "append()", "addToEnd()", "insert()"],
-        correctOption: 0,
-        points: 1
-      },
-      {
-        id: 2,
-        content: "Giải thích cách hoạt động của Virtual DOM trong React và so sánh với DOM thực.",
-        type: QuestionType.ESSAY,
-        points: 5
-      }
-    ],
-    status: ExamStatus.PUBLISHED,
-    createdAt: "2024-03-20T10:00:00.000Z"
-  },
-  {
-    id: 2,
-    title: "Đề thi giữa kỳ JavaScript - Lần 1",
-    description: "Kiểm tra kiến thức cơ bản về JavaScript",
-    duration: 60,
-    questions: [
-      {
-        id: 3,
-        content: "Trong CSS, thuộc tính display: flex được sử dụng để làm gì?",
-        type: QuestionType.MULTIPLE_CHOICE,
-        options: ["Ẩn phần tử", "Tạo layout linh hoạt", "Thêm animation", "Thay đổi màu sắc"],
-        correctOption: 1,
-        points: 1
-      },
-      {
-        id: 4,
-        content: "Phân biệt giữa let, const và var trong JavaScript.",
-        type: QuestionType.ESSAY,
-        points: 3
-      }
-    ],
-    status: ExamStatus.DRAFT,
-    createdAt: "2024-03-19T15:30:00.000Z"
-  }
-];
-
 const ExamList: React.FC = () => {
   const { exams, deleteExam } = useExam();
   const [selectedExam, setSelectedExam] = useState<typeof exams[0] | null>(null);

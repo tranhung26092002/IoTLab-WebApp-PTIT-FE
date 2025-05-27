@@ -25,7 +25,7 @@ const UserManager: React.FC = () => {
         isAddingUser,
         isUpdatingUser,
         isDeletingUser,
-        error,
+        getUsers,
         useFilteredUsers,
     } = useUsers({
         enableUsers: false
@@ -180,12 +180,12 @@ const UserManager: React.FC = () => {
         },
     ];
 
-    if (error) {
+    if (getUsers.error) {
         return (
             <AppLayoutAdmin>
                 <div className="p-6">
                     <Title level={4} className="text-red-500">
-                        Error loading users: {error.message}
+                        Error loading users: {getUsers.error.message}
                     </Title>
                 </div>
             </AppLayoutAdmin>

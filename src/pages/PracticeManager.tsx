@@ -16,7 +16,7 @@ const PracticeManager: React.FC = () => {
   const [status, setStatus] = useState<PracticeStatus | 'ALL'>('ALL');
   const [sort, setSort] = useState<'newest' | 'oldest'>('newest');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { practices, isLoading, createPractice, isCreating } = usePractice(currentPage - 1, pageSize);
+  const { practices, isLoading, createPractice, isCreating } = usePractice();
 
   const handleCreatePractice = async (practice: Partial<Practice>, file?: File) => {
     try {

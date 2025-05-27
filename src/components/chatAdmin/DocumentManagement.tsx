@@ -45,7 +45,7 @@ const DocumentManagement: React.FC = () => {
             title: 'Tên tài liệu',
             dataIndex: 'filename',
             key: 'filename',
-            render: (text: string, record: Document) => (
+            render: (text: string) => (
                 <Space>
                     <FileOutlined />
                     <span>{text}</span>

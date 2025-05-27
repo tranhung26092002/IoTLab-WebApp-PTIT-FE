@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Document, UploadResponse } from '../types';
+import { Document } from '../types';
 import { chatApi } from '../services/api/chatApi';
 
 export const useChatAdmin = () => {
@@ -24,7 +24,7 @@ export const useChatAdmin = () => {
         setError(null);
 
         try {
-            const response: UploadResponse = await chatApi.uploadDocument(file);
+            await chatApi.uploadDocument(file);
             setUploadMessage('Tải lên thành công!');
             await loadDocuments();
         } catch (err) {

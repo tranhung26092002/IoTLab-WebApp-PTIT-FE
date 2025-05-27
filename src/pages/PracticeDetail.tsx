@@ -25,7 +25,6 @@ export const PracticeDetail: React.FC = () => {
     const [loading, setLoading] = React.useState(true);
     const { imageUrl, isLoading: imageLoading } = useAvatar(practice?.imageUrl);
     const [selectedDocument, setSelectedDocument] = useState<string | null>(null);
-    const [documentLoading, setDocumentLoading] = useState(false);
     const [selectedFile, setSelectedFile] = useState<{url: string, type: string, name: string} | null>(null);
     const [viewerType, setViewerType] = useState<'pdf' | 'word' | 'excel' | null>(null);
     const { url: documentUrl, isLoading: isDocumentLoading } = useDocument(selectedFile?.url);
@@ -67,7 +66,6 @@ export const PracticeDetail: React.FC = () => {
     };
 
     const handleDocumentReady = (url: string) => {
-        setDocumentLoading(false);
         window.open(url, '_blank');
         setSelectedDocument(null);
     };

@@ -62,7 +62,7 @@ export const ReportContentTable: React.FC<Props> = ({
       title: 'Người thực hiện', 
       dataIndex: 'performer', 
       width: '25%',
-      render: (text, record, index) => (
+      render: ( _, record, index) => (
         <Select
           value={record.userId || undefined}
           onChange={(value) => {

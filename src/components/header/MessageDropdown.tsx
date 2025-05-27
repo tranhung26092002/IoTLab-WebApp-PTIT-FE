@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Badge, Dropdown, Avatar, Input, Spin, Tabs, Button, Typography, Tooltip } from 'antd';
-import { MessageOutlined, UserOutlined, SendOutlined, RobotOutlined, SmileOutlined, 
-    CloseOutlined, FullscreenOutlined, FullscreenExitOutlined, DragOutlined, InfoCircleOutlined } from '@ant-design/icons';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Badge, Avatar, Input, Spin, Tabs, Button, Typography, Tooltip } from 'antd';
+import { MessageOutlined, SendOutlined, RobotOutlined, SmileOutlined, 
+    CloseOutlined, FullscreenOutlined, FullscreenExitOutlined, DragOutlined } from '@ant-design/icons';
+import { motion } from 'framer-motion';
 import { useChat } from '../../hooks/useChat';
 import { useNotificationSound } from '../../hooks/useNotificationSound';
 import { formatDistanceToNow } from 'date-fns';
@@ -10,7 +10,6 @@ import { vi } from 'date-fns/locale';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import { TabType } from '../../types';
-import type { InputRef } from 'antd';
 
 interface ChatPopupProps {
     visible: boolean;
@@ -403,7 +402,7 @@ export const MessageTooltipContent: React.FC = () => (
     </motion.div>
 );
 
-export const MessageDropdown: React.FC<MessageDropdownProps> = ({ children }) => {
+export const MessageDropdown: React.FC<MessageDropdownProps> = () => {
     const [chatVisible, setChatVisible] = useState(false);
     const { messages } = useChat();
 

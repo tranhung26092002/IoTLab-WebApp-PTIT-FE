@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Table, Button, Space, Tag, Modal, Form, Input, Select, Upload, message } from 'antd';
+import { Table, Button, Space, Tag, Modal, Form, Input, Select, Upload, message } from 'antd';
 import { PlusOutlined, UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { QuestionType, QuestionDifficulty } from '../../types/exam';
 import { sampleQuestions, Question } from '../../data/sampleQuestions';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Spin } from 'antd';
+import { Spin } from 'antd';
 import { useVideo } from '../../hooks/useVideo';
 import { PracticeVideo } from '../../types/practice';
 

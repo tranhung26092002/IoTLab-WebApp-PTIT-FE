@@ -1,7 +1,6 @@
 import React, { Suspense, useState, useEffect, useCallback } from "react";
 import { Layout, Button, ConfigProvider } from "antd";
 import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons";
-import { useLocation } from 'react-router-dom';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import "../App.css";
@@ -17,7 +16,6 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const saved = localStorage.getItem('sidebarCollapsed');
     return saved ? JSON.parse(saved) : false;
   });
-  const location = useLocation();
 
   useEffect(() => {
     localStorage.setItem('sidebarCollapsed', JSON.stringify(collapsed));

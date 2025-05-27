@@ -39,7 +39,7 @@ export const Team: React.FC = () => (
     >
       <Row gutter={[24, 24]}>
         {teamMembers.map((member, index) => (
-          <Col xs={24} md={8} key={member.id}>
+          <Col xs={24} md={8} key={index}>
             <motion.div 
               variants={animations.stagger.item}
               {...animations.cardHover}

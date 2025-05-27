@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, Typography, Space, Modal, notification } from "antd";
-import { UserOutlined, LockOutlined, EyeTwoTone, EyeInvisibleOutlined } from "@ant-design/icons";
+import React from "react";
+import { Form, Input, Button, Typography, Space, notification } from "antd";
+import { UserOutlined } from "@ant-design/icons";
 import { motion } from "framer-motion";
 import { useAuth } from "../../hooks/useAuth";
 
@@ -8,7 +8,7 @@ const { Title } = Typography;
 
 const RegisterForm: React.FC<{ onToggleLogin: () => void }> = ({ onToggleLogin }) => {
   const [form] = Form.useForm();
-  const { sendOtp, signUp, isOtpLoading, isSignUpLoading } = useAuth();
+  const { signUp, isSignUpLoading } = useAuth();
   // const [isOtpModalVisible, setIsOtpModalVisible] = useState(false);
   // const [otpValue, setOtpValue] = useState("");
   // const [timer, setTimer] = useState(120);

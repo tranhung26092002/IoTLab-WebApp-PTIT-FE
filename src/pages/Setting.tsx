@@ -6,19 +6,13 @@ import {
   SecurityScanOutlined,
   MailOutlined,
   GlobalOutlined,
-  ApiOutlined,
   TranslationOutlined,
-  TeamOutlined,
-  DatabaseOutlined,
-  CloudOutlined,
   SettingOutlined
 } from '@ant-design/icons';
 import { ThemeContext } from '../contexts/ThemeContext';
 import AppLayout from '../components/AppLayout';
 import { useUsers } from '../hooks/useUsers';
 import { ChangePasswordDto } from '../types/user';
-
-const { Title } = Typography;
 
 const Setting: React.FC = () => {
   const { isDark, toggleTheme } = useContext(ThemeContext);

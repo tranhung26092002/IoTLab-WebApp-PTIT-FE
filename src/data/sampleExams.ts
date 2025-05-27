@@ -1,4 +1,4 @@
-import { ExamStatus, QuestionType } from '../types/exam';
+import { ExamStatus } from '../types/exam';
 import { sampleQuestions } from './sampleQuestions';
 
 export interface Exam {

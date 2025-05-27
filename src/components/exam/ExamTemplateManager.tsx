@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Card, Table, Button, Space, Tag, Modal, Form, Input, InputNumber, Select, message } from 'antd';
+import { Table, Button, Space, Tag, Modal, Form, Input, InputNumber, Select, message } from 'antd';
 import { PlusOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { ExamStatus, QuestionType, QuestionDifficulty } from '../../types/exam';
+import { ExamStatus, QuestionType } from '../../types/exam';
 import { useExam } from '../../contexts/ExamContext.tsx';
 import { sampleQuestions } from '../../data/sampleQuestions';
 
@@ -15,28 +15,6 @@ interface ExamTemplate {
   duration: number;
   multipleChoiceCount: number;
   essayCount: number;
-  status: ExamStatus;
-  createdAt: string;
-}
-
-interface Question {
-  id: number;
-  content: string;
-  type: QuestionType;
-  difficulty: QuestionDifficulty;
-  category: string;
-  options?: string[];
-  correctOption?: number;
-  points: number;
-}
-
-interface Exam {
-  id: number;
-  templateId: number;
-  title: string;
-  description: string;
-  duration: number;
-  questions: Question[];
   status: ExamStatus;
   createdAt: string;
 }

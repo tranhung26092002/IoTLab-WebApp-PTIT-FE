@@ -43,7 +43,7 @@ export const useHardDevices = () => {
         return {
             devices: data?.data || [],
             isLoading,
-            metadata: data?.metaData,
+            metaData: data?.metaData,
             handlePageChange: (newPage: number) => {
                 filters.page = newPage;
                 refetch();

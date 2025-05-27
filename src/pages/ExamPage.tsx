@@ -4,7 +4,7 @@ import { UploadOutlined, FileImageOutlined, ClockCircleOutlined, UserOutlined, B
 import { motion } from 'framer-motion';
 import AppLayout from '../components/AppLayout';
 import { Student } from '../types/student';
-import { Exam, StudentExam, Question, QuestionType, QuestionDifficulty, ExamStatus } from '../types/exam';
+import { Exam, StudentExam, QuestionType, QuestionDifficulty, ExamStatus } from '../types/exam';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -19,7 +19,7 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
   const [isExamStarted, setIsExamStarted] = useState(false);
   const [preparationTime, setPreparationTime] = useState(5 * 60); // 5 minutes preparation
   const [showProgressModal, setShowProgressModal] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep] = useState(0);
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const WARNING_TIME = 5 * 60; // 5 minutes in seconds
 

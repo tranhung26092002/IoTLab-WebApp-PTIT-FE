@@ -1,5 +1,12 @@
 export type TabType = 'chat' | 'iot' | 'admin';
 
+export interface Chat {
+    id: string;
+    messages: Message[];
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export interface Message {
     content: string;
     isUser: boolean;

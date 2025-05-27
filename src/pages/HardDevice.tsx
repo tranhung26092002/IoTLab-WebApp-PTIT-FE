@@ -41,7 +41,7 @@ const HardDevicePage: React.FC = () => {
     const {
         devices,
         isLoading,
-        metadata,
+        metaData,
         handlePageChange,
         handleSizeChange
     } = useFilteredDevices({
@@ -166,7 +166,7 @@ const HardDevicePage: React.FC = () => {
                                             <Pagination
                                                 current={currentPage}
                                                 pageSize={pageSize}
-                                                total={metadata?.total || 0}
+                                                total={metaData?.total || 0}
                                                 showTotal={(total) => `Tổng ${total} thiết bị`}
                                                 showSizeChanger
                                                 onChange={onPaginationChange}
@@ -181,7 +181,7 @@ const HardDevicePage: React.FC = () => {
                                         <span className="flex items-center gap-2 text-lg font-semibold">
                                             Thiết bị đã mượn
                                             <span className={`px-2 py-0.5 text-sm bg-[${COLORS.primary}]/10 text-[${COLORS.primary}] rounded-full`}>
-                                                {borrowedDevicesData?.metadata?.total || 0}
+                                                {borrowedDevicesData?.metaData?.total || 0}
                                             </span>
                                         </span>
                                     ),
@@ -195,7 +195,7 @@ const HardDevicePage: React.FC = () => {
                                             <Pagination
                                                 current={borrowedCurrentPage}
                                                 pageSize={borrowedPageSize}
-                                                total={borrowedDevicesData?.metadata?.total || 0}
+                                                total={borrowedDevicesData?.metaData?.total || 0}
                                                 showTotal={(total) => `Tổng ${total} lượt mượn`}
                                                 showSizeChanger
                                                 onChange={onBorrowedPaginationChange}

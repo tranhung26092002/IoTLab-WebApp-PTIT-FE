@@ -1,11 +1,13 @@
 version: '3.8'
 services:
   react-app:
-    build: .
-    container_name: react-app-dev
-    image: react-app-dev:latest  # Đặt tên image duy nhất
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: react-app-prod
+    image: ${DOCKER_USERNAME}/react-app:latest  # Thay thế DOCKER_USERNAME bằng username Docker Hub của bạn
     ports:
-      - "3000:3000"  # Ánh xạ cổng 5173
+      - "80:80"
     networks:
       - app-network
     restart: always

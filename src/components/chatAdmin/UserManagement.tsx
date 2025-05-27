@@ -82,7 +82,7 @@ const UserManagement: React.FC = () => {
                         type="text"
                         danger
                         icon={<DeleteOutlined />}
-                        onClick={() => handleDelete(record.id)}
+                        onClick={handleDelete}
                     >
                         Xóa
                     </Button>
@@ -97,7 +97,7 @@ const UserManagement: React.FC = () => {
         setIsModalVisible(true);
     };
 
-    const handleDelete = (userId: number) => {
+    const handleDelete = () => {
         Modal.confirm({
             title: 'Xác nhận xóa',
             content: 'Bạn có chắc chắn muốn xóa người dùng này?',

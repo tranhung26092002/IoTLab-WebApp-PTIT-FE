@@ -15,8 +15,6 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
   const [form] = Form.useForm();
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [showResetPassword, setShowResetPassword] = useState(false);
-  const [email, setEmail] = useState('');
-  // const [userName, setUserName] = useState('');
   const [rememberMe, setRememberMe] = useState(() =>
     localStorage.getItem('rememberMe') === 'true'
   );
@@ -56,7 +54,6 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
   const handleForgotPassword = async (email: string) => {
     try {
       await forgotPassword({ email });
-      setEmail(email);
       setShowForgotPassword(false);
       setShowResetPassword(true);
     } catch (error) {
@@ -175,7 +172,6 @@ const LoginForm: React.FC<{ onToggleRegister: () => void }> = ({ onToggleRegiste
         onClose={() => setShowResetPassword(false)}
         onSubmit={handleResetPassword}
         loading={isResetPasswordLoading}
-        email={email} // Update prop name
       />
     </>
   );

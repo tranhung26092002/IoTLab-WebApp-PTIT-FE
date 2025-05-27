@@ -1,11 +1,10 @@
-version: '3.8'
 services:
   react-app:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: react-app-prod
-    image: ${DOCKER_USERNAME}/react-app:latest  # Thay thế DOCKER_USERNAME bằng username Docker Hub của bạn
+    container_name: react-app
+    image: tranvanhung26092002/react-app:latest  # Thay thế DOCKER_USERNAME bằng username Docker Hub của bạn
     ports:
       - "80:80"
     networks:
@@ -14,4 +13,4 @@ services:
 
 networks:
   app-network:
-    driver: bridge
+    external: true

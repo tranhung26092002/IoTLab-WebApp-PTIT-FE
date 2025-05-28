@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: "0.0.0.0",
-    port: 80,
+    port: 3000,
     proxy: {
       '/mqtt/ws': {
         target: `http://localhost:8088`,

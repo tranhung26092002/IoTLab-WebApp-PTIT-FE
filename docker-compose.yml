@@ -4,7 +4,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: react-app
-    image: tranvanhung26092002/react-app:latest  # Thay thế DOCKER_USERNAME bằng username Docker Hub của bạn
+    image: ${DOCKER_USERNAME}/react-app:latest  
     ports:
       - "80:80"
     networks:

@@ -7,12 +7,15 @@ import type { TabsProps } from 'antd';
 import QuestionBankManager from '../components/exam/QuestionBankManager';
 import ExamTemplateManager from '../components/exam/ExamTemplateManager';
 import ExamList from '../components/exam/ExamList';
-import { ExamProvider } from '../contexts/ExamContext.tsx';
+import { useExam } from '../hooks/useExam';
+import { useQuestion } from '../hooks/useQuestion';
 
 const { Title } = Typography;
 
 const ExamManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('1');
+  const { exams, isLoading: isLoadingExams } = useExam();
+  const { questions, isLoading: isLoadingQuestions } = useQuestion();
 
   const items: TabsProps['items'] = [
     {
@@ -23,7 +26,7 @@ const ExamManager: React.FC = () => {
           Ngân hàng câu hỏi
         </span>
       ),
-      children: <QuestionBankManager />,
+      children: <QuestionBankManager questions={questions?.data || []} isLoading={isLoadingQuestions} />,
     },
     {
       key: '2',
@@ -33,7 +36,7 @@ const ExamManager: React.FC = () => {
           Mẫu đề thi
         </span>
       ),
-      children: <ExamTemplateManager />,
+      children: <ExamTemplateManager exams={exams?.data || []} isLoading={isLoadingExams} />,
     },
     {
       key: '3',
@@ -43,7 +46,7 @@ const ExamManager: React.FC = () => {
           Đề thi đã tạo
         </span>
       ),
-      children: <ExamList />,
+      children: <ExamList exams={exams?.data || []} isLoading={isLoadingExams} />,
     },
   ];
 
@@ -60,14 +63,12 @@ const ExamManager: React.FC = () => {
               <BankOutlined /> Quản lý ngân hàng đề thi
             </Title>
 
-            <ExamProvider>
-              <Tabs 
-                activeKey={activeTab} 
-                items={items} 
-                onChange={setActiveTab}
-                className="custom-tabs"
-              />
-            </ExamProvider>
+            <Tabs 
+              activeKey={activeTab} 
+              items={items} 
+              onChange={setActiveTab}
+              className="custom-tabs"
+            />
           </Card>
         </motion.div>
 

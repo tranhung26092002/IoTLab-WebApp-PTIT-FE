@@ -51,6 +51,31 @@ export const SUCCESS_MESSAGES = {
     CHANGE_STATUS: 'Thay đổi trạng thái thành công!',
     CHANGE_EVALUATION: 'Thay đổi điểm thành công!',
     GET_REPORTS_BY_STUDENT: 'Lấy danh sách báo cáo thành công!',
+
+    // Exam messages
+    CREATE_EXAM: 'Tạo bài thi thành công!',
+    UPDATE_EXAM: 'Cập nhật bài thi thành công!',
+    DELETE_EXAM: 'Xóa bài thi thành công!',
+    UPDATE_EXAM_STATUS: 'Cập nhật trạng thái bài thi thành công!',
+    SAVE_ANSWER: 'Lưu câu trả lời thành công!',
+    GET_STUDENT_EXAM_RESULT: 'Lấy kết quả bài thi thành công!',
+    GET_EXAM_STATISTICS: 'Lấy thống kê bài thi thành công!',
+    GET_STUDENT_STATISTICS: 'Lấy thống kê học sinh thành công!',
+    GET_TOP_PERFORMERS: 'Lấy top học sinh thành công!',
+    
+
+    // Question messages
+    CREATE_MULTIPLE_CHOICE_QUESTION: 'Tạo câu hỏi trắc nghiệm thành công!',
+    CREATE_ESSAY_QUESTION: 'Tạo câu hỏi tự luận thành công!',
+    UPDATE_QUESTION: 'Cập nhật câu hỏi thành công!',
+    DELETE_QUESTION: 'Xóa câu hỏi thành công!',
+    IMPORT_QUESTIONS: 'Nhập câu hỏi từ Excel thành công!',
+
+    // Student Exam messages
+    START_EXAM: 'Bắt đầu làm bài thi thành công!',
+    SUBMIT_EXAM: 'Nộp bài thi thành công!',
+    SAVE_ANSWERS: 'Lưu câu trả lời thành công!',
+    GRADE_ESSAY: 'Chấm điểm câu tự luận thành công!',
 } as const;
 
 export const ERROR_MESSAGES = {

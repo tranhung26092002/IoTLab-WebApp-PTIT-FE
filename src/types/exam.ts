@@ -1,100 +1,93 @@
-import { BaseEntity } from './baseEntity';
+export enum QuestionType {
+  MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
+  ESSAY = 'ESSAY'
+}
 
 export enum ExamStatus {
-    DRAFT = 'DRAFT',
-    PUBLISHED = 'PUBLISHED',
-    COMPLETED = 'COMPLETED',
-    ARCHIVED = 'ARCHIVED'
+  NOT_STARTED = 'NOT_STARTED',
+  IN_PROGRESS = 'IN_PROGRESS',
+  SUBMITTED = 'SUBMITTED'
 }
 
-export enum QuestionType {
-    MULTIPLE_CHOICE = 'MULTIPLE_CHOICE',
-    ESSAY = 'ESSAY'
+export interface MultipleChoiceOption {
+  id: number;
+  option: string; // A, B, C, D
+  content: string;
+  isCorrect: boolean;
 }
 
-export enum QuestionDifficulty {
-    EASY = 'EASY',
-    MEDIUM = 'MEDIUM',
-    HARD = 'HARD'
+export interface Question {
+  id: number;
+  type: QuestionType;
+  content: string;
+  options?: MultipleChoiceOption[]; // Only for multiple choice questions
+  score: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Question extends BaseEntity {
-    id: number;
-    content: string;
-    type: QuestionType;
-    difficulty: QuestionDifficulty;
-    category: string;
-    options?: string[]; // For multiple choice questions
-    correctOption?: number; // For multiple choice questions
-    points: number;
+export interface ExamQuestion {
+  id: number;
+  examId: number;
+  question: Question;
+  order: number;
 }
 
-export interface ExamTemplate extends BaseEntity {
-    id: number;
-    title: string;
-    description: string;
-    duration: number; // in minutes
-    multipleChoiceCount: number;
-    essayCount: number;
-    difficultyDistribution: {
-        [QuestionDifficulty.EASY]: number;
-        [QuestionDifficulty.MEDIUM]: number;
-        [QuestionDifficulty.HARD]: number;
-    };
-    categories: string[];
-    status: ExamStatus;
+export interface Exam {
+  id: number;
+  title: string;
+  description: string;
+  questions: ExamQuestion[];
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface Exam extends BaseEntity {
-    id: number;
-    templateId: number;
-    title: string;
-    description: string;
-    duration: number; // in minutes
-    startTime: string;
-    endTime: string;
-    questions: Question[];
-    status: ExamStatus;
+export interface StudentAnswer {
+  id: number;
+  studentExamId: number;
+  questionId: number;
+  essayAnswer?: string;
+  selectedOption?: string;
+  imageUrls?: string[];
+  score?: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export interface StudentExam extends BaseEntity {
-    id: number;
-    examId: number;
-    studentId: number;
-    startTime: string;
-    endTime?: string;
-    multipleChoiceAnswers: {
-        [questionId: number]: number;
-    };
-    essayAnswers: {
-        [questionId: number]: {
-            answer: string;
-            images: string[];
-        };
-    };
-    status: ExamStatus;
-    score?: number;
+export interface StudentExam {
+  id: number;
+  studentId: number;
+  examId: number;
+  startTime: string;
+  endTime?: string;
+  status: ExamStatus;
+  score?: number;
+  answers: StudentAnswer[];
 }
 
-export interface ExamFilter {
-    id?: number;
-    title?: string;
-    status?: ExamStatus;
-    startDate?: string;
-    endDate?: string;
-    page?: number;
-    size?: number;
-    sortField?: string;
-    sortOrder?: 'asc' | 'desc';
+// DTOs for API requests/responses
+export interface StartExamDTO {
+  studentId: number;
+  examId: number;
+  startTime?: string;
 }
 
-export interface QuestionFilter {
-    id?: number;
-    type?: QuestionType;
-    difficulty?: QuestionDifficulty;
-    category?: string;
-    page?: number;
-    size?: number;
-    sortField?: string;
-    sortOrder?: 'asc' | 'desc';
+export interface StudentAnswerDTO {
+  questionId: number;
+  questionType: QuestionType;
+  selectedOption?: string;
+  essayAnswer?: string;
+  imageUrls?: string[];
+  score?: number;
+}
+
+export interface StudentAnswerListDTO {
+  answers: StudentAnswerDTO[];
+}
+
+export interface StudentExamResult {
+  id: number;
+  studentCode: string;
+  score: number;
+  correctAnswers: number;
 } 

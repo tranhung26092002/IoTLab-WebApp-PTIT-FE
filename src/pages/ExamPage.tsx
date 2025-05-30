@@ -3,18 +3,15 @@ import { Typography, Card, Radio, Space, Input, Upload, Button, message, Progres
 import { UploadOutlined, FileImageOutlined, ClockCircleOutlined, UserOutlined, BookOutlined, ExclamationCircleOutlined, FormOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import AppLayout from '../components/AppLayout';
-import { Student } from '../types/student';
-import { Exam, StudentExam, QuestionType, QuestionDifficulty, ExamStatus } from '../types/exam';
+import { Exam, StudentExam, QuestionType, ExamStatus, StudentAnswer } from '../types/exam';
+import { useExam } from '../hooks/useExam';
+import { useStudentExam } from '../hooks/useStudentExam';
+import { useUsers } from '../hooks/useUsers';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
 
-interface ExamPageProps {
-  student?: Student;
-  exam?: Exam;
-}
-
-const ExamPage: React.FC<ExamPageProps> = (_) => {
+const ExamPage: React.FC = () => {
   // States
   const [isExamStarted, setIsExamStarted] = useState(false);
   const [preparationTime, setPreparationTime] = useState(5 * 60); // 5 minutes preparation
@@ -23,74 +20,41 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
   const [showTimeWarning, setShowTimeWarning] = useState(false);
   const WARNING_TIME = 5 * 60; // 5 minutes in seconds
 
-  // Sample student info
-  const [studentInfo] = useState<Student>({
-    id: 1,
-    userId: 1,
-    name: "Nguyễn Văn A",
-    studentCode: "B20DCCN001",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  });
+  // Hooks
+  const { 
+    getRandomExam,
+    isGettingRandom
+  } = useExam();
+  const { 
+    startExam,
+    saveAnswers,
+    submitExam,
+    isStarting,
+    isSavingAnswers,
+    isSubmitting
+  } = useStudentExam();
+  const { me, getMe } = useUsers({ enableMe: true });
 
-  // Sample exam info
-  const [examInfo] = useState<Exam>({
-    id: 1,
-    templateId: 1,
-    title: "Kiểm tra IoT Cơ Bản",
-    description: "Bài kiểm tra kiến thức cơ bản về IoT, bao gồm phần trắc nghiệm và thực hành.",
-    duration: 30,
-    startTime: new Date().toISOString(),
-    endTime: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-    questions: Array(20).fill(null).map((_, index) => ({
-      id: index + 1,
-      content: `Câu hỏi ${index + 1}: Đây là nội dung câu hỏi trắc nghiệm...`,
-      type: index < 20 ? QuestionType.MULTIPLE_CHOICE : QuestionType.ESSAY,
-      difficulty: QuestionDifficulty.MEDIUM,
-      category: 'IoT Basics',
-      options: index < 20 ? ['Đáp án A', 'Đáp án B', 'Đáp án C', 'Đáp án D'] : undefined,
-      correctOption: index < 20 ? 0 : undefined,
-      points: index < 20 ? 1 : 5,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    })),
-    status: ExamStatus.PUBLISHED,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  });
+  // States for exam data
+  const [examInfo, setExamInfo] = useState<Exam | null>(null);
+  const [studentExam, setStudentExam] = useState<StudentExam | null>(null);
+  const [timeLeft, setTimeLeft] = useState(0);
 
-  // Student exam state
-  const [studentExam, setStudentExam] = useState<StudentExam>({
-    id: 1,
-    examId: examInfo.id,
-    studentId: studentInfo.userId,
-    startTime: new Date().toISOString(),
-    multipleChoiceAnswers: {},
-    essayAnswers: {},
-    status: ExamStatus.DRAFT, // Start as draft, then move to published when started
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  });
-
-  // Timer state
-  const [timeLeft, setTimeLeft] = useState(examInfo.duration * 60);
+  // Get current user info on mount
+  useEffect(() => {
+    getMe();
+  }, [getMe]);
 
   // Calculate progress
-  const answeredQuestions = Object.keys(studentExam.multipleChoiceAnswers).length;
-  const progressPercent = (answeredQuestions / examInfo.questions.filter(q => q.type === QuestionType.MULTIPLE_CHOICE).length) * 100;
+  const answeredQuestions = studentExam ? studentExam.answers.filter(a => a.selectedOption || a.essayAnswer).length : 0;
+  const progressPercent = examInfo ? (answeredQuestions / examInfo.questions.length) * 100 : 0;
 
   // Timer effect
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (isExamStarted) {
-      setStudentExam(prev => ({
-        ...prev,
-        status: ExamStatus.PUBLISHED,
-        updatedAt: new Date().toISOString(),
-      }));
+    if (isExamStarted && examInfo) {
       timer = setInterval(() => {
         setTimeLeft(prev => {
-          // Show warning when 5 minutes remaining
           if (prev === WARNING_TIME) {
             setShowTimeWarning(true);
           }
@@ -115,62 +79,174 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [isExamStarted]);
+  }, [isExamStarted, examInfo]);
 
   // Handle exam start
-  const handleStartExam = () => {
-    setIsExamStarted(true);
-    setTimeLeft(examInfo.duration * 60);
-    message.success('Bài kiểm tra đã bắt đầu!');
+  const handleStartExam = async () => {
+    try {
+      // Get random exam
+      const randomExam = await getRandomExam();
+      setExamInfo(randomExam);
+      setTimeLeft(60 * 60); // 1 hour default duration
+
+      // Start student exam
+      const startedExam = await startExam({
+        examId: randomExam.id,
+        studentId: me?.id || 0
+      });
+      setStudentExam(startedExam);
+      setIsExamStarted(true);
+      message.success('Bài kiểm tra đã bắt đầu!');
+    } catch (error) {
+      message.error('Không thể bắt đầu bài kiểm tra. Vui lòng thử lại!');
+    }
   };
 
   // Handle multiple choice answer selection
-  const handleAnswerSelect = (questionId: number, optionIndex: number) => {
-    setStudentExam(prev => ({
-      ...prev,
-      multipleChoiceAnswers: {
-        ...prev.multipleChoiceAnswers,
-        [questionId]: optionIndex,
-      },
-      updatedAt: new Date().toISOString(),
-    }));
+  const handleAnswerSelect = async (questionId: number, optionIndex: number) => {
+    if (!studentExam) return;
+
+    try {
+      const updatedAnswers = studentExam.answers.map(answer => 
+        answer.questionId === questionId 
+          ? { ...answer, selectedOption: String.fromCharCode(65 + optionIndex) }
+          : answer
+      );
+
+      await saveAnswers({
+        studentExamId: studentExam.id,
+        answers: {
+          answers: updatedAnswers.map(answer => ({
+            questionId: answer.questionId,
+            questionType: answer.questionId === questionId ? QuestionType.MULTIPLE_CHOICE : QuestionType.ESSAY,
+            selectedOption: answer.selectedOption,
+            essayAnswer: answer.essayAnswer
+          }))
+        }
+      });
+
+      setStudentExam(prev => prev ? {
+        ...prev,
+        answers: updatedAnswers
+      } : null);
+    } catch (error) {
+      message.error('Không thể lưu câu trả lời. Vui lòng thử lại!');
+    }
   };
 
   // Handle essay answer update
-  const handleEssayAnswer = (questionId: number, answer: string) => {
-    setStudentExam(prev => ({
-      ...prev,
-      essayAnswers: {
-        ...prev.essayAnswers,
-        [questionId]: {
-          answer,
-          images: prev.essayAnswers[questionId]?.images || [],
-        },
-      },
-      updatedAt: new Date().toISOString(),
-    }));
+  const handleEssayAnswer = async (questionId: number, answer: string) => {
+    if (!studentExam) return;
+
+    try {
+      const updatedAnswers = studentExam.answers.map(a => 
+        a.questionId === questionId 
+          ? { ...a, essayAnswer: answer }
+          : a
+      );
+
+      await saveAnswers({
+        studentExamId: studentExam.id,
+        answers: {
+          answers: updatedAnswers.map(a => ({
+            questionId: a.questionId,
+            questionType: a.questionId === questionId ? QuestionType.ESSAY : QuestionType.MULTIPLE_CHOICE,
+            selectedOption: a.selectedOption,
+            essayAnswer: a.essayAnswer
+          }))
+        }
+      });
+
+      setStudentExam(prev => prev ? {
+        ...prev,
+        answers: updatedAnswers
+      } : null);
+    } catch (error) {
+      message.error('Không thể lưu câu trả lời. Vui lòng thử lại!');
+    }
   };
 
   // Handle image upload
-  const handleImageUpload = (questionId: number, file: File) => {
-    // Simulate image upload
-    setTimeout(() => {
-      setStudentExam(prev => ({
-        ...prev,
-        essayAnswers: {
-          ...prev.essayAnswers,
-          [questionId]: {
-            answer: prev.essayAnswers[questionId]?.answer || '',
-            images: [
-              ...(prev.essayAnswers[questionId]?.images || []),
-              URL.createObjectURL(file),
-            ].slice(0, 3), // Keep only the last 3 images
-          },
+  const handleImageUpload = async (questionId: number, file: File) => {
+    if (!studentExam) return false;
+
+    try {
+      const updatedAnswers = studentExam.answers.map(a => 
+        a.questionId === questionId 
+          ? { 
+              ...a, 
+              imageUrls: [...(a.imageUrls || []), URL.createObjectURL(file)].slice(0, 3)
+            }
+          : a
+      );
+
+      await saveAnswers({
+        studentExamId: studentExam.id,
+        answers: {
+          answers: updatedAnswers.map(a => ({
+            questionId: a.questionId,
+            questionType: a.questionId === questionId ? QuestionType.ESSAY : QuestionType.MULTIPLE_CHOICE,
+            selectedOption: a.selectedOption,
+            essayAnswer: a.essayAnswer,
+            imageUrls: a.imageUrls
+          }))
         },
-        updatedAt: new Date().toISOString(),
-      }));
-    }, 1000);
-    return false;
+        images: [file]
+      });
+
+      setStudentExam(prev => prev ? {
+        ...prev,
+        answers: updatedAnswers
+      } : null);
+
+      return false;
+    } catch (error) {
+      message.error('Không thể tải lên hình ảnh. Vui lòng thử lại!');
+      return false;
+    }
+  };
+
+  // Handle exam submit
+  const handleExamSubmit = async () => {
+    if (!studentExam) return;
+
+    const unansweredQuestions = examInfo?.questions
+      .filter(q => !studentExam.answers.find(a => a.questionId === q.id && (a.selectedOption || a.essayAnswer)));
+
+    if (unansweredQuestions?.length) {
+      Modal.confirm({
+        title: 'Xác nhận nộp bài',
+        icon: <ExclamationCircleOutlined />,
+        content: `Bạn còn ${unansweredQuestions.length} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài?`,
+        okText: 'Nộp bài',
+        cancelText: 'Kiểm tra lại',
+        onOk: async () => {
+          try {
+            await submitExam(studentExam.id);
+            setStudentExam(prev => prev ? {
+              ...prev,
+              status: ExamStatus.SUBMITTED,
+              endTime: new Date().toISOString()
+            } : null);
+            message.success('Đã nộp bài thành công!');
+          } catch (error) {
+            message.error('Không thể nộp bài. Vui lòng thử lại!');
+          }
+        }
+      });
+    } else {
+      try {
+        await submitExam(studentExam.id);
+        setStudentExam(prev => prev ? {
+          ...prev,
+          status: ExamStatus.SUBMITTED,
+          endTime: new Date().toISOString()
+        } : null);
+        message.success('Đã nộp bài thành công!');
+      } catch (error) {
+        message.error('Không thể nộp bài. Vui lòng thử lại!');
+      }
+    }
   };
 
   // Format time
@@ -180,44 +256,11 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   };
 
-  // Handle exam submit
-  const handleExamSubmit = () => {
-    const unansweredQuestions = examInfo.questions
-      .filter(q => q.type === QuestionType.MULTIPLE_CHOICE)
-      .filter(q => !studentExam.multipleChoiceAnswers[q.id]);
-
-    if (unansweredQuestions.length > 0) {
-      Modal.confirm({
-        title: 'Xác nhận nộp bài',
-        icon: <ExclamationCircleOutlined />,
-        content: `Bạn còn ${unansweredQuestions.length} câu chưa trả lời. Bạn có chắc chắn muốn nộp bài?`,
-        okText: 'Nộp bài',
-        cancelText: 'Kiểm tra lại',
-        onOk: () => {
-          submitExam();
-        },
-      });
-    } else {
-      submitExam();
-    }
-  };
-
-  const submitExam = () => {
-    setStudentExam(prev => ({
-      ...prev,
-      endTime: new Date().toISOString(),
-      status: ExamStatus.COMPLETED,
-      updatedAt: new Date().toISOString(),
-    }));
-    message.success('Đã nộp bài thành công!');
-  };
-
   // Scroll to question function
   const scrollToQuestion = (questionId: number) => {
     const element = document.getElementById(`question-${questionId}`);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      // Add highlight effect
       element.classList.add('highlight-question');
       setTimeout(() => {
         element.classList.remove('highlight-question');
@@ -267,27 +310,9 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
                     </Title>
                     <Card className="bg-[var(--bg-secondary)]">
                       <div className="grid grid-cols-2 gap-4">
-                        <Paragraph><strong>Họ và tên:</strong> {studentInfo.name}</Paragraph>
-                        <Paragraph><strong>Mã sinh viên:</strong> {studentInfo.studentCode}</Paragraph>
+                        <Paragraph><strong>Họ và tên:</strong> {me?.fullName}</Paragraph>
+                        <Paragraph><strong>Mã sinh viên:</strong> {me?.id}</Paragraph>
                       </div>
-                    </Card>
-                  </div>
-
-                  {/* Exam Info */}
-                  <div>
-                    <Title level={4} className="flex items-center gap-2">
-                      <BookOutlined /> Thông tin bài kiểm tra
-                    </Title>
-                    <Card className="bg-[var(--bg-secondary)]">
-                      <div className="grid grid-cols-2 gap-4">
-                        <Paragraph><strong>Mã bài kiểm tra:</strong> {examInfo.id}</Paragraph>
-                        <Paragraph><strong>Thời gian:</strong> {examInfo.duration} phút</Paragraph>
-                        <Paragraph><strong>Số câu hỏi:</strong> {examInfo.questions.length} câu</Paragraph>
-                        <Paragraph><strong>Loại bài:</strong> Trắc nghiệm và Thực hành</Paragraph>
-                      </div>
-                      <Paragraph className="mt-4">
-                        <strong>Mô tả:</strong> {examInfo.description}
-                      </Paragraph>
                     </Card>
                   </div>
 
@@ -303,7 +328,8 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
                       type="primary"
                       size="large"
                       onClick={handleStartExam}
-                      disabled={preparationTime > 0}
+                      disabled={preparationTime > 0 || isGettingRandom || isStarting}
+                      loading={isGettingRandom || isStarting}
                     >
                       {preparationTime > 0 ? 'Vui lòng đợi...' : 'Bắt đầu làm bài'}
                     </Button>
@@ -318,6 +344,10 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
   }
 
   // Exam interface
+  if (!examInfo || !studentExam) {
+    return null;
+  }
+
   return (
     <AppLayout>
       <div className="p-6">
@@ -341,7 +371,7 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
           >
             <div className="flex justify-between items-center mb-6">
               <div>
-                <Text className="text-base">{studentInfo.name} - {studentInfo.studentCode}</Text>
+                <Text className="text-base">{me?.fullName} - {me?.id}</Text>
               </div>
               <Card className="flex items-center gap-2 bg-[var(--bg-secondary)]">
                 <ClockCircleOutlined className="text-xl primary--color" />
@@ -365,7 +395,7 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
                   />
                 </div>
                 <Text className="text-lg primary--color">
-                  {answeredQuestions}/{examInfo.questions.filter(q => q.type === QuestionType.MULTIPLE_CHOICE).length} câu đã trả lời
+                  {answeredQuestions}/{examInfo.questions.length} câu đã trả lời
                 </Text>
               </div>
             </Card>
@@ -383,31 +413,33 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
               </Title>
               <Space direction="vertical" className="w-full" size="large">
                 {examInfo.questions
-                  .filter(q => q.type === QuestionType.MULTIPLE_CHOICE)
-                  .map((question) => (
+                  .filter(q => q.question.type === QuestionType.MULTIPLE_CHOICE)
+                  .map((examQuestion) => (
                     <div 
-                      key={question.id} 
-                      id={`question-${question.id}`}
+                      key={examQuestion.id} 
+                      id={`question-${examQuestion.id}`}
                       className="border-b border-[var(--border-color)] pb-4 last:border-0 transition-all duration-300"
                     >
                       <div className="flex justify-between items-start mb-4">
-                        <Text className="text-lg">{question.content}</Text>
-                        <Tag color={studentExam.multipleChoiceAnswers[question.id] !== undefined ? 'success' : 'warning'}>
-                          {studentExam.multipleChoiceAnswers[question.id] !== undefined ? 'Đã trả lời' : 'Chưa trả lời'}
+                        <Text className="text-lg">{examQuestion.question.content}</Text>
+                        <Tag color={studentExam.answers.find(a => a.questionId === examQuestion.id && a.selectedOption) ? 'success' : 'warning'}>
+                          {studentExam.answers.find(a => a.questionId === examQuestion.id && a.selectedOption) ? 'Đã trả lời' : 'Chưa trả lời'}
                         </Tag>
                       </div>
                       <Radio.Group
-                        onChange={(e) => handleAnswerSelect(question.id, e.target.value)}
-                        value={studentExam.multipleChoiceAnswers[question.id]}
+                        onChange={(e) => handleAnswerSelect(examQuestion.id, e.target.value)}
+                        value={studentExam.answers.find(a => a.questionId === examQuestion.id)?.selectedOption ? 
+                          studentExam.answers.find(a => a.questionId === examQuestion.id)!.selectedOption!.charCodeAt(0) - 65 : undefined}
+                        disabled={isSavingAnswers}
                       >
                         <Space direction="vertical" className="w-full">
-                          {question.options?.map((option, index) => (
+                          {examQuestion.question.options?.map((option, index) => (
                             <Radio 
                               key={index} 
                               value={index}
                               className="text-base py-2 w-full"
                             >
-                              {option}
+                              {option.content}
                             </Radio>
                           ))}
                         </Space>
@@ -430,41 +462,43 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
               </Title>
               <Space direction="vertical" className="w-full" size="large">
                 {examInfo.questions
-                  .filter(q => q.type === QuestionType.ESSAY)
-                  .map((question) => (
-                    <div key={question.id} className="space-y-6">
+                  .filter(q => q.question.type === QuestionType.ESSAY)
+                  .map((examQuestion) => (
+                    <div key={examQuestion.id} className="space-y-6">
                       <Text className="text-lg block">
-                        {question.content}
+                        {examQuestion.question.content}
                       </Text>
                       <TextArea
                         rows={6}
-                        value={studentExam.essayAnswers[question.id]?.answer}
-                        onChange={(e) => handleEssayAnswer(question.id, e.target.value)}
+                        value={studentExam.answers.find(a => a.questionId === examQuestion.id)?.essayAnswer}
+                        onChange={(e) => handleEssayAnswer(examQuestion.id, e.target.value)}
                         placeholder="Nhập câu trả lời của bạn ở đây..."
                         className="text-base"
+                        disabled={isSavingAnswers}
                       />
                       <div>
                         <Text className="text-base block mb-4">
                           Tải lên hình ảnh minh họa (tối đa 3 ảnh):
                         </Text>
                         <Upload
-                          beforeUpload={(file) => handleImageUpload(question.id, file)}
+                          beforeUpload={(file) => handleImageUpload(examQuestion.id, file)}
                           multiple={false}
                           accept="image/*"
                           showUploadList={true}
                           listType="picture"
-                          fileList={studentExam.essayAnswers[question.id]?.images.map((url, index) => ({
+                          fileList={studentExam.answers.find(a => a.questionId === examQuestion.id)?.imageUrls?.map((url, index) => ({
                             uid: `-${index}`,
                             name: `image-${index + 1}`,
                             status: 'done',
                             url,
                           }))}
                           maxCount={3}
+                          disabled={isSavingAnswers || (studentExam.answers.find(a => a.questionId === examQuestion.id)?.imageUrls?.length || 0) >= 3}
                         >
                           <Button 
                             icon={<UploadOutlined />}
                             className="flex items-center gap-2"
-                            disabled={studentExam.essayAnswers[question.id]?.images.length >= 3}
+                            disabled={isSavingAnswers || (studentExam.answers.find(a => a.questionId === examQuestion.id)?.imageUrls?.length || 0) >= 3}
                           >
                             <FileImageOutlined /> Tải lên ảnh
                           </Button>
@@ -488,6 +522,8 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
               size="large"
               className="min-w-[200px]"
               onClick={handleExamSubmit}
+              loading={isSubmitting}
+              disabled={isSubmitting}
             >
               Nộp bài
             </Button>
@@ -507,7 +543,7 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
               >
                 <div className="text-center">
                   <div className="text-lg font-bold">{answeredQuestions}</div>
-                  <div className="text-xs">/ {examInfo.questions.filter(q => q.type === QuestionType.MULTIPLE_CHOICE).length}</div>
+                  <div className="text-xs">/ {examInfo.questions.length}</div>
                 </div>
               </Button>
             </Tooltip>
@@ -519,7 +555,7 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
               <div className="flex items-center justify-between">
                 <span>Tiến độ làm bài</span>
                 <Text className="text-lg primary--color">
-                  {answeredQuestions}/{examInfo.questions.filter(q => q.type === QuestionType.MULTIPLE_CHOICE).length} câu đã trả lời
+                  {answeredQuestions}/{examInfo.questions.length} câu đã trả lời
                 </Text>
               </div>
             }
@@ -547,38 +583,36 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
                   </div>
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-full bg-[#f0f0f0]"></div>
-                    <Text>Chưa trả lời: {examInfo.questions.filter(q => q.type === QuestionType.MULTIPLE_CHOICE).length - answeredQuestions} câu</Text>
+                    <Text>Chưa trả lời: {examInfo.questions.length - answeredQuestions} câu</Text>
                   </div>
                 </div>
               </Card>
 
               {/* Question Grid */}
               <div className="grid grid-cols-5 gap-4">
-                {examInfo.questions
-                  .filter(q => q.type === QuestionType.MULTIPLE_CHOICE)
-                  .map((question) => (
-                    <Tooltip 
-                      key={question.id}
-                      title={
-                        <div className="text-center">
-                          <div className="font-bold mb-1">Câu {question.id}</div>
-                          <div>{studentExam.multipleChoiceAnswers[question.id] !== undefined ? 'Đã trả lời' : 'Chưa trả lời'}</div>
-                        </div>
-                      }
+                {examInfo.questions.map((examQuestion) => (
+                  <Tooltip 
+                    key={examQuestion.id}
+                    title={
+                      <div className="text-center">
+                        <div className="font-bold mb-1">Câu {examQuestion.id}</div>
+                        <div>{studentExam.answers.find(a => a.questionId === examQuestion.id && (a.selectedOption || a.essayAnswer)) ? 'Đã trả lời' : 'Chưa trả lời'}</div>
+                      </div>
+                    }
+                  >
+                    <Button
+                      type={studentExam.answers.find(a => a.questionId === examQuestion.id && (a.selectedOption || a.essayAnswer)) ? 'primary' : 'default'}
+                      className={`w-full h-12 ${
+                        studentExam.answers.find(a => a.questionId === examQuestion.id && (a.selectedOption || a.essayAnswer))
+                          ? 'bg-[#4f6f52] hover:bg-[#3a5a40]' 
+                          : 'hover:border-[#4f6f52] hover:text-[#4f6f52]'
+                      }`}
+                      onClick={() => scrollToQuestion(examQuestion.id)}
                     >
-                      <Button
-                        type={studentExam.multipleChoiceAnswers[question.id] !== undefined ? 'primary' : 'default'}
-                        className={`w-full h-12 ${
-                          studentExam.multipleChoiceAnswers[question.id] !== undefined 
-                            ? 'bg-[#4f6f52] hover:bg-[#3a5a40]' 
-                            : 'hover:border-[#4f6f52] hover:text-[#4f6f52]'
-                        }`}
-                        onClick={() => scrollToQuestion(question.id)}
-                      >
-                        {question.id}
-                      </Button>
-                    </Tooltip>
-                  ))}
+                      {examQuestion.id}
+                    </Button>
+                  </Tooltip>
+                ))}
               </div>
             </div>
           </Modal>
@@ -605,6 +639,8 @@ const ExamPage: React.FC<ExamPageProps> = (_) => {
                 type="primary" 
                 danger
                 onClick={handleExamSubmit}
+                loading={isSubmitting}
+                disabled={isSubmitting}
               >
                 Nộp bài ngay
               </Button>,

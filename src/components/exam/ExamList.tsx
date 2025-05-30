@@ -1,34 +1,26 @@
 import React, { useState } from 'react';
 import { Table, Button, Space, Tag, Modal, message } from 'antd';
 import { ExclamationCircleOutlined, EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { ExamStatus, QuestionType } from '../../types/exam';
-import { useExam } from '../../contexts/ExamContext';
+import { QuestionType, Exam } from '../../types/exam';
+import { useExam } from '../../hooks/useExam';
 
 const { confirm } = Modal;
 
-interface Question {
-  id: number;
-  content: string;
-  type: QuestionType;
-  options?: string[];
-  correctOption?: number;
-  points: number;
+interface ExamListProps {
+  exams: Exam[];
+  isLoading: boolean;
 }
 
-interface Exam {
-  id: number;
-  title: string;
-  description: string;
-  duration: number;
-  questions: Question[];
-  status: ExamStatus;
-  createdAt: string;
-}
-
-const ExamList: React.FC = () => {
-  const { exams, deleteExam } = useExam();
-  const [selectedExam, setSelectedExam] = useState<typeof exams[0] | null>(null);
+const ExamList: React.FC<ExamListProps> = ({ exams, isLoading }) => {
+  const [selectedExam, setSelectedExam] = useState<Exam | null>(null);
   const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+
+  const {
+    deleteExam,
+    updateExam,
+    isDeleting,
+    isUpdating
+  } = useExam();
 
   const handleDelete = (id: number) => {
     confirm({
@@ -38,16 +30,29 @@ const ExamList: React.FC = () => {
       okText: 'Xóa',
       okType: 'danger',
       cancelText: 'Hủy',
-      onOk() {
-        deleteExam(id);
-        message.success('Đã xóa đề thi');
+      onOk: async () => {
+        try {
+          await deleteExam(id);
+          message.success('Đã xóa đề thi');
+        } catch (error) {
+          message.error('Không thể xóa đề thi');
+        }
       },
     });
   };
 
-  const handlePreview = (exam: typeof exams[0]) => {
+  const handlePreview = (exam: Exam) => {
     setSelectedExam(exam);
     setIsPreviewVisible(true);
+  };
+
+  const handleUpdate = async (id: number, exam: Partial<Exam>) => {
+    try {
+      await updateExam({ id, exam });
+      message.success('Đã cập nhật đề thi');
+    } catch (error) {
+      message.error('Không thể cập nhật đề thi');
+    }
   };
 
   const columns = [
@@ -58,43 +63,18 @@ const ExamList: React.FC = () => {
       ellipsis: true,
     },
     {
-      title: 'Thời gian (phút)',
-      dataIndex: 'duration',
-      key: 'duration',
-    },
-    {
       title: 'Số câu hỏi',
       key: 'questionCount',
       render: (record: Exam) => (
         <Space>
           <Tag color="blue">
-            {record.questions.filter(q => q.type === QuestionType.MULTIPLE_CHOICE).length} Trắc nghiệm
+            {record.questions.filter(q => q.question.type === QuestionType.MULTIPLE_CHOICE).length} Trắc nghiệm
           </Tag>
           <Tag color="green">
-            {record.questions.filter(q => q.type === QuestionType.ESSAY).length} Tự luận
+            {record.questions.filter(q => q.question.type === QuestionType.ESSAY).length} Tự luận
           </Tag>
         </Space>
       ),
-    },
-    {
-      title: 'Trạng thái',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: ExamStatus) => {
-        const colors = {
-          [ExamStatus.DRAFT]: 'default',
-          [ExamStatus.PUBLISHED]: 'success',
-          [ExamStatus.COMPLETED]: 'warning',
-          [ExamStatus.ARCHIVED]: 'error',
-        };
-        const labels = {
-          [ExamStatus.DRAFT]: 'Nháp',
-          [ExamStatus.PUBLISHED]: 'Đã xuất bản',
-          [ExamStatus.COMPLETED]: 'Đã hoàn thành',
-          [ExamStatus.ARCHIVED]: 'Đã lưu trữ',
-        };
-        return <Tag color={colors[status]}>{labels[status]}</Tag>;
-      },
     },
     {
       title: 'Ngày tạo',
@@ -117,7 +97,8 @@ const ExamList: React.FC = () => {
           <Button 
             type="default" 
             icon={<EditOutlined />}
-            onClick={() => message.info('Chức năng chỉnh sửa đang được phát triển')}
+            onClick={() => handleUpdate(record.id, { title: record.title })}
+            loading={isUpdating}
           >
             Sửa
           </Button>
@@ -126,6 +107,7 @@ const ExamList: React.FC = () => {
             danger 
             icon={<DeleteOutlined />}
             onClick={() => handleDelete(record.id)}
+            loading={isDeleting}
           >
             Xóa
           </Button>
@@ -141,6 +123,7 @@ const ExamList: React.FC = () => {
         dataSource={exams}
         rowKey="id"
         pagination={{ pageSize: 10 }}
+        loading={isLoading}
       />
 
       <Modal
@@ -158,30 +141,28 @@ const ExamList: React.FC = () => {
             </div>
             
             <div className="space-y-2">
-              <p><strong>Thời gian:</strong> {selectedExam.duration} phút</p>
-              <p><strong>Trạng thái:</strong> {selectedExam.status}</p>
               <p><strong>Ngày tạo:</strong> {new Date(selectedExam.createdAt).toLocaleDateString('vi-VN')}</p>
             </div>
 
             <div className="space-y-4">
               <h4 className="font-semibold">Danh sách câu hỏi:</h4>
-              {selectedExam.questions.map((question, index) => (
-                <div key={question.id} className="border p-4 rounded-lg">
-                  <p className="font-medium">Câu {index + 1}: {question.content}</p>
+              {selectedExam.questions.map((examQuestion, index) => (
+                <div key={examQuestion.id} className="border p-4 rounded-lg">
+                  <p className="font-medium">Câu {index + 1}: {examQuestion.question.content}</p>
                   <p className="text-gray-500">
-                    Loại: {question.type === QuestionType.MULTIPLE_CHOICE ? 'Trắc nghiệm' : 'Tự luận'}
+                    Loại: {examQuestion.question.type === QuestionType.MULTIPLE_CHOICE ? 'Trắc nghiệm' : 'Tự luận'}
                   </p>
-                  {question.type === QuestionType.MULTIPLE_CHOICE && question.options && (
+                  {examQuestion.question.type === QuestionType.MULTIPLE_CHOICE && examQuestion.question.options && (
                     <div className="ml-4 mt-2">
-                      {question.options.map((option, optIndex) => (
-                        <p key={optIndex} className={optIndex === question.correctOption ? 'text-green-600 font-medium' : ''}>
-                          {String.fromCharCode(65 + optIndex)}. {option}
-                          {optIndex === question.correctOption && ' ✓'}
+                      {examQuestion.question.options.map((option, optIndex) => (
+                        <p key={optIndex} className={option.isCorrect ? 'text-green-600 font-medium' : ''}>
+                          {option.option}. {option.content}
+                          {option.isCorrect && ' ✓'}
                         </p>
                       ))}
                     </div>
                   )}
-                  <p className="text-gray-500 mt-2">Điểm: {question.points}</p>
+                  <p className="text-gray-500 mt-2">Điểm: {examQuestion.question.score}</p>
                 </div>
               ))}
             </div>

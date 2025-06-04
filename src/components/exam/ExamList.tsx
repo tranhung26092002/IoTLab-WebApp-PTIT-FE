@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Table, Button, Space, Tag, Modal, message } from 'antd';
 import { ExclamationCircleOutlined, EyeOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { QuestionType, Exam } from '../../types/exam';
+import { QuestionType, Exam, ExamDTO } from '../../types/exam';
 import { useExam } from '../../hooks/useExam';
 
 const { confirm } = Modal;
@@ -46,7 +46,7 @@ const ExamList: React.FC<ExamListProps> = ({ exams, isLoading }) => {
     setIsPreviewVisible(true);
   };
 
-  const handleUpdate = async (id: number, exam: Partial<Exam>) => {
+  const handleUpdate = async (id: number, exam: ExamDTO) => {
     try {
       await updateExam({ id, exam });
       message.success('Đã cập nhật đề thi');
@@ -80,7 +80,15 @@ const ExamList: React.FC<ExamListProps> = ({ exams, isLoading }) => {
       title: 'Ngày tạo',
       dataIndex: 'createdAt',
       key: 'createdAt',
-      render: (date: string) => new Date(date).toLocaleDateString('vi-VN'),
+      render: (date: number[]) => new Date(
+        date[0],
+        date[1] - 1,
+        date[2],
+        date[3],
+        date[4],
+        date[5],
+        date[6] / 1000000
+      ).toLocaleDateString('vi-VN'),
     },
     {
       title: 'Thao tác',
@@ -97,7 +105,13 @@ const ExamList: React.FC<ExamListProps> = ({ exams, isLoading }) => {
           <Button 
             type="default" 
             icon={<EditOutlined />}
-            onClick={() => handleUpdate(record.id, { title: record.title })}
+            onClick={() => handleUpdate(record.id, { 
+              id: record.id,
+              title: record.title,
+              description: record.description,
+              createdAt: record.createdAt,
+              updatedAt: record.updatedAt
+            })}
             loading={isUpdating}
           >
             Sửa
@@ -141,7 +155,15 @@ const ExamList: React.FC<ExamListProps> = ({ exams, isLoading }) => {
             </div>
             
             <div className="space-y-2">
-              <p><strong>Ngày tạo:</strong> {new Date(selectedExam.createdAt).toLocaleDateString('vi-VN')}</p>
+              <p><strong>Ngày tạo:</strong> {new Date(
+                selectedExam.createdAt[0],
+                selectedExam.createdAt[1] - 1,
+                selectedExam.createdAt[2],
+                selectedExam.createdAt[3],
+                selectedExam.createdAt[4],
+                selectedExam.createdAt[5],
+                selectedExam.createdAt[6] / 1000000
+              ).toLocaleDateString('vi-VN')}</p>
             </div>
 
             <div className="space-y-4">
@@ -155,9 +177,9 @@ const ExamList: React.FC<ExamListProps> = ({ exams, isLoading }) => {
                   {examQuestion.question.type === QuestionType.MULTIPLE_CHOICE && examQuestion.question.options && (
                     <div className="ml-4 mt-2">
                       {examQuestion.question.options.map((option, optIndex) => (
-                        <p key={optIndex} className={option.isCorrect ? 'text-green-600 font-medium' : ''}>
+                        <p key={optIndex} className={option.correct ? 'text-green-600 font-medium' : ''}>
                           {option.option}. {option.content}
-                          {option.isCorrect && ' ✓'}
+                          {option.correct && ' ✓'}
                         </p>
                       ))}
                     </div>

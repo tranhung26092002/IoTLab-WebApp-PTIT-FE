@@ -8,7 +8,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/mqtt/ws': {
-        target: `http://localhost:8088`,
+        target: `http://localhost:8080`,
         changeOrigin: true,
         ws: true,
         secure: false,
@@ -19,7 +19,7 @@ export default defineConfig({
         // },
       },
       '/notification/ws': {
-        target: `http://localhost:8088`,
+        target: `http://localhost:8080`,
         changeOrigin: true,
         ws: true,
         secure: false,

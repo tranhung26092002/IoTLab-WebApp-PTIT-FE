@@ -9,80 +9,114 @@ export enum ExamStatus {
   SUBMITTED = 'SUBMITTED'
 }
 
-export interface MultipleChoiceOption {
-  id: number;
-  option: string; // A, B, C, D
-  content: string;
-  isCorrect: boolean;
-}
-
-export interface Question {
-  id: number;
-  type: QuestionType;
-  content: string;
-  options?: MultipleChoiceOption[]; // Only for multiple choice questions
-  score: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ExamQuestion {
-  id: number;
-  examId: number;
-  question: Question;
-  order: number;
-}
-
+// exam
 export interface Exam {
   id: number;
   title: string;
   description: string;
   questions: ExamQuestion[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number[];
+  updatedAt: number[];
 }
+
+export interface ExamQuestion {
+  id: number;
+  question: Question;
+  order: number;
+}
+
+export interface ExamDTO {
+  id: number;
+  title: string;
+  description: string;
+  // questions: ExamQuestionDTO[];
+  createdAt: number[];
+  updatedAt: number[];
+} 
+
+// export interface ExamQuestionDTO {
+//   id: number;
+//   question: QuestionDTO;
+//   order: number;
+// }
+
+// question
+
+export interface Question {
+  id: number;
+  type: QuestionType;
+  content: string;
+  options: MultipleChoiceOption[];
+  score: number;
+  createdAt: number[];
+  updatedAt: number[];
+}
+
+export interface MultipleChoiceOption {
+  id: number;
+  question: Question;
+  option: string;
+  content: string;
+  correct: boolean;
+}
+
+// export interface QuestionDTO {
+//   id: number;
+//   type: QuestionType;
+//   content: string;
+//   options: MultipleChoiceOptionDTO[];
+//   score: number;
+// }
+
+// export interface MultipleChoiceOptionDTO {
+//   id: number;
+//   option: string;
+//   content: string;
+//   isCorrect: boolean;
+// }
+
+// student answer
+export interface StudentExam {
+  id: number;
+  student: Student;
+  exam: Exam;
+  startTime: number[];
+  endTime: number[];
+  status: ExamStatus;
+  score: number;
+  answers: StudentAnswerDTO[];
+}
+
+export interface Student {
+  id: number;
+  name: string;
+  studentCode: string;
+}
+
 
 export interface StudentAnswer {
   id: number;
-  studentExamId: number;
-  questionId: number;
-  essayAnswer?: string;
-  selectedOption?: string;
-  imageUrls?: string[];
-  score?: number;
-  createdAt: string;
-  updatedAt: string;
+  studentExam: StudentExam;
+  question: Question;
+  selectedOption: string;
+  essayAnswer: string;
+  imageUrls: string[];
+  score: number;
+  createdAt: number[];
+  updatedAt: number[];
 }
 
-export interface StudentExam {
-  id: number;
-  studentId: number;
-  examId: number;
-  startTime: string;
-  endTime?: string;
-  status: ExamStatus;
-  score?: number;
-  answers: StudentAnswer[];
-}
-
-// DTOs for API requests/responses
-export interface StartExamDTO {
-  studentId: number;
-  examId: number;
-  startTime?: string;
+export interface StudentAnswerListDTO {
+  answers: StudentAnswerDTO[];
 }
 
 export interface StudentAnswerDTO {
   questionId: number;
   questionType: QuestionType;
-  selectedOption?: string;
-  essayAnswer?: string;
-  imageUrls?: string[];
-  score?: number;
-}
-
-export interface StudentAnswerListDTO {
-  answers: StudentAnswerDTO[];
+  selectedOption: string;
+  essayAnswer: string;
+  imageUrls: string[];
+  score: number;
 }
 
 export interface StudentExamResult {
@@ -90,4 +124,4 @@ export interface StudentExamResult {
   studentCode: string;
   score: number;
   correctAnswers: number;
-} 
+}

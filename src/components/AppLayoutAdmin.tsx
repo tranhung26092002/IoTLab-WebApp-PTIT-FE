@@ -110,6 +110,45 @@ const AppLayoutAdmin: React.FC<{ children: React.ReactNode }> = ({ children }) =
           <CustomFooter />
         </Layout>
       </Layout>
+    
+      {/* Floating Scroll-to-Top Button */}
+      <Button
+        type="default"
+        shape="circle"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        style={{
+          position: 'fixed',
+          bottom: 40,
+          right: 32,
+          zIndex: 1100,
+          background: '#fff',
+          border: '2px solid #4f6f52',
+          color: '#4f6f52',
+          width: 36,
+          height: 36,
+          boxShadow: '0 4px 16px rgba(0,0,0,0.10)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: 18,
+          cursor: 'pointer',
+          transition: 'background 0.2s, box-shadow 0.2s',
+        }}
+        className="exam-scrolltop-floating-btn"
+        title="Lên đầu trang"
+      >
+        <span style={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 5V19M12 5L5 12M12 5L19 12" stroke="#4f6f52" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </span>
+      </Button>
+      <style>{`
+        .exam-scrolltop-floating-btn:hover {
+          background: #e6f4ea !important;
+          box-shadow: 0 8px 24px rgba(79, 111, 82, 0.18) !important;
+        }
+      `}</style>
     </ConfigProvider>
   );
 };

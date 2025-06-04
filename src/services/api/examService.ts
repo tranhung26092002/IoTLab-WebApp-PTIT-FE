@@ -1,24 +1,40 @@
 import api from '../axios';
 import { Exam } from '../../types/exam';
-import { PageResponse } from '../../types/PageResponse';
+import { ExamDTO } from '../../types/exam';
 
 export const examService = {
-    // Basic Exam CRUD operations
+    // Get all exams
     getExams: () =>
-        api.get<PageResponse<Exam>>('/exams'),
+        api.get<Exam[]>('/practice/exams'),
 
-    getRandomExam: () =>
-        api.get<Exam>('/exams/random'),
-
+    // Get exam by ID
     getExam: (id: number) =>
-        api.get<Exam>(`/exams/${id}`),
+        api.get<Exam>(`/practice/exams/${id}`),
 
-    createExam: (exam: Partial<Exam>) =>
-        api.post<Exam>('/exams', exam),
+    // Get random exam
+    getRandomExam: () =>
+        api.get<Exam>('/practice/exams/random'),
 
-    updateExam: (id: number, exam: Partial<Exam>) =>
-        api.put<Exam>(`/exams/${id}`, exam),
+    // Get random exam and start for student
+    getRandomExamAndStart: (studentId: number) =>
+        api.get<Exam>(`/practice/exams/random/${studentId}`),
 
+    // Create new exam
+    createExam: (exam: ExamDTO) =>
+        api.post<Exam>('/practice/exams', {
+            title: exam.title,
+            description: exam.description
+        }),
+
+    // Update existing exam
+    updateExam: (id: number, exam: ExamDTO) =>
+        api.put<Exam>(`/practice/exams/${id}`, {
+            id: id,
+            title: exam.title,
+            description: exam.description
+        }),
+
+    // Delete exam
     deleteExam: (id: number) =>
-        api.delete(`/exams/${id}`),
+        api.delete<void>(`/practice/exams/${id}`),
 }; 

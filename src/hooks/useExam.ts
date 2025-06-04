@@ -1,27 +1,41 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { examService } from '../services/api/examService';
-import { Exam } from '../types/exam';
+import { Exam, ExamDTO } from '../types/exam';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
-import { PageResponse } from '../types/PageResponse';
 
-export const useExam = () => {
+export const useExam = (options?: {
+    enableExams?: boolean;
+}) => {
+    const {
+        enableExams = false
+    } = options || {};
     const queryClient = useQueryClient();
 
     // Get all exams
-    const { data: exams, isLoading } = useQuery<PageResponse<Exam>, AxiosError<ApiError>>({
+    const { data: exams, isLoading } = useQuery<Exam[], AxiosError<ApiError>>({
         queryKey: ['exams'],
         queryFn: async () => {
             const response = await examService.getExams();
             return response.data;
-        }
+        },
+        enabled: enableExams
     });
 
     // Get random exam mutation
     const getRandomExamMutation = useMutation<Exam, AxiosError<ApiError>>({
         mutationFn: async () => {
             const response = await examService.getRandomExam();
+            return response.data;
+        },
+        onError: handleApiError
+    });
+
+    // Get random exam and start for student
+    const getRandomExamAndStartMutation = useMutation<Exam, AxiosError<ApiError>, number>({
+        mutationFn: async (studentId) => {
+            const response = await examService.getRandomExamAndStart(studentId);
             return response.data;
         },
         onError: handleApiError
@@ -37,7 +51,7 @@ export const useExam = () => {
     });
 
     // Create exam
-    const createExamMutation = useMutation<Exam, AxiosError<ApiError>, Partial<Exam>>({
+    const createExamMutation = useMutation<Exam, AxiosError<ApiError>, ExamDTO>({
         mutationFn: async (exam) => {
             const response = await examService.createExam(exam);
             return response.data;
@@ -50,7 +64,7 @@ export const useExam = () => {
     });
 
     // Update exam
-    const updateExamMutation = useMutation<Exam, AxiosError<ApiError>, { id: number; exam: Partial<Exam> }>({
+    const updateExamMutation = useMutation<Exam, AxiosError<ApiError>, { id: number; exam: ExamDTO }>({
         mutationFn: async ({ id, exam }) => {
             const response = await examService.updateExam(id, exam);
             return response.data;
@@ -81,6 +95,7 @@ export const useExam = () => {
         // Methods
         getExam: getExamMutation.mutateAsync,
         getRandomExam: getRandomExamMutation.mutateAsync,
+        getRandomExamAndStart: getRandomExamAndStartMutation.mutateAsync,
         createExam: createExamMutation.mutateAsync,
         updateExam: updateExamMutation.mutateAsync,
         deleteExam: deleteExamMutation.mutateAsync,
@@ -88,6 +103,7 @@ export const useExam = () => {
         // Loading states
         isLoading,
         isGettingRandom: getRandomExamMutation.isPending,
+        isGettingRandomAndStart: getRandomExamAndStartMutation.isPending,
         isCreating: createExamMutation.isPending,
         isUpdating: updateExamMutation.isPending,
         isDeleting: deleteExamMutation.isPending,
@@ -95,6 +111,7 @@ export const useExam = () => {
         // Errors
         getExamError: getExamMutation.error,
         getRandomExamError: getRandomExamMutation.error,
+        getRandomExamAndStartError: getRandomExamAndStartMutation.error,
         createExamError: createExamMutation.error,
         updateExamError: updateExamMutation.error,
         deleteExamError: deleteExamMutation.error

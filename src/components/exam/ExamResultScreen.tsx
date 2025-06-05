@@ -61,7 +61,7 @@ const ExamResultScreen: React.FC<ExamResultScreenProps> = ({ exam, onBack }) => 
                                 <Progress
                                     type="circle"
                                     percent={scorePercentage}
-                                    format={percent => (
+                                    format={() => (
                                         <div className="text-center">
                                             <div className="text-3xl font-bold text-green-600">{exam.score}</div>
                                             <div className="text-sm text-gray-600">điểm</div>

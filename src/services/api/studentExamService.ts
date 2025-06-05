@@ -4,11 +4,20 @@ import {
     StudentAnswerListDTO,
     StudentExamResult,
 } from '../../types/exam';
+import { PageResponse } from '../../types/PageResponse';
+
+interface GetStudentExamsParams {
+    page?: number;
+    size?: number;
+}
 
 export const studentExamService = {
-    // Basic CRUD operations
-    getAllStudentExams: () =>
-        api.get<StudentExam[]>('/practice/student-exams'),
+    getAllStudentExams: async ({ page = 0, size = 10 }: GetStudentExamsParams = {}) => {
+        const response = await api.get<PageResponse<StudentExam>>('/practice/student-exams', {
+            params: { page, size }
+        });
+        return response;
+    },
 
     getStudentExamById: (id: number) =>
         api.get<StudentExam>(`/practice/student-exams/${id}`),

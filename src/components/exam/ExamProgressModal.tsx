@@ -1,8 +1,8 @@
 import React from 'react';
-import { Modal, Card, Typography, Progress, Button, Tooltip } from 'antd';
-import { QuestionType, ExamQuestion, StudentAnswer } from '../../types/exam';
+import { Modal, Typography, Progress, Button, Tooltip } from 'antd';
+import { ExamQuestion, StudentAnswer } from '../../types/exam';
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 interface ExamProgressModalProps {
     open: boolean;
@@ -45,7 +45,6 @@ const ExamProgressModal: React.FC<ExamProgressModalProps> = ({
                 {questions.map((question, index) => {
                     const answer = answers.find(a => a.question.id === question.question.id);
                     const isAnswered = answer?.selectedOption || answer?.essayAnswer;
-                    const isMultipleChoice = question.question.type === QuestionType.MULTIPLE_CHOICE;
 
                     return (
                         <Tooltip 

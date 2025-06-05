@@ -1,36 +1,52 @@
 import React, { useState } from 'react';
 import { Table, Button, Space, Tag, Modal, Form, Input, Select, Upload, message } from 'antd';
-import { PlusOutlined, UploadOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { PlusOutlined, UploadOutlined, ExclamationCircleOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { QuestionType, Question } from '../../types/exam';
 import { useQuestion } from '../../hooks/useQuestion';
-import * as XLSX from 'xlsx';
+import { PageResponse } from '../../types/PageResponse';
 
 const { TextArea } = Input;
 const { confirm } = Modal;
 
-interface QuestionBankManagerProps {
-  questions: Question[];
-  isLoading: boolean;
-}
-
-const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({ questions, isLoading }) => {
+const QuestionBankManager: React.FC = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [selectedType, setSelectedType] = useState<QuestionType>(QuestionType.MULTIPLE_CHOICE);
+  const [editingQuestion, setEditingQuestion] = useState<Question | null>(null);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
   
   const { 
+    questions,
+    isLoading,
     createMultipleChoiceQuestion,
     createEssayQuestion,
+    updateQuestion,
     deleteQuestion,
     importQuestions,
     isCreatingMultipleChoice,
     isCreatingEssay,
-    isDeleting,
     isImporting
-  } = useQuestion();
+  } = useQuestion({ page, size });
 
   const handleAdd = () => {
+    setEditingQuestion(null);
     form.resetFields();
+    setIsModalVisible(true);
+  };
+
+  const handleEdit = (question: Question) => {
+    setEditingQuestion(question);
+    form.setFieldsValue({
+      ...question,
+      options: question.type === QuestionType.MULTIPLE_CHOICE 
+        ? question.options?.map(opt => opt.content).join('\n')
+        : undefined,
+      correctOption: question.type === QuestionType.MULTIPLE_CHOICE 
+        ? question.options?.findIndex(opt => opt.correct)
+        : undefined
+    });
+    setSelectedType(question.type);
     setIsModalVisible(true);
   };
 
@@ -66,46 +82,67 @@ const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({ questions, is
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
-      const newQuestion = {
+      const questionData = {
         content: values.content,
         type: values.type,
-        difficulty: values.difficulty,
-        category: values.category,
         score: values.score,
         ...(values.type === QuestionType.MULTIPLE_CHOICE && {
-          options: values.options.split('\\n').filter(Boolean).map((content: string, index: number) => ({
+          options: values.options.split('\n').filter(Boolean).map((content: string, index: number) => ({
             option: String.fromCharCode(65 + index),
             content,
-            isCorrect: index === values.correctOption
+            correct: index === values.correctOption
           }))
         })
       };
 
-      if (values.type === QuestionType.MULTIPLE_CHOICE) {
-        await createMultipleChoiceQuestion(newQuestion);
+      if (editingQuestion) {
+        await updateQuestion({ id: editingQuestion.id, question: questionData });
+        message.success('Đã cập nhật câu hỏi');
       } else {
-        await createEssayQuestion(newQuestion);
+        if (values.type === QuestionType.MULTIPLE_CHOICE) {
+          await createMultipleChoiceQuestion(questionData);
+        } else {
+          await createEssayQuestion(questionData);
+        }
+        message.success('Đã thêm câu hỏi mới');
       }
 
       setIsModalVisible(false);
       form.resetFields();
-      message.success('Đã thêm câu hỏi mới');
+      setEditingQuestion(null);
     } catch (error) {
-      message.error('Không thể thêm câu hỏi');
+      message.error('Có lỗi xảy ra');
     }
+  };
+
+  const handleTableChange = (pagination: any) => {
+    setPage(pagination.current - 1);
+    setSize(pagination.pageSize);
   };
 
   const columns = [
     {
-      title: 'Nội dung',
+      title: 'STT',
+      key: 'index',
+      width: '5%',
+      sorter: (a: Question, b: Question) => a.id - b.id,
+      defaultSortOrder: 'ascend' as const,
+      render: (_: any, record: Question) => record.id,
+    },
+    {
+      title: 'Nội dung câu hỏi',
       dataIndex: 'content',
       key: 'content',
-      ellipsis: true,
+      width: '35%',
+      render: (content: string) => (
+        <div className="whitespace-pre-wrap">{content}</div>
+      ),
     },
     {
       title: 'Loại',
       dataIndex: 'type',
       key: 'type',
+      width: '10%',
       render: (type: QuestionType) => (
         <Tag color={type === QuestionType.MULTIPLE_CHOICE ? 'blue' : 'green'}>
           {type === QuestionType.MULTIPLE_CHOICE ? 'Trắc nghiệm' : 'Tự luận'}
@@ -113,23 +150,59 @@ const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({ questions, is
       ),
     },
     {
-      title: 'Danh mục',
-      dataIndex: 'category',
-      key: 'category',
-      render: (category: string) => <Tag>{category}</Tag>,
+      title: 'Đáp án',
+      key: 'options',
+      width: '35%',
+      render: (record: Question) => (
+        <div className="space-y-2">
+          {record.type === QuestionType.MULTIPLE_CHOICE ? (
+            record.options?.map((option) => (
+              <div key={option.id} className="flex items-center gap-2">
+                <span className="font-medium">{option.option}.</span>
+                <span className={option.correct ? "text-green-600 font-medium" : ""}>
+                  {option.content}
+                  {option.correct && " ✓"}
+                </span>
+              </div>
+            ))
+          ) : (
+            <div className="text-gray-500 italic">Câu hỏi tự luận</div>
+          )}
+        </div>
+      ),
     },
     {
       title: 'Điểm',
       dataIndex: 'score',
       key: 'score',
+      width: '5%',
+      align: 'center' as const,
     },
     {
       title: 'Thao tác',
       key: 'action',
+      width: '10%',
+      align: 'center' as const,
       render: (_: any, record: Question) => (
-        <Button type="link" danger onClick={() => handleDelete(record.id)}>
-          Xóa
-        </Button>
+        <Space>
+          <Button 
+            type="primary" 
+            icon={<EditOutlined />}
+            size="small"
+            onClick={() => handleEdit(record)}
+          >
+            Sửa
+          </Button>
+          <Button 
+            type="primary" 
+            danger 
+            icon={<DeleteOutlined />}
+            size="small"
+            onClick={() => handleDelete(record.id)}
+          >
+            Xóa
+          </Button>
+        </Space>
       ),
     },
   ];
@@ -158,17 +231,30 @@ const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({ questions, is
 
       <Table
         columns={columns}
-        dataSource={questions}
+        dataSource={questions?.data || []}
         rowKey="id"
-        pagination={{ pageSize: 10 }}
+        pagination={{
+          current: (questions?.metaData?.page || 0) + 1,
+          pageSize: questions?.metaData?.size || 10,
+          total: questions?.metaData?.total || 0,
+          showSizeChanger: true,
+          showTotal: (total) => `Tổng số ${total} câu hỏi`,
+          pageSizeOptions: ['10', '20', '50'],
+        }}
+        onChange={handleTableChange}
         loading={isLoading}
+        className="question-bank-table"
       />
 
       <Modal
-        title="Thêm câu hỏi mới"
+        title={editingQuestion ? "Sửa câu hỏi" : "Thêm câu hỏi mới"}
         open={isModalVisible}
         onOk={handleSubmit}
-        onCancel={() => setIsModalVisible(false)}
+        onCancel={() => {
+          setIsModalVisible(false);
+          setEditingQuestion(null);
+          form.resetFields();
+        }}
         width={800}
         confirmLoading={isCreatingMultipleChoice || isCreatingEssay}
       >
@@ -215,14 +301,6 @@ const QuestionBankManager: React.FC<QuestionBankManagerProps> = ({ questions, is
               </Form.Item>
             </>
           )}
-
-          <Form.Item
-            name="category"
-            label="Danh mục"
-            rules={[{ required: true }]}
-          >
-            <Input />
-          </Form.Item>
 
           <Form.Item
             name="score"

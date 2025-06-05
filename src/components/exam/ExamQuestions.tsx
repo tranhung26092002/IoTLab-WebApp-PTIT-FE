@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Typography, Radio, Space, Input, Upload, Button, Tag, Progress, Divider } from 'antd';
-import { UploadOutlined, FileImageOutlined, CheckCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { UploadOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { QuestionType, ExamQuestion, StudentAnswer } from '../../types/exam';
 
@@ -25,8 +25,6 @@ const ExamQuestions: React.FC<ExamQuestionsProps> = ({
     onEssayAnswer,
     onImageUpload,
     isSubmitting,
-    examDescription,
-    onBack
 }) => {
     // Sort questions by order and filter by type
     const sortedQuestions = [...questions].sort((a, b) => a.order - b.order);
@@ -170,26 +168,6 @@ const ExamQuestions: React.FC<ExamQuestionsProps> = ({
             transition={{ duration: 0.5 }}
             className="space-y-8"
         >
-            {/* Back Button */}
-            {onBack && (
-                <div className="mb-4">
-                    <Button 
-                        type="primary"
-                        icon={<ArrowLeftOutlined />}
-                        onClick={onBack}
-                    >
-                        Quay lại
-                    </Button>
-                </div>
-            )}
-
-            {/* Exam Description */}
-            {examDescription && (
-                <Card className="mb-8 bg-gray-50">
-                    <Text className="text-base">{examDescription}</Text>
-                </Card>
-            )}
-
             {/* Multiple Choice Questions Section */}
             {multipleChoiceQuestions.length > 0 && (
                 <div className="mb-8">

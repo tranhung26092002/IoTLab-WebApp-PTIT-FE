@@ -1,41 +1,27 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { questionService } from '../services/api/questionService';
-import { Question, QuestionType } from '../types/exam';
+import { Question } from '../types/exam';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
 import { PageResponse } from '../types/PageResponse';
 
-export const useQuestion = () => {
+interface UseQuestionParams {
+  page: number;
+  size: number;
+}
+
+export const useQuestion = ({ page, size }: UseQuestionParams) => {
     const queryClient = useQueryClient();
 
-    // Get all questions
     const { data: questions, isLoading } = useQuery<PageResponse<Question>, AxiosError<ApiError>>({
-        queryKey: ['questions'],
+        queryKey: ['questions', page, size],
         queryFn: async () => {
-            const response = await questionService.getQuestions();
+            const response = await questionService.getQuestions({ page, size });
             return response.data;
         }
     });
 
-    // Get questions by type
-    const useQuestionsByType = (type: QuestionType) => {
-        const { data, isLoading, refetch } = useQuery<PageResponse<Question>>({
-            queryKey: ['questions', 'type', type],
-            queryFn: async () => {
-                const response = await questionService.getQuestionsByType(type);
-                return response.data;
-            }
-        });
-
-        return {
-            questions: data?.data || [],
-            isLoading,
-            refetch
-        };
-    };
-
-    // Get single question
     const getQuestionMutation = useMutation<Question, AxiosError<ApiError>, number>({
         mutationFn: async (id) => {
             const response = await questionService.getQuestion(id);
@@ -44,7 +30,6 @@ export const useQuestion = () => {
         onError: handleApiError
     });
 
-    // Create multiple choice question
     const createMultipleChoiceQuestionMutation = useMutation<Question, AxiosError<ApiError>, Partial<Question>>({
         mutationFn: async (question) => {
             const response = await questionService.createMultipleChoiceQuestion(question);
@@ -57,7 +42,6 @@ export const useQuestion = () => {
         onError: handleApiError
     });
 
-    // Create essay question
     const createEssayQuestionMutation = useMutation<Question, AxiosError<ApiError>, Partial<Question>>({
         mutationFn: async (question) => {
             const response = await questionService.createEssayQuestion(question);
@@ -70,7 +54,6 @@ export const useQuestion = () => {
         onError: handleApiError
     });
 
-    // Update question
     const updateQuestionMutation = useMutation<Question, AxiosError<ApiError>, { id: number; question: Partial<Question> }>({
         mutationFn: async ({ id, question }) => {
             const response = await questionService.updateQuestion(id, question);
@@ -83,7 +66,6 @@ export const useQuestion = () => {
         onError: handleApiError
     });
 
-    // Delete question
     const deleteQuestionMutation = useMutation<void, AxiosError<ApiError>, number>({
         mutationFn: async (id) => {
             await questionService.deleteQuestion(id);
@@ -95,7 +77,6 @@ export const useQuestion = () => {
         onError: handleApiError
     });
 
-    // Import questions from Excel
     const importQuestionsMutation = useMutation<string, AxiosError<ApiError>, File>({
         mutationFn: async (file) => {
             const response = await questionService.importQuestionsFromExcel(file);
@@ -111,7 +92,6 @@ export const useQuestion = () => {
     return {
         // Data
         questions,
-        useQuestionsByType,
 
         // Methods
         getQuestion: getQuestionMutation.mutateAsync,

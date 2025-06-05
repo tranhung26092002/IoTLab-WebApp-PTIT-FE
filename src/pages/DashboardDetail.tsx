@@ -11,13 +11,14 @@ import {
   RobotOutlined,
   ThunderboltOutlined,
   NotificationOutlined,
-  ApiOutlined
+  ApiOutlined,
 } from '@ant-design/icons';
 import { useSensorData } from '../hooks/useSensorData';
 import { SensorMonitorCard } from '../components/dashboard/SensorMonitorCard';
 import { DeviceControlCard } from '../components/dashboard/DeviceControlCard';
 import { SensorChart } from '../components/dashboard/SensorChart';
 import { BrokerInfoCard } from '../components/dashboard/BrokerInfoCard';
+import { BrokerControlCard } from '../components/dashboard/BrokerControlCard';
 import AppLayout from '../components/AppLayout';
 
 interface SensorHistory {
@@ -126,19 +127,12 @@ useEffect(() => {
             <BrokerInfoCard
               broker={sensorData.data.broker}
               topic={sensorData.data.topic}
-              payload={JSON.stringify({
-                sensors: sensorData.sensors,
-                status: sensorData.status
-              }, null, 2)}
-              index={0}
+              payload={sensorData.data.payload}
             />
           </Col>
           <Col xs={24} lg={12}>
-            <BrokerInfoCard
-              broker={sensorData.data.broker}
-              topic={sensorData.data.topic}
-              payload={JSON.stringify(sensorData.data.payload, null, 2)}
-              index={1}
+            <BrokerControlCard
+              deviceId={id || ''}
             />
           </Col>
         </Row>

@@ -1,6 +1,6 @@
 export interface StudentInfo {
   name: string;
-  userId: number;
+  id: number;
   studentCode: string;
 }
 
@@ -30,12 +30,12 @@ export interface ReportData {
 }
 
 export interface Instructor {
-  userId: number;
+  id: number;
   name: string;
 }
 
 export interface Student {
-  userId: number;
+  id: number;
   name: string;
   studentCode: string;
 }

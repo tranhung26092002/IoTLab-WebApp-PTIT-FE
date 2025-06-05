@@ -6,7 +6,7 @@ import { useUsers } from '../../hooks/useUsers';
 
 interface StudentListProps {
   students: StudentInfo[];
-  onAddStudent: (student: { userId: number; name: string; studentCode: string }) => void;
+  onAddStudent: (student: { id: number; name: string; studentCode: string }) => void;
   onDeleteStudent: (index: number) => void;
 }
 const isValidStudentCode = (code: string) => /^[A-Z0-9]*$/.test(code);
@@ -19,7 +19,7 @@ export const StudentList: React.FC<StudentListProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchCode, setSearchCode] = useState('');
   const { getStudent } = useUsers();
-  const [searchResult, setSearchResult] = useState<{ userId: number, name: string; studentCode: string } | null>(null);
+  const [searchResult, setSearchResult] = useState<{ id: number, name: string; studentCode: string } | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -53,7 +53,7 @@ export const StudentList: React.FC<StudentListProps> = ({
       const user = await getStudent(searchCode);
       if (user) {
         setSearchResult({
-          userId: user.userId,
+          id: user.id,
           name: user.name || '',
           studentCode: user.studentCode
         });
@@ -70,7 +70,7 @@ const errorMessage = error instanceof Error ? error.message : 'Đã xảy ra l�
   const handleSelectStudent = () => {
     if (searchResult) {
       onAddStudent({
-        userId: searchResult.userId, 
+        id: searchResult.id, 
         name: searchResult.name,
         studentCode: searchResult.studentCode
       });
@@ -84,7 +84,7 @@ const errorMessage = error instanceof Error ? error.message : 'Đã xảy ra l�
     <div className="space-y-4">
       <h2 className="text-xl font-semibold primary--color">Thông tin sinh viên</h2>
       {students.map((student, index) => (
-        <div key={student.userId} className="grid grid-cols-12 gap-4 items-start border-b pb-4 last:border-0">
+        <div key={student.id} className="grid grid-cols-12 gap-4 items-start border-b pb-4 last:border-0">
           <div className="col-span-5">
             <div className="flex flex-col gap-2">
               <label className="text-sm text-gray-600 font-medium">

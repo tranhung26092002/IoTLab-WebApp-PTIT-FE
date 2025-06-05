@@ -1,11 +1,12 @@
 import api from '../axios';
 import { Exam } from '../../types/exam';
 import { ExamDTO } from '../../types/exam';
+import { PageResponse } from '../../types/PageResponse';
 
 export const examService = {
     // Get all exams
-    getExams: () =>
-        api.get<Exam[]>('/practice/exams'),
+    getExams: (page: number, size: number) =>
+        api.get<PageResponse<Exam>>('/practice/exams', { params: { page, size } }),
 
     // Get exam by ID
     getExam: (id: number) =>

@@ -8,7 +8,7 @@ import { ReportService } from '../../services/api/reportService';
 
 interface Props {
   practiceContents: ReportContent[];
-  students: { userId: number; name: string; studentCode: string }[];
+  students: { id: number; name: string; studentCode: string }[];
   onContentChange: (index: number, value: string) => void;
   onPerformerChange: (index: number, studentId: number, name: string) => void; 
   onImageUpload: (index: number, url: string) => void;
@@ -66,16 +66,16 @@ export const ReportContentTable: React.FC<Props> = ({
         <Select
           value={record.userId || undefined}
           onChange={(value) => {
-            const student = students.find(s => s.userId === value);
+            const student = students.find(s => s.id === value);
             if (student) {
-              onPerformerChange(index, student.userId, student.name);
+              onPerformerChange(index, student.id, student.name);
             }
           }}
           placeholder="Chọn người thực hiện"
           className="w-full"
         >
           {students.map(student => (
-            <Select.Option key={student.userId} value={student.userId}>
+            <Select.Option key={student.id} value={student.id}>
               {student.name}
             </Select.Option>
           ))}

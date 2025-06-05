@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, Tag, Button } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { Device } from '../../types/dashboard';
-import { ApiOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { ApiOutlined, ArrowRightOutlined, WifiOutlined, GlobalOutlined } from '@ant-design/icons';
 
 interface DeviceCardProps {
     device: Device;
@@ -34,6 +34,14 @@ export const DeviceCardDashboard: React.FC<DeviceCardProps> = ({ device }) => {
                     <h3 className="text-lg font-semibold text-[#2c4a2d] mb-2">{device.name}</h3>
                     <p className="text-gray-600 mb-2">ID: {device.deviceId}</p>
                     <p className="text-gray-600 mb-2">Location: {device.location}</p>
+                    <div className="flex items-center gap-2 mb-2">
+                        <WifiOutlined className="text-[#4f6f52]" />
+                        <p className="text-gray-600">WiFi: {device.wifi}</p>
+                    </div>
+                    <div className="flex items-center gap-2 mb-2">
+                        <GlobalOutlined className="text-[#4f6f52]" />
+                        <p className="text-gray-600">IP: {device.ip}</p>
+                    </div>
                     <Tag color="green" className="mt-2">{device.type}</Tag>
                 </div>
             </div>

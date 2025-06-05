@@ -26,13 +26,9 @@ export interface ExamQuestion {
 }
 
 export interface ExamDTO {
-  id: number;
   title: string;
   description: string;
-  // questions: ExamQuestionDTO[];
-  createdAt: number[];
-  updatedAt: number[];
-} 
+}
 
 // export interface ExamQuestionDTO {
 //   id: number;

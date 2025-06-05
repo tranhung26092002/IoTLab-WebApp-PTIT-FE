@@ -38,10 +38,10 @@ const Report: React.FC = () => {
   const initialReportData: ReportData = {
     title: practiceTitle,
     practiceId: practiceId,
-    students: [{ name: '', userId: 0, studentCode: '' }],
+    students: [{ name: '', id: 0, studentCode: '' }],
     classGroup: '',
     className: '',
-    instructor: { userId: 0, name: '' },
+    instructor: { id: 0, name: '' },
     shift: '',
     reportContents: [ { id: 0, content: '', performer: '', imageUrl: '', evaluation: 0, userId: 0 } ],
     discussion: '',
@@ -64,7 +64,7 @@ const Report: React.FC = () => {
         ...prev,
         students: [{
           name: me.fullName || '',
-          userId: me.id || 0,
+          id: me.id || 0,
           studentCode: me.userName || ''
         }]
       }));
@@ -192,7 +192,7 @@ const Report: React.FC = () => {
                 setReportData(prev => ({
                   ...prev,
                   students: [...prev.students, {
-                    userId: student.userId,
+                    id: student.id,
                     name: student.name,
                     studentCode: student.studentCode
                   }]
@@ -245,14 +245,14 @@ const Report: React.FC = () => {
                     </label>
                     <Select 
                       placeholder="Chọn giảng viên" 
-                      value={reportData.instructor?.userId || undefined}
+                      value={reportData.instructor?.id || undefined}
                       onChange={(value) => {
-                        const selectedInstructor = instructors?.find(i => i.userId === value);
+                        const selectedInstructor = instructors?.find(i => i.id === value);
                         if (selectedInstructor) {
                           setReportData(prev => ({
                             ...prev,
                             instructor: {
-                              userId: selectedInstructor.userId,
+                              id: selectedInstructor.id,
                               name: selectedInstructor.name
                             }
                           }));
@@ -270,8 +270,8 @@ const Report: React.FC = () => {
                       {(instructors && instructors.length > 0) && 
                         instructors.map(instructor => (
                           <Select.Option 
-                            key={instructor.userId}
-                            value={instructor.userId}
+                            key={instructor.id}
+                            value={instructor.id}
                           >
                             {instructor.name}
                           </Select.Option>

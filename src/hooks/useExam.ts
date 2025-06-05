@@ -4,20 +4,25 @@ import { Exam, ExamDTO } from '../types/exam';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
+import { PageResponse } from '../types/PageResponse';
 
 export const useExam = (options?: {
     enableExams?: boolean;
+    page?: number;
+    size?: number;
 }) => {
     const {
-        enableExams = false
+        enableExams = false,
+        page = 0,
+        size = 10
     } = options || {};
     const queryClient = useQueryClient();
 
     // Get all exams
-    const { data: exams, isLoading } = useQuery<Exam[], AxiosError<ApiError>>({
-        queryKey: ['exams'],
+    const { data: exams, isLoading } = useQuery<PageResponse<Exam>, AxiosError<ApiError>>({
+        queryKey: ['exams', page, size],
         queryFn: async () => {
-            const response = await examService.getExams();
+            const response = await examService.getExams(page, size);
             return response.data;
         },
         enabled: enableExams

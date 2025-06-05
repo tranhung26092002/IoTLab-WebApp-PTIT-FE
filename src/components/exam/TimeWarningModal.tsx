@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Typography, Button, Space } from 'antd';
+import { Modal, Typography, Button } from 'antd';
 import { ClockCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Text } = Typography;

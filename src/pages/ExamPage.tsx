@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Button, message, Modal, Divider } from 'antd';
+import { Typography, Button, message, Modal } from 'antd';
 import { FormOutlined, ExclamationCircleOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import AppLayout from '../components/AppLayout';
 import { Exam, StudentAnswer, StudentExam, ExamStatus } from '../types/exam';
@@ -75,7 +75,18 @@ const ExamPage: React.FC = () => {
             const elapsedTime = Math.floor((now - startTime) / 1000);
             const remainingTime = Math.max(0, EXAM_DURATION - elapsedTime);
 
+            // Save start time to localStorage if not exists
+            if (!localStorage.getItem('examStartTime')) {
+                localStorage.setItem('examStartTime', startTime.toString());
+            }
+
             setTimeLeft(remainingTime);
+
+            // Check if time is up when returning to the page
+            if (remainingTime <= 0) {
+                handleExamSubmit(true);
+                return;
+            }
 
             timer = setInterval(() => {
                 setTimeLeft(prev => {
@@ -94,6 +105,27 @@ const ExamPage: React.FC = () => {
         }
         return () => clearInterval(timer);
     }, [step, currentStudentExam]);
+
+    // Clean up localStorage when exam is submitted
+    useEffect(() => {
+        if (currentStudentExam?.status === ExamStatus.SUBMITTED) {
+            localStorage.removeItem('examStartTime');
+        }
+    }, [currentStudentExam?.status]);
+
+    // Check exam time when component mounts
+    useEffect(() => {
+        const savedStartTime = localStorage.getItem('examStartTime');
+        if (savedStartTime && currentStudentExam?.status === ExamStatus.IN_PROGRESS) {
+            const startTime = parseInt(savedStartTime);
+            const now = new Date().getTime();
+            const elapsedTime = Math.floor((now - startTime) / 1000);
+            
+            if (elapsedTime >= EXAM_DURATION) {
+                handleExamSubmit(true);
+            }
+        }
+    }, [currentStudentExam?.status]);
 
     // Handle info confirmation
     const handleInfoConfirm = async () => {
@@ -361,9 +393,18 @@ const ExamPage: React.FC = () => {
         return (
             <AppLayout>
                 <div className="p-6">
-                    <Title level={2} className="forest--dark--color flex items-center gap-2 mb-8">
-                        <FormOutlined /> Bài Kiểm Tra: {currentExamData.title}
-                    </Title>
+                    <div className="flex items-center justify-between mb-8">
+                        <Title level={2} className="forest--dark--color flex items-center gap-2 m-0">
+                            <FormOutlined /> Kiểm Tra Trực Tuyến
+                        </Title>
+                        <Button 
+                            type="primary"
+                            icon={<ArrowLeftOutlined />}
+                            onClick={() => setStep('status')}
+                        >
+                            Quay lại
+                        </Button>
+                    </div>
 
                     <div className="max-w-5xl mx-auto">
                         <ExamHeader
@@ -383,7 +424,6 @@ const ExamPage: React.FC = () => {
                             onImageUpload={handleImageUpload}
                             isSubmitting={isSubmitting}
                             examDescription={currentExamData.description}
-                            onBack={() => setStep('status')}
                         />
 
                         <div className="mt-6 flex justify-end">

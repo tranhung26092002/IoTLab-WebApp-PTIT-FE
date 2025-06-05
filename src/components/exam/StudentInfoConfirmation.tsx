@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Typography, Button, Space, Descriptions, Tag, Avatar } from 'antd';
+import { Card, Typography, Button, Space, Descriptions, Avatar } from 'antd';
 import { UserOutlined, IdcardOutlined, MailOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { User } from '../../types/user';
@@ -16,7 +16,7 @@ const StudentInfoConfirmation: React.FC<StudentInfoConfirmationProps> = ({
     student,
     onConfirm,
 }) => {
-    const { imageUrl, isLoading } = useAvatar(student.avatarUrl);
+    const { imageUrl } = useAvatar(student.avatarUrl);
 
     return (
         <motion.div

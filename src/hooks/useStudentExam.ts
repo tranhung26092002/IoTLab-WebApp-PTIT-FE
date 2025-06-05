@@ -1,31 +1,32 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { studentExamService } from '../services/api/studentExamService';
-import { 
-    StudentExam, 
-    StudentAnswerListDTO,
-    StudentExamResult
-} from '../types/exam';
+import { StudentExam, StudentAnswerListDTO,StudentExamResult } from '../types/exam';
 import { AxiosError } from 'axios';
 import { ApiError } from '../types/ApiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
+import { PageResponse } from '../types/PageResponse';
 
 export const useStudentExam = (options?: {
     enableStudentExams?: boolean;
     studentId?: number;
     studentExamId?: number;
+    page?: number;
+    size?: number;
 }) => {
     const {
         enableStudentExams = false,
         studentId,
-        studentExamId
+        studentExamId,
+        page = 0,
+        size = 10
     } = options || {};
     const queryClient = useQueryClient();
 
     // Get all student exams
-    const { data: studentExams, isLoading: isLoadingExams } = useQuery<StudentExam[], AxiosError<ApiError>>({
-        queryKey: ['student-exams'],
+    const { data: studentExams, isLoading: isLoadingExams } = useQuery<PageResponse<StudentExam>, AxiosError<ApiError>>({
+        queryKey: ['student-exams', page, size],
         queryFn: async () => {
-            const response = await studentExamService.getAllStudentExams();
+            const response = await studentExamService.getAllStudentExams({ page, size });
             return response.data;
         },
         enabled: enableStudentExams
@@ -85,7 +86,7 @@ export const useStudentExam = (options?: {
             const response = await studentExamService.submitExam(studentExamId, answers, images);
             return response.data;
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             handleSuccess('SUBMIT_EXAM');
             queryClient.invalidateQueries({ queryKey: ['exam-result', studentExamId] });
             queryClient.invalidateQueries({ queryKey: ['student-exam', studentExamId] });
@@ -105,7 +106,7 @@ export const useStudentExam = (options?: {
             const response = await studentExamService.gradeEssayAnswer(answerId, score);
             return response.data;
         },
-        onSuccess: (data) => {
+        onSuccess: () => {
             handleSuccess('GRADE_ESSAY');
             queryClient.invalidateQueries({ queryKey: ['exam-result', studentExamId] });
         },

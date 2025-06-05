@@ -19,8 +19,7 @@ const ExamTemplateManager: React.FC<ExamTemplateManagerProps> = ({ exams, isLoad
   const {
     createExam,
     deleteExam,
-    isCreating,
-    isDeleting
+    isCreating
   } = useExam();
 
   const handleAdd = () => {
@@ -52,11 +51,7 @@ const ExamTemplateManager: React.FC<ExamTemplateManagerProps> = ({ exams, isLoad
       const values = await form.validateFields();
       const newExam = {
         title: values.title,
-        description: values.description,
-        duration: values.duration,
-        multipleChoiceCount: values.multipleChoiceCount,
-        essayCount: values.essayCount,
-        status: values.status
+        description: values.description
       };
 
       await createExam(newExam);

@@ -2,20 +2,16 @@ import React, { useState } from "react";
 import AppLayoutAdmin from "../components/AppLayoutAdmin";
 import { motion } from "framer-motion";
 import { Typography, Card, Tabs } from "antd";
-import { BankOutlined, BookOutlined, DatabaseOutlined } from "@ant-design/icons";
+import { BankOutlined, DatabaseOutlined } from "@ant-design/icons";
 import type { TabsProps } from 'antd';
 import QuestionBankManager from '../components/exam/QuestionBankManager';
-import ExamTemplateManager from '../components/exam/ExamTemplateManager';
 import ExamList from '../components/exam/ExamList';
-import { useExam } from '../hooks/useExam';
-import { useQuestion } from '../hooks/useQuestion';
+import StudentExamList from "../components/exam/StudentExamList";
 
 const { Title } = Typography;
 
 const ExamManager: React.FC = () => {
   const [activeTab, setActiveTab] = useState('1');
-  const { exams, isLoading: isLoadingExams } = useExam();
-  const { questions, isLoading: isLoadingQuestions } = useQuestion();
 
   const items: TabsProps['items'] = [
     {
@@ -26,17 +22,17 @@ const ExamManager: React.FC = () => {
           Ngân hàng câu hỏi
         </span>
       ),
-      children: <QuestionBankManager questions={questions?.data || []} isLoading={isLoadingQuestions} />,
+      children: <QuestionBankManager />,
     },
     {
       key: '2',
       label: (
         <span className="flex items-center gap-2">
-          <BookOutlined />
-          Mẫu đề thi
+          <DatabaseOutlined />
+          Đề thi đã tạo
         </span>
       ),
-      children: <ExamTemplateManager exams={exams?.data || []} isLoading={isLoadingExams} />,
+      children: <ExamList />,
     },
     {
       key: '3',
@@ -46,7 +42,7 @@ const ExamManager: React.FC = () => {
           Đề thi đã tạo
         </span>
       ),
-      children: <ExamList exams={exams?.data || []} isLoading={isLoadingExams} />,
+      children: <StudentExamList />,
     },
   ];
 

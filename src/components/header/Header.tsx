@@ -140,14 +140,14 @@ const CustomHeader: React.FC<HeaderProps> = ({ layoutType = 'user' }) => {
       </motion.div>
 
       {/* Right section - Search & Controls */}
-      <Space align="center" size={24}>
+      <Space align="center" size={32} className="mr-8">
         <motion.div variants={itemVariants} className="w-64">
           <SearchComponent 
             onSearch={(value) => console.log('Search query:', value)} 
           />
         </motion.div>
 
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="ml-4">
           <Tooltip 
             title={<MessageTooltipContent />}
             placement="bottom"
@@ -172,7 +172,7 @@ const CustomHeader: React.FC<HeaderProps> = ({ layoutType = 'user' }) => {
           </Tooltip>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="ml-4">
           <Tooltip 
             title={<NotificationTooltipContent />}
             placement="bottom"
@@ -198,7 +198,7 @@ const CustomHeader: React.FC<HeaderProps> = ({ layoutType = 'user' }) => {
           </Tooltip>
         </motion.div>
 
-        <motion.div variants={itemVariants}>
+        <motion.div variants={itemVariants} className="ml-4">
           <Dropdown
             menu={{ items: menuItems }}
             placement="bottomRight"

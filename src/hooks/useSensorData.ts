@@ -74,7 +74,7 @@ export const useSensorData = (id: string) => {
     const toggleDevice = (device: keyof Pick<SensorData, 'led' | 'buzzer' | 'alertLed' | 'servo' | 'fan'>) => {
         const newStatus = sensorData[device] === 0 ? 1 : 0;
         const command: DeviceCommand = {
-            deviceName: `device_${id}`,
+            deviceName: `node_${id}`,
             [device]: newStatus,
         };
         console.log("Toggling", device, "to", newStatus);

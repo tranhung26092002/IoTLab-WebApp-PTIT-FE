@@ -5,31 +5,31 @@ export default defineConfig({
   plugins: [react()],
   server: {
     host: "0.0.0.0",
-    port: 3000,
-    proxy: {
-      '/mqtt/ws': {
-        target: `http://localhost:8080`,
-        changeOrigin: true,
-        ws: true,
-        secure: false,
-        // configure: (proxy) => {
-        //   proxy.on('proxyReq', (proxyReq) => {
-        //     proxyReq.setHeader('Origin', 'http://localhost:3000'); // Địa chỉ frontend cụ thể
-        //   });
-        // },
-      },
-      '/notification/ws': {
-        target: `http://localhost:8080`,
-        changeOrigin: true,
-        ws: true,
-        secure: false,
-        // configure: (proxy) => {
-        //   proxy.on('proxyReq', (proxyReq) => {
-        //     proxyReq.setHeader('Origin', 'http://localhost:3000'); // Địa chỉ frontend cụ thể
-        //   });
-        // },
-      }
-    },
+    port: 4000,
+    // proxy: {
+    //   '/mqtt/ws': {
+    //     target: `http://localhost:8080`,
+    //     changeOrigin: true,
+    //     ws: true,
+    //     secure: false,
+    //     // configure: (proxy) => {
+    //     //   proxy.on('proxyReq', (proxyReq) => {
+    //     //     proxyReq.setHeader('Origin', 'http://localhost:3000'); // Địa chỉ frontend cụ thể
+    //     //   });
+    //     // },
+    //   },
+    //   '/notification/ws': {
+    //     target: `http://localhost:8080`,
+    //     changeOrigin: true,
+    //     ws: true,
+    //     secure: false,
+    //     // configure: (proxy) => {
+    //     //   proxy.on('proxyReq', (proxyReq) => {
+    //     //     proxyReq.setHeader('Origin', 'http://localhost:3000'); // Địa chỉ frontend cụ thể
+    //     //   });
+    //     // },
+    //   }
+    // },
   },
   define: {
     global: 'globalThis',

@@ -6,7 +6,7 @@ services:
     container_name: react-app
     image: ${DOCKER_USERNAME}/react-app:latest  
     ports:
-      - "80:80"
+      - "4000:4000"
     networks:
       - app-network
     restart: always

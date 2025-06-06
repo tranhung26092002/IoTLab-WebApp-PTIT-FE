@@ -55,7 +55,7 @@ docker-compose up -d
 # Kiểm tra container có chạy thành công không
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}Deployment completed successfully!${NC}"
-    echo -e "${YELLOW}Your frontend is running at: http://localhost:80${NC}"
+    echo -e "${YELLOW}Your frontend is running at: http://localhost:4000${NC}"
 else
     echo -e "${RED}Failed to start container!${NC}"
     exit 1

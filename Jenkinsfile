@@ -2,30 +2,22 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'react-app-dev:latest'
-        CONTAINER_NAME = 'react-app-dev'
+        DOCKER_IMAGE = "${DOCKER_USERNAME}/react-app:latest"
+        CONTAINER_NAME = 'react-app'
     }
 
     stages {
-        stage('Grant Permissions') {
+        stage('Checkout Code') {
             steps {
-                script {
-                    // Cấp quyền cho thư mục node_modules và workspace
-                    sh 'sudo chmod -R 777 /var/lib/jenkins/workspace/Front-end'
-                }
+                checkout scm
             }
         }
 
         stage('Clean Old Containers') {
             steps {
                 script {
-                    sh """
-                    if [ \$(docker ps -aq -f name=${CONTAINER_NAME}) ]; then
-                        echo 'Stopping and removing old container...'
-                        docker stop ${CONTAINER_NAME}
-                        docker rm ${CONTAINER_NAME}
-                    fi
-                    """
+                    echo 'Stopping and removing old containers (if any)...'
+                    sh 'docker-compose down || true'
                 }
             }
         }
@@ -33,7 +25,18 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t ${DOCKER_IMAGE} .'
+                    echo 'Building Docker image...'
+                    sh 'docker-compose build'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    echo 'Pushing Docker image to registry...'
+                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
+                    sh 'docker push $DOCKER_IMAGE'
                 }
             }
         }
@@ -41,7 +44,7 @@ pipeline {
         stage('Deploy New Container') {
             steps {
                 script {
-                    sh 'docker-compose down'
+                    echo 'Deploying new container...'
                     sh 'docker-compose up -d'
                 }
             }

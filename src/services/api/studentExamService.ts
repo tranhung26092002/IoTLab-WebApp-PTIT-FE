@@ -40,8 +40,8 @@ export const studentExamService = {
         });
     },
 
-    gradeEssayAnswer: (answerId: number, score: number) =>
-        api.post<StudentExamResult>(`/practice/student-exams/answers/${answerId}/grade`, null, {
+    gradeEssayAnswer: (studentExamId: number, questionId: number, score: number) =>
+        api.post<StudentExamResult>(`/practice/student-exams/${studentExamId}/questions/${questionId}/grade?score=${score}`, null, {
             params: { score }
         }),
 

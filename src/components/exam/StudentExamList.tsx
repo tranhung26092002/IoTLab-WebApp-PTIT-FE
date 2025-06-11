@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Table, Card, Typography, Tag } from 'antd';
+import { Table, Card, Typography, Tag, Button } from 'antd';
 import { useStudentExam } from '../../hooks/useStudentExam';
+import { StudentExam, ExamStatus } from '../../types/exam';
+import TeacherExamResultScreen from './TeacherExamResultScreen';
 
 const { Title } = Typography;
 
@@ -26,12 +28,25 @@ const formatDate = (dateArray: number[] | null) => {
 const StudentExamList: React.FC = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const pageSize = 10;
+    const [selectedExam, setSelectedExam] = useState<StudentExam | null>(null);
 
     const { studentExams, isLoadingExams } = useStudentExam({
         enableStudentExams: true,
         page: currentPage - 1,
         size: pageSize
     });
+
+    const handleViewResult = (exam: StudentExam) => {
+        setSelectedExam(exam);
+    };
+
+    const handleBack = () => {
+        setSelectedExam(null);
+    };
+
+    if (selectedExam) {
+        return <TeacherExamResultScreen exam={selectedExam} onBack={handleBack} />;
+    }
 
     const columns = [
         {
@@ -60,14 +75,13 @@ const StudentExamList: React.FC = () => {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
-            render: (status: string) => {
+            render: (status: ExamStatus) => {
                 const statusConfig = {
-                    PENDING: { color: 'warning', text: 'Chờ thi' },
-                    IN_PROGRESS: { color: 'processing', text: 'Đang thi' },
-                    SUBMITTED: { color: 'success', text: 'Đã nộp' },
-                    GRADED: { color: 'default', text: 'Đã chấm điểm' }
+                    [ExamStatus.NOT_STARTED]: { color: 'default', text: 'Chưa bắt đầu' },
+                    [ExamStatus.IN_PROGRESS]: { color: 'processing', text: 'Đang thi' },
+                    [ExamStatus.SUBMITTED]: { color: 'success', text: 'Đã nộp' }
                 };
-                const config = statusConfig[status as keyof typeof statusConfig];
+                const config = statusConfig[status];
                 return <Tag color={config.color}>{config.text}</Tag>;
             }
         },
@@ -76,6 +90,19 @@ const StudentExamList: React.FC = () => {
             dataIndex: 'score',
             key: 'score',
             render: (score: number) => score !== null ? `${score.toFixed(2)}` : 'Chưa có điểm'
+        },
+        {
+            title: 'Hành động',
+            key: 'action',
+            render: (_: unknown, record: StudentExam) => (
+                <Button 
+                    type="primary"
+                    onClick={() => handleViewResult(record)}
+                    disabled={record.status !== ExamStatus.SUBMITTED}
+                >
+                    Chấm điểm
+                </Button>
+            ),
         }
     ];
 
@@ -99,4 +126,4 @@ const StudentExamList: React.FC = () => {
     );
 };
 
-export default StudentExamList; 
+export default StudentExamList;

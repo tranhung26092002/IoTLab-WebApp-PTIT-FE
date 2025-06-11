@@ -100,10 +100,10 @@ export const useStudentExam = (options?: {
     const gradeEssayMutation = useMutation<
         StudentExamResult,
         AxiosError<ApiError>,
-        { answerId: number; score: number }
+        { studentExamId: number; questionId: number; score: number }
     >({
-        mutationFn: async ({ answerId, score }) => {
-            const response = await studentExamService.gradeEssayAnswer(answerId, score);
+        mutationFn: async ({ studentExamId, questionId, score }) => {
+            const response = await studentExamService.gradeEssayAnswer(studentExamId, questionId, score);
             return response.data;
         },
         onSuccess: () => {
@@ -132,7 +132,7 @@ export const useStudentExam = (options?: {
         
         // Mutations
         submitExam: submitExamMutation.mutateAsync,
-        gradeEssay: gradeEssayMutation.mutate,
+        gradeEssay: gradeEssayMutation.mutateAsync,
         
         // Mutation states
         isSubmitting: submitExamMutation.isPending,

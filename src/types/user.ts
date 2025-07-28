@@ -23,6 +23,8 @@ export interface User {
     dateOfBirth?: string;
     status: string;
     roleType: string;
+    avatarSource: Provider;
+    authProvider: Provider;
 }
 
 export interface ChangePasswordDto {
@@ -51,4 +53,11 @@ export interface UserFilter {
     size?: number;
     sortField?: string;
     sortOrder?: 'asc' | 'desc';
+}
+
+export enum Provider {
+    LOCAL = 'LOCAL',
+    GOOGLE = 'GOOGLE',
+    FACEBOOK = 'FACEBOOK',
+    GITHUB = 'GITHUB'
 }

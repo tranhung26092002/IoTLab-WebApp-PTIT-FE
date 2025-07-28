@@ -9,12 +9,21 @@ export const authService = {
   // Đăng ký người dùng
   signUp: (signUpDto: SignUpDto) => api.post('user/auth/sign-up', signUpDto),
 
-  // Đăng nhập
+  // Đăng nhập thông thường
   signIn: async (signInDto: SignInDto): Promise<AuthResponse> => {
     const response = await api.post<AuthResponse>('user/auth/sign-in', signInDto);
     // Lưu token khi đăng nhập thành công
     tokenStorage.setTokens(response.data.accessToken, response.data.refreshToken);
     return response.data; // Trả về dữ liệu AuthResponse
+  },
+
+  // Đăng nhập bằng Google
+  signInWithGoogle: async (googleToken: string): Promise<AuthResponse> => {
+    const response = await api.post<AuthResponse>('user/auth/oauth2/google', null, {
+      params: { googleToken }
+    });
+    tokenStorage.setTokens(response.data.accessToken, response.data.refreshToken);
+    return response.data;
   },
 
   signOut: async () => {

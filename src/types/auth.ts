@@ -1,8 +1,9 @@
 import { User } from "./user";
 
 export interface SignInDto {
-    userName: string;
-    password: string;
+    userName?: string;
+    password?: string;
+    googleToken?: string;
 }
 
 export interface OtpCodeDto {

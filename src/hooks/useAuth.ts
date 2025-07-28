@@ -53,20 +53,26 @@ export const useAuth = () => {
     }
   });
 
+  const signInWithGoogleMutation = useMutation<AuthResponse, AxiosError<ApiError>, string>({
+    mutationFn: authService.signInWithGoogle,
+    onSuccess: (data) => {
+      tokenStorage.clearTokens();
+      queryClient.setQueryData(['user'], data.user);
+      tokenStorage.setTokens(data.accessToken, data.refreshToken);
+      handleSuccess('SIGN_IN');
+    },
+    onError: (error) => {
+      handleSignInError(error);
+      handleApiError(error);
+      tokenStorage.clearRememberedLogin();
+    }
+  });
+
   const signOutMutation = useMutation<void, AxiosError<ApiError>, void>({
     mutationFn: authService.signOut,
     onSuccess: () => {
       queryClient.removeQueries();
       handleSuccess('SIGN_OUT');
-
-      // // Clear all tokens
-      // tokenStorage.clearTokens();
-      // // Clear all query cache
-      // queryClient.clear();
-      // // Remove specific queries if needed
-      // queryClient.removeQueries(['user']);
-      // // Show success message
-      // handleSuccess('SIGN_OUT');
     },
     onError: handleApiError
   });
@@ -133,6 +139,7 @@ export const useAuth = () => {
   return {
     signUp: signUpMutation.mutate,
     signIn: signInMutation.mutate,
+    signInWithGoogle: signInWithGoogleMutation.mutate,
     signOut: signOutMutation.mutate,
     refreshToken: refreshTokenMutation.mutate,
     sendOtp: sendOtpMutation.mutate,
@@ -141,6 +148,7 @@ export const useAuth = () => {
 
     isSignUpLoading: signUpMutation.isPending,
     isSignInLoading: signInMutation.isPending,
+    isSignInWithGoogleLoading: signInWithGoogleMutation.isPending,
     isSignOutLoading: signOutMutation.isPending,
     isRefreshingToken: refreshTokenMutation.isPending,
     isOtpLoading: sendOtpMutation.isPending,
@@ -149,6 +157,7 @@ export const useAuth = () => {
 
     signUpError: signUpMutation.error,
     signInError: signInMutation.error,
+    signInWithGoogleError: signInWithGoogleMutation.error,
     signOutError: signOutMutation.error,
     refreshTokenError: refreshTokenMutation.error,
     otpError: sendOtpMutation.error,

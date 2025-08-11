@@ -9,7 +9,7 @@
   [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 </div>
 
-## 📝 Mô tả dự án
+## 📝 Mô tả dự án IoT
 
 IoTLab WebApp là một nền tảng học tập và thực hành IoT toàn diện, được thiết kế đặc biệt cho môi trường phòng thí nghiệm. Ứng dụng cung cấp một hệ sinh thái học tập tích hợp, kết hợp giữa lý thuyết và thực hành, cho phép người dùng học tập, thực hành và tương tác với các thiết bị IoT trong môi trường thực tế.
 

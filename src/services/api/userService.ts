@@ -1,8 +1,8 @@
 import { Attendance, ChangePasswordDto, User, UserFilter } from '../../types/user';
 import api from '../axios';
 import { tokenStorage } from '../tokenStorage';
-import { PageResponse } from '../../types/PageResponse';
-import { ApiResponse } from '../../types/ApiResponse';
+import { PageResponse } from '../../types/pageResponse';
+import { ApiResponse } from '../../types/apiResponse';
 import { Instructor, Student } from '../../types/report';
 import dayjs from 'dayjs';
 

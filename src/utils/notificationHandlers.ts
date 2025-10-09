@@ -1,6 +1,6 @@
 import { notification } from 'antd';
 import { AxiosError } from 'axios';
-import { ApiError } from '../types/ApiError';
+import { ApiError } from '../types/apiError';
 import { SUCCESS_MESSAGES, ERROR_MESSAGES } from './messages';
 
 export const handleSuccess = (messageKey: keyof typeof SUCCESS_MESSAGES) => {

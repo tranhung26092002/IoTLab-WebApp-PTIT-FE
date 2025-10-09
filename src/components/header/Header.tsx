@@ -15,7 +15,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MessageDropdown, MessageTooltipContent } from "./MessageDropdown";
 import { NotificationDropdown, NotificationTooltipContent } from "./NotificationDropdown";
 import { SearchComponent } from "./SearchBar";
-import { useUserAvatar } from "../../hooks/useUserAvatar";
+import { useAvatar } from "../../hooks/useAvatar";
 import { useUsers } from "../../hooks/useUsers";
 import { useNotification } from "../../hooks/useNotification";
 import { useChat } from "../../hooks/useChat";
@@ -34,7 +34,7 @@ const CustomHeader: React.FC<HeaderProps> = ({ layoutType = 'user' }) => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { me } = useUsers({ enableMe: true });
-  const { imageUrl, isLoading: isAvatarLoading } = useUserAvatar(me?.avatarUrl, me?.avatarSource);
+  const { imageUrl, isLoading: isAvatarLoading } = useAvatar(me?.avatarUrl, me?.avatarSource);
   const { notifications, isLoading: isNotificationLoading } = useNotification(me?.id || 0);
   const { messages } = useChat();
   const unreadNotifications = notifications.filter(n => !n.read);

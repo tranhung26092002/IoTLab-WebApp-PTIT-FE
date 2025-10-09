@@ -2,9 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { practiceService } from '../services/api/practiceService';
 import { Practice, PracticeGuide, PracticeVideo, PracticeFile, PracticeFilter } from '../types/practice';
 import { AxiosError } from 'axios';
-import { ApiError } from '../types/ApiError';
+import { ApiError } from '../types/apiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
-import { PageResponse } from '../types/PageResponse';
+import { PageResponse } from '../types/pageResponse';
 
 export const usePractice = () => {
     const queryClient = useQueryClient();

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { PageResponse } from '../types/PageResponse';
+import { PageResponse } from '../types/pageResponse';
 import { Device } from '../types/dashboard';
 import { dashboardService } from '../services/api/dashboardService';
 

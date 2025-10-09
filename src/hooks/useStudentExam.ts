@@ -2,9 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { studentExamService } from '../services/api/studentExamService';
 import { StudentExam, StudentAnswerListDTO,StudentExamResult } from '../types/exam';
 import { AxiosError } from 'axios';
-import { ApiError } from '../types/ApiError';
+import { ApiError } from '../types/apiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
-import { PageResponse } from '../types/PageResponse';
+import { PageResponse } from '../types/pageResponse';
 
 export const useStudentExam = (options?: {
     enableStudentExams?: boolean;

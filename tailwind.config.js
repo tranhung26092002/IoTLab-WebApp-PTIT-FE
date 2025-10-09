@@ -1,21 +1,21 @@
+// Switching config to ESM syntax to work under package.json { "type": "module" }
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
-  },
-  plugins: [],
-  extend: {
-    keyframes: {
-      fadeIn: {
-        '0%': { opacity: '0', transform: 'translateY(10px)' },
-        '100%': { opacity: '1', transform: 'translateY(0)' }
+    extend: {
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' }
+        }
+      },
+      animation: {
+        fadeIn: 'fadeIn 0.5s ease-out'
       }
     },
-    animation: {
-      fadeIn: 'fadeIn 0.5s ease-out'
-    }
-  }
+  },
+  plugins: [],
 };
 
 

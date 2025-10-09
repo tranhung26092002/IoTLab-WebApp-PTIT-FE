@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { studentProgressService } from '../services/api/studentProgressService';
 import { StudentProgress } from '../types';
 import { AxiosError } from 'axios';
-import { ApiError } from '../types/ApiError';
+import { ApiError } from '../types/apiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
 
 export const useStudentProgress = (studentId: number) => {

@@ -2,9 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { examService } from '../services/api/examService';
 import { Exam, ExamDTO } from '../types/exam';
 import { AxiosError } from 'axios';
-import { ApiError } from '../types/ApiError';
+import { ApiError } from '../types/apiError';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
-import { PageResponse } from '../types/PageResponse';
+import { PageResponse } from '../types/pageResponse';
 
 export const useExam = (options?: {
     enableExams?: boolean;

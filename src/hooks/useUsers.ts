@@ -2,10 +2,10 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { userService } from '../services/api/userService';
 import { Attendance, ChangePasswordDto, User, UserFilter } from '../types/user';
 import { AxiosError } from 'axios';
-import { ApiError } from '../types/ApiError';
+import { ApiError } from '../types/apiError';
 import dayjs from 'dayjs';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
-import { PageResponse } from '../types/PageResponse';
+import { PageResponse } from '../types/pageResponse';
 import { Instructor, Student } from '../types/report';
 
 export const useUsers = (options?: {

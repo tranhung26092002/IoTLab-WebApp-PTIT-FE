@@ -3,7 +3,7 @@ import { authService } from '../services/api/authService';
 import { SignInDto, SignUpDto, EmailDto, ResetPasswordDto, AuthResponse } from '../types/auth';
 import { User } from '../types/user';
 import { tokenStorage } from '../services/tokenStorage';
-import { ApiError } from '../types/ApiError';
+import { ApiError } from '../types/apiError';
 import { AxiosError } from 'axios';
 import { handleSuccess, handleApiError } from '../utils/notificationHandlers';
 import { useEffect } from 'react';

@@ -1,4 +1,3 @@
-// src/types/about.ts
 export interface Stat {
     title: string;
     value: number;

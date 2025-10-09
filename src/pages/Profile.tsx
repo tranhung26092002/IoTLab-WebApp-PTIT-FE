@@ -6,7 +6,7 @@ import { useUsers } from '../hooks/useUsers';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { User } from '../types/user';
-import { useUserAvatar } from '../hooks/useUserAvatar';
+import { useAvatar } from '../hooks/useAvatar';
 
 interface ProfileProps {
   isOpen: boolean;
@@ -20,7 +20,7 @@ const Profile: React.FC<ProfileProps> = ({ isOpen, onClose }) => {
   const [form] = Form.useForm();
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
-  const { imageUrl, isLoading: isLoadingAvatar } = useUserAvatar(me?.avatarUrl, me?.avatarSource);
+  const { imageUrl, isLoading: isLoadingAvatar } = useAvatar(me?.avatarUrl, me?.avatarSource);
 
   useEffect(() => {
     if (isOpen && getMe) {
